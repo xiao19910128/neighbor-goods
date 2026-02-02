@@ -3,7 +3,7 @@
     <!-- 顶部导航栏 -->
     <div class="top-nav">
       <div class="search-container">
-        <input type="text" placeholder="棉拖鞋" class="search-box" />
+        <input type="text" placeholder="请输入关键词筛选" class="search-box" />
       </div>
       <div class="nav-tabs">
         <span class="active" @click="navigateTo('猜你喜欢', $event)">猜你喜欢</span>

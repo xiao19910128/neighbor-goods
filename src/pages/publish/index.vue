@@ -1,25 +1,30 @@
 <template>
   <div class="publish-page">
-    <!-- 顶部导航栏 -->
-    <div class="top-nav">
-      <span class="back-btn" @click="goBack">← 返回</span>
-      <span class="page-title">发布闲置</span>
-      <span class="submit-btn" @click="submitForm">发布</span>
-    </div>
-
     <!-- 表单内容区 -->
     <div class="form-container">
       <!-- 商品图片上传 -->
       <div class="image-upload-section">
-        <div class="upload-title">添加商品图片（最多9张）</div>
-        <div class="image-upload-area">
-          <div class="add-image-btn">+</div>
-          <!-- 已上传图片占位符 -->
-          <div class="uploaded-image" v-for="i in 3" :key="i">
-            <img src="/src/static/logo.png" alt="商品图片" />
-            <span class="delete-image-btn">×</span>
-          </div>
-        </div>
+        <view class="upload-title">添加商品图片（最多9张）</view>
+        <view class="upload-list">
+          <!-- 已上传图片 -->
+          <view 
+            class="upload-item" 
+            v-for="(item, index) in fileList" 
+            :key="index"
+            @click="handlePreview(item)"
+          >
+            <image :src="item.url" class="upload-img" mode="aspectFill" />
+            <view class="upload-delete" @click.stop="handleDelete(index)">×</view>
+          </view>
+          <!-- 添加图片按钮 -->
+          <view 
+            class="upload-item upload-add" 
+            v-if="fileList.length < 9"
+            @click="handleChooseImage"
+          >
+            <view class="upload-add-icon">+</view>
+          </view>
+        </view>
       </div>
 
       <!-- 商品信息表单 -->
@@ -91,25 +96,143 @@
         </div>
       </form>
     </div>
+    <view>
+      <uni-button type="primary" @click="handleSubmit">发布</uni-button>
+    </view>
 
     <TabBar defaultTab="publish" />
   </div>
 </template>
 
 <script>
-import TabBar from '../../components/TabBar.vue'
+import TabBar from '@/components/TabBar.vue'
+
 export default {
   name: 'PublishPage',
   components: {  TabBar },
+  data() {
+    return {
+      fileList: [], // 存储已上传的图片信息，包括url和name等
+    };
+  },
   methods: {
-    goBack() {
-      // 返回上一页逻辑
-      console.log('返回上一页');
+    // 选择图片
+    handleChooseImage  () {
+      // 计算还能选几张
+      const count = 9 - this.fileList.length;
+      uni.chooseImage({
+        count,
+        sizeType: ['original', 'compressed'],
+        sourceType: ['album', 'camera'],
+        success: (res) => {
+          const tempFilePaths = res.tempFilePaths;
+          
+          // 模拟上传到服务器（替换为你的真实上传接口）
+          tempFilePaths.forEach((path) => {
+            // 这里可以调用 uni.uploadFile 上传到服务器
+            // 上传成功后，将返回的 url 存入 fileList
+            this.fileList.push({
+              url: path, // 这里先用本地路径，实际项目应替换为服务器返回的 url
+              name: `image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+            });
+          });
+        },
+        fail: (err) => {
+          console.error('选择图片失败：', err);
+          uni.showToast({ title: '选择图片失败', icon: 'none' });
+        }
+      });
     },
-    submitForm() {
-      // 提交表单逻辑
-      console.log('提交发布表单');
-    }
+    /**
+     * 提交图片数据到服务器的方法
+     */
+    async handleSubmit() {
+      // 1. 校验是否选择图片
+      if (this.fileList.length === 0) {
+        uni.showToast({ title: '请至少选择1张图片', icon: 'none' });
+        return;
+      }
+
+      // 2. 标记提交中
+      this.submitting = true;
+
+      try {
+        // 3. 遍历图片，上传本地临时图片到服务器
+        const imageUrls = [];
+        for (const item of this.fileList) {
+          // 判断是否为本地临时路径（小程序临时路径以 tmp/ 开头）
+          if (item.url.includes('tmp/')) {
+            const serverUrl = await this.uploadToServer(item.url);
+            imageUrls.push(serverUrl);
+          } else {
+            imageUrls.push(item.url);
+          }
+        }
+
+        // 4. 提交图片URL到后端接口
+        const res = await uni.request({
+          url: 'https://你的服务器地址/submit',
+          method: 'POST',
+          data: { images: imageUrls }
+        });
+
+        // 5. 处理提交结果
+        if (res.data.code === 200) {
+          uni.showToast({ title: '提交成功', icon: 'success' });
+          this.fileList = []; // 清空图片列表
+        } else {
+          uni.showToast({ title: res.data.msg, icon: 'none' });
+        }
+      } catch (err) {
+        // 6. 捕获异常
+        console.error('提交失败：', err);
+        uni.showToast({ title: '提交失败，请重试', icon: 'none' });
+      } finally {
+        // 7. 重置提交状态
+        this.submitting = false;
+      }
+    },
+
+    // 上传图片到服务器
+    uploadToServer(tempFilePath) {
+      return new Promise((resolve, reject) => {
+        uni.uploadFile({
+          url: 'https://你的服务器地址/upload', // 后端上传接口
+          filePath: tempFilePath,
+          name: 'file', // 后端接收文件的字段名
+          success: (res) => {
+            const data = JSON.parse(res.data);
+            if (data.code === 200) {
+              resolve(data.url); // 返回服务器返回的图片URL
+            } else {
+              reject(new Error(data.msg));
+            }
+          },
+          fail: reject
+        });
+      });
+    },
+
+    // 删除已上传图片
+    handleDelete  (index) {
+      uni.showModal({
+        title: '提示',
+        content: '确定要删除这张图片吗？',
+        success: (res) => {
+          if (res.confirm) {
+            this.fileList.splice(index, 1);
+          }
+        }
+      });
+    },
+    // 预览图片
+    handlePreview  (current) {
+      const urls = this.fileList.map(item => item.url);
+      uni.previewImage({
+        urls,
+        current: current.url
+      });
+    },
   }
 };
 </script>
@@ -289,5 +412,61 @@ export default {
 
 .status-option input, .trade-option input {
   margin: 0;
+}
+
+
+.upload-container {
+  padding: 20rpx;
+}
+
+.upload-title {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.upload-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.upload-item {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  position: relative;
+}
+
+.upload-img {
+  width: 100%;
+  height: 100%;
+}
+
+.upload-delete {
+  position: absolute;
+  top: 10rpx;
+  right: 10rpx;
+  width: 36rpx;
+  height: 36rpx;
+  line-height: 36rpx;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 24rpx;
+}
+
+.upload-add {
+  border: 2rpx dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-add-icon {
+  font-size: 48rpx;
+  color: #ccc;
 }
 </style>

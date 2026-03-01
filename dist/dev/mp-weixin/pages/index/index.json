@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "闲置中心",
+  "usingComponents": {
+    "tab-bar": "../../components/TabBar"
+  }
+}

@@ -1,0 +1,42 @@
+
+
+/* 底部tab栏 */
+.bottom-tab.data-v-7d9a6b19 {
+  display: flex;
+  justify-content: space-around;
+  background-color: #fff;
+  padding: 5px 0;
+  border-top: 1px solid #eee;
+}
+.tab-item.data-v-7d9a6b19 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10px;
+  color: #666;
+}
+.tab-item.active.data-v-7d9a6b19 {
+  color: #ff7676;
+}
+.tab-item.active  .uni-icons.data-v-7d9a6b19 {
+  color: #fbeaea!important;
+}
+.sell-tab.data-v-7d9a6b19 {
+  position: relative;
+}
+.sell-tab .icon-sell.data-v-7d9a6b19 {
+  background-color: #cf4310;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -20px;
+  font-size: 20px;
+}
+.sell-tab .text.data-v-7d9a6b19 {
+  margin-top: 25px;
+}

@@ -18,6 +18,9 @@
       }
     }
 	],
+	"easycom": {
+    "^van-(.*)": "@vant/weapp/dist/index.vue"
+  },
 	
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

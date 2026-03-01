@@ -1,0 +1,157 @@
+
+/* 基础布局 */
+.publish-page.data-v-ce8f53b1 {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 90rpx);
+  background-color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 顶部导航栏 */
+.top-nav.data-v-ce8f53b1 {
+  background-color: #fbeaea;
+  padding: 15px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.back-btn.data-v-ce8f53b1 {
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+}
+.page-title.data-v-ce8f53b1 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+.submit-btn.data-v-ce8f53b1 {
+  font-size: 16px;
+  color: #ff4400;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 表单内容区 */
+.form-container.data-v-ce8f53b1 {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+/* 图片上传区域 */
+.image-upload-section.data-v-ce8f53b1 {
+  margin-bottom: 20px;
+}
+.upload-title.data-v-ce8f53b1 {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+}
+.image-upload-area.data-v-ce8f53b1 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.add-image-btn.data-v-ce8f53b1 {
+  width: 80px;
+  height: 80px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+}
+.uploaded-image.data-v-ce8f53b1 {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.uploaded-image img.data-v-ce8f53b1 {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.delete-image-btn.data-v-ce8f53b1 {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0,0,0,0.5);
+  color: #fff;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* 表单样式 */
+.product-form.data-v-ce8f53b1 {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.form-group.data-v-ce8f53b1 {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.form-label.data-v-ce8f53b1 {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+.form-input.data-v-ce8f53b1, .form-textarea.data-v-ce8f53b1, .form-select.data-v-ce8f53b1 {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+}
+.form-textarea.data-v-ce8f53b1 {
+  min-height: 100px;
+  resize: vertical;
+}
+.price-group.data-v-ce8f53b1 {
+  position: relative;
+}
+.price-input-container.data-v-ce8f53b1 {
+  display: flex;
+  align-items: center;
+}
+.currency-symbol.data-v-ce8f53b1 {
+  position: absolute;
+  left: 10px;
+  top: 35px;
+  font-size: 14px;
+  color: #333;
+}
+.price-input.data-v-ce8f53b1 {
+  padding-left: 25px;
+  width: 100%;
+}
+.status-options.data-v-ce8f53b1, .trade-options.data-v-ce8f53b1 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.status-option.data-v-ce8f53b1, .trade-option.data-v-ce8f53b1 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  color: #333;
+}
+.status-option input.data-v-ce8f53b1, .trade-option input.data-v-ce8f53b1 {
+  margin: 0;
+}

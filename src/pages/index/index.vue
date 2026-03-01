@@ -3,36 +3,56 @@
     <!-- 顶部导航栏 -->
     <div class="top-nav">
       <div class="search-container">
-        <input type="text" placeholder="请输入关键词筛选" class="search-box" />
+        <!-- <input v-model="searchValue" type="text" placeholder="请输入关键词筛选" class="search-box" 
+        @confirm="handleSearch" /> -->
+
+        <van-search
+          v-model="searchValue"
+          placeholder="请输入关键词筛选商品"
+          @search="handleSearch"
+          @clear="handleClear"
+          shape="round"
+          background="#f5f5f5"
+          clearable
+          show-action
+        >
+          <template #action>
+            <van-button size="mini" type="primary" @click="handleSearch">
+              搜索
+            </van-button>
+          </template>
+        </van-search>
       </div>
-      <div class="nav-tabs">
+      <!-- <div class="nav-tabs">
         <span class="active" @click="navigateTo('猜你喜欢', $event)">猜你喜欢</span>
         <span @click="navigateTo('最新发布', $event)">最新发布</span>
         <span @click="navigateTo('美妆小样', $event)">美妆小样</span>
         <span @click="navigateTo('稀缺潮玩', $event)">稀缺潮玩</span>
         <span @click="navigateTo('自用数码', $event)">自用数码</span>
-      </div>
+      </div> -->
     </div>
 
     <!-- 中部商品展示区 -->
     <div class="product-display">
-      <div class="product-grid" :class="viewMode === 'single' ? 'single-column' : 'double-column'">
+      <div class="product-grid" :class="viewMode === 'single' ? 'single-column' : 'double-column'" v-if="products.length">
         <div class="product-card" v-for="(product, index) in products" :key="index" @click="toDetail(product)">
           <img :src="product.image" alt="商品图片" class="product-image" />
-          <div class="product-title">{{ product.title }}</div>
-          <div class="product-price">{{ product.price }}</div>
-          <div class="product-meta">
+          <div class="product-title">{{ product.name }}</div>
+          <div class="product-price">￥{{ product.price }}</div>
+          <!-- <div class="product-meta">
             <span class="want-count">{{ product.wantCount }}人想要</span>
             <span class="seller-info">{{ product.seller }}</span>
-          </div>
+          </div> -->
         </div>
       </div>
+
+      <div class="no-product" v-else>暂无数据</div>
     </div>
 
     <!-- 底部提示栏 -->
     <div class="bottom-tip">
       <span class="tip-icon">🐟</span>
-      <span class="tip-text">欢迎来到闲鱼~ 赶快登录打开新世界吧</span>
+      <span class="tip-text">欢迎~ 赶快登录打开新世界吧</span>
       <button class="login-btn">马上登录</button>
     </div>
     <TabBar defaultTab="home" />
@@ -40,46 +60,66 @@
 </template>
 
 <script>
-import TabBar from '../../components/TabBar.vue'
+import TabBar from '@/components/TabBar.vue'
+import { goods } from '@/api/goods.js'
 export default {
   name: 'IdleFishIndex',
   components: {  TabBar },
   data() {
     return {
-      products: [
-        {
-          image: '/src/static/logo.png',
-          title: '个人出售dji大疆osmo pocket',
-          price: '¥20',
-          wantCount: 417,
-          seller: 'mrten先生 芝麻信用极好'
-        },
-        {
-          image: '/src/static/logo.png',
-          title: 'AirPods Pro 2 个人闲置',
-          price: '¥300',
-          wantCount: 523,
-          seller: '青岛优... 芝麻信用优秀'
-        },
-        {
-          image: '/src/static/logo.png',
-          title: '全新未拆封iPhone 14 Pro',
-          price: '¥8500',
-          wantCount: 1245,
-          seller: '科技爱好者 芝麻信用极好'
-        },
-        {
-          image: '/src/static/logo.png',
-          title: 'Nike Air Max 90 全新',
-          price: '¥650',
-          wantCount: 328,
-          seller: '运动达人 芝麻信用优秀'
-        }
-      ],
+      products: [],
+      // products: [
+      //   {
+      //     image: '/src/static/logo.png',
+      //     title: '个人出售dji大疆osmo pocket',
+      //     price: '¥20',
+      //     wantCount: 417,
+      //     seller: 'mrten先生 芝麻信用极好'
+      //   },
+      //   {
+      //     image: '/src/static/logo.png',
+      //     title: 'AirPods Pro 2 个人闲置',
+      //     price: '¥300',
+      //     wantCount: 523,
+      //     seller: '青岛优... 芝麻信用优秀'
+      //   },
+      //   {
+      //     image: '/src/static/logo.png',
+      //     title: '全新未拆封iPhone 14 Pro',
+      //     price: '¥8500',
+      //     wantCount: 1245,
+      //     seller: '科技爱好者 芝麻信用极好'
+      //   },
+      //   {
+      //     image: '/src/static/logo.png',
+      //     title: 'Nike Air Max 90 全新',
+      //     price: '¥650',
+      //     wantCount: 328,
+      //     seller: '运动达人 芝麻信用优秀'
+      //   }
+      // ],
+      searchValue: '',
       viewMode: 'double' // 初始为双排模式
     };
   },
+
+   mounted() {
+    this.getGoodsList()
+  },
+
   methods: {
+    async getGoodsList() {
+      const listRes = await goods.getGoodsList({name: this.searchValue})
+      this.products = listRes.data
+    },
+
+    handleClear(){
+      this.searchValue = ''
+      this.getGoodsList()
+    },
+    handleSearch(){
+      this.getGoodsList()
+    },
     navigateTo(tabName, event) {
       // 移除所有活动状态
       const tabs = document.querySelectorAll('.nav-tabs span');

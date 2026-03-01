@@ -1,0 +1,1 @@
+<view class="bottom-tab data-v-7d9a6b19"><view wx:for="{{a}}" wx:for-item="item" wx:key="e" class="{{['data-v-7d9a6b19', item.d, 'tab-item']}}" bindtap="{{item.f}}"><uni-icons wx:if="{{item.b}}" class="data-v-7d9a6b19" u-i="{{item.a}}" bind:__l="__l" u-p="{{item.b}}"></uni-icons><label class="text data-v-7d9a6b19">{{item.c}}</label></view></view>

@@ -3,25 +3,14 @@
     <!-- 顶部导航栏 -->
     <div class="top-nav">
       <div class="search-container">
-        <!-- <input v-model="searchValue" type="text" placeholder="请输入关键词筛选" class="search-box" 
-        @confirm="handleSearch" /> -->
-
-        <van-search
+        <uni-search-bar
           v-model="searchValue"
-          placeholder="请输入关键词筛选商品"
-          @search="handleSearch"
+          cancelButton="none"
+          clearButton="always" 
+          placeholder="请输入名称筛选商品"
+          @confirm="handleSearch"
           @clear="handleClear"
-          shape="round"
-          background="#f5f5f5"
-          clearable
-          show-action
-        >
-          <template #action>
-            <van-button size="mini" type="primary" @click="handleSearch">
-              搜索
-            </van-button>
-          </template>
-        </van-search>
+        />
       </div>
       <!-- <div class="nav-tabs">
         <span class="active" @click="navigateTo('猜你喜欢', $event)">猜你喜欢</span>
@@ -46,7 +35,10 @@
         </div>
       </div>
 
-      <div class="no-product" v-else>暂无数据</div>
+    <view class="empty-container" v-else>
+      <uni-icons type="info" size="60" color="#999"></uni-icons>
+      <text class="empty-text">暂无相关商品，换个关键词试试吧</text>
+    </view>
     </div>
 
     <!-- 底部提示栏 -->
@@ -324,6 +316,28 @@ export default {
   padding: 5px 10px;
   border-radius: 4px;
   font-size: 14px;
+}
+
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+  color: #999;
+}
+.empty-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+}
+.empty-btn {
+  margin-top: 30rpx;
+  padding: 10rpx 30rpx;
+  background: #007aff;
+  color: #fff;
+  border: none;
+  border-radius: 40rpx;
+  font-size: 28rpx;
 }
 
 </style>

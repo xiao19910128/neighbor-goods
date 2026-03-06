@@ -1,9 +1,8 @@
 <template>
-  <div class="publish-page">
-    <!-- 表单内容区 -->
-    <div class="form-container">
+  <view class="publish-page">
+    <view class="form-container">
       <!-- 商品图片上传 -->
-      <div class="image-upload-section">
+      <view class="form-item" style="display: none">
         <view class="upload-title">添加商品图片（最多9张）</view>
         <view class="upload-list">
           <!-- 已上传图片 -->
@@ -25,98 +24,122 @@
             <view class="upload-add-icon">+</view>
           </view>
         </view>
-      </div>
+      </view>
 
-      <!-- 商品信息表单 -->
-      <form class="product-form">
-        <!-- 商品标题 -->
-        <div class="form-group">
-          <label class="form-label">商品标题</label>
-          <input type="text" class="form-input" placeholder="请输入商品标题，清晰描述商品特点" />
-        </div>
+      <!-- 商品标题 -->
+      <view class="form-item">
+        <text class="label">商品标题</text>
+        <input v-model="form.name" placeholder="请输入商品标题" />
+      </view>
 
-        <!-- 商品描述 -->
-        <div class="form-group">
-          <label class="form-label">商品描述</label>
-          <textarea class="form-textarea" placeholder="请详细描述商品情况，包括品牌、型号、使用时间、成色等信息"></textarea>
-        </div>
+      <!-- 商品价格 -->
+      <view class="form-item">
+        <text class="label">价格（元）</text>
+        <input v-model.number="form.price" type="number" placeholder="0.00" />
+      </view>
 
-        <!-- 商品分类 -->
-        <div class="form-group">
-          <label class="form-label">商品分类</label>
-          <select class="form-select">
-            <option value="">请选择分类</option>
-            <option value="digital">数码产品</option>
-            <option value="clothes">服装鞋帽</option>
-            <option value="home">家居用品</option>
-            <option value="beauty">美妆护肤</option>
-            <option value="other">其他分类</option>
-          </select>
-        </div>
+      <!-- 平铺分类选择 -->
+      <view class="form-item">
+        <text class="label">商品分类</text>
+        <view class="category-list">
+          <view
+            v-for="cat in categoryList"
+            :key="cat.category_id"
+            :class="['category-item', { active: form.categoryId === cat.category_id }]"
+            @click="selectCategory(cat.category_id)"
+          >
+            {{ cat.name }}
+          </view>
+        </view>
+      </view>
 
-        <!-- 商品价格 -->
-        <div class="form-group price-group">
-          <label class="form-label">商品价格</label>
-          <div class="price-input-container">
-            <span class="currency-symbol">¥</span>
-            <input type="number" class="price-input" placeholder="0" />
-          </div>
-        </div>
+      <!-- 商品描述（包含成色/品牌等信息） -->
+      <view class="form-item">
+        <text class="label">商品描述（可填写成色、品牌、使用情况等）</text>
+        <textarea v-model="form.desc" placeholder="例如：99新小米14，全套配件，无拆无修..." />
+      </view>
+    </view>
 
-        <!-- 商品状态 -->
-        <div class="form-group">
-          <label class="form-label">商品状态</label>
-          <div class="status-options">
-            <label class="status-option">
-              <input type="radio" name="status" value="new" /> 全新未使用
-            </label>
-            <label class="status-option">
-              <input type="radio" name="status" value="like-new" /> 几乎全新
-            </label>
-            <label class="status-option">
-              <input type="radio" name="status" value="used" /> 轻微使用痕迹
-            </label>
-            <label class="status-option">
-              <input type="radio" name="status" value="heavily-used" /> 明显使用痕迹
-            </label>
-          </div>
-        </div>
-
-        <!-- 交易方式 -->
-        <div class="form-group">
-          <label class="form-label">交易方式</label>
-          <div class="trade-options">
-            <label class="trade-option">
-              <input type="checkbox" name="trade-type" value="online" /> 线上交易
-            </label>
-            <label class="trade-option">
-              <input type="checkbox" name="trade-type" value="offline" /> 当面交易
-            </label>
-          </div>
-        </div>
-      </form>
-    </div>
-    <view>
-      <uni-button type="primary" @click="handleSubmit">发布</uni-button>
+    <!-- 发布按钮 -->
+    <view class="footer-box">
+      <uni-button class="publish-btn" @click="publishGoods">发布闲置</uni-button>
     </view>
 
     <TabBar defaultTab="publish" />
-  </div>
+  </view>
 </template>
 
 <script>
 import TabBar from '@/components/TabBar.vue'
+import { goodsApi } from '@/api/goods';
+import { categoryApi } from '@/api/category';
 
 export default {
   name: 'PublishPage',
   components: {  TabBar },
   data() {
     return {
+      categoryList: [], // 分类列表
       fileList: [], // 存储已上传的图片信息，包括url和name等
+      form: {
+        name: 'namename',
+        price: 10,
+        categoryId: null, // 选中的分类ID
+        desc: 'descdesc'
+      }
     };
   },
+  async onLoad() {
+    // 加载分类列表
+    await this.loadCategories();
+  },
   methods: {
-    // 选择图片
+    // 加载分类列表
+    async loadCategories() {
+      try {
+        const res = await categoryApi.getCategoryList();
+        if (res?.code === 200) {
+          this.categoryList = res?.data;
+        }
+      } catch (err) {
+        uni.showToast({ title: '加载分类失败', icon: 'none' });
+      }
+    },
+    // 选择分类
+    selectCategory(id) {
+      this.form.categoryId = id;
+    },
+    // 发布商品
+    async publishGoods() {
+      // 简单校验
+      if (!this.form.name) return uni.showToast({ title: '请输入商品标题', icon: 'none' });
+      if (!this.form.price) return uni.showToast({ title: '请输入商品价格', icon: 'none' });
+      if (!this.form.categoryId) return uni.showToast({ title: '请选择商品分类', icon: 'none' });
+
+      try {
+        console.log(11, this.form.name, this.form.price, this.form.categoryId, this.form.desc);
+        
+        const publisgRes = await goodsApi.publishGoods({
+          name: this.form.name,
+          price: this.form.price,
+          category_id: this.form.categoryId,
+          description: this.form.desc,
+          image_urls: this.fileList.map(item => item.url),
+          user_id: uni.getStorageSync('userId') || 2 // TODO 这里待拿到用户登录信息
+        });
+        
+        if (publisgRes?.code === 200) {
+          uni.showToast({ title: '发布成功', icon: 'success' });
+          // 重置表单
+          this.form = { name: '', price: 0, categoryId: null, desc: '' };
+        } else {
+          uni.showToast({ title: publisgRes.msg, icon: 'none' });
+        }
+      } catch (err) {
+        uni.showToast({ title: '发布失败', icon: 'none' });
+      }
+    },
+     // 选择图片
     handleChooseImage  () {
       // 计算还能选几张
       const count = 9 - this.fileList.length;
@@ -126,7 +149,6 @@ export default {
         sourceType: ['album', 'camera'],
         success: (res) => {
           const tempFilePaths = res.tempFilePaths;
-          
           // 模拟上传到服务器（替换为你的真实上传接口）
           tempFilePaths.forEach((path) => {
             // 这里可以调用 uni.uploadFile 上传到服务器
@@ -143,101 +165,13 @@ export default {
         }
       });
     },
-    /**
-     * 提交图片数据到服务器的方法
-     */
-    async handleSubmit() {
-      // 1. 校验是否选择图片
-      if (this.fileList.length === 0) {
-        uni.showToast({ title: '请至少选择1张图片', icon: 'none' });
-        return;
-      }
-
-      // 2. 标记提交中
-      this.submitting = true;
-
-      try {
-        // 3. 遍历图片，上传本地临时图片到服务器
-        const imageUrls = [];
-        for (const item of this.fileList) {
-          // 判断是否为本地临时路径（小程序临时路径以 tmp/ 开头）
-          if (item.url.includes('tmp/')) {
-            const serverUrl = await this.uploadToServer(item.url);
-            imageUrls.push(serverUrl);
-          } else {
-            imageUrls.push(item.url);
-          }
-        }
-
-        // 4. 提交图片URL到后端接口
-        const res = await uni.request({
-          url: 'https://你的服务器地址/submit',
-          method: 'POST',
-          data: { images: imageUrls }
-        });
-
-        // 5. 处理提交结果
-        if (res.data.code === 200) {
-          uni.showToast({ title: '提交成功', icon: 'success' });
-          this.fileList = []; // 清空图片列表
-        } else {
-          uni.showToast({ title: res.data.msg, icon: 'none' });
-        }
-      } catch (err) {
-        // 6. 捕获异常
-        console.error('提交失败：', err);
-        uni.showToast({ title: '提交失败，请重试', icon: 'none' });
-      } finally {
-        // 7. 重置提交状态
-        this.submitting = false;
-      }
-    },
-
-    // 上传图片到服务器
-    uploadToServer(tempFilePath) {
-      return new Promise((resolve, reject) => {
-        uni.uploadFile({
-          url: 'https://你的服务器地址/upload', // 后端上传接口
-          filePath: tempFilePath,
-          name: 'file', // 后端接收文件的字段名
-          success: (res) => {
-            const data = JSON.parse(res.data);
-            if (data.code === 200) {
-              resolve(data.url); // 返回服务器返回的图片URL
-            } else {
-              reject(new Error(data.msg));
-            }
-          },
-          fail: reject
-        });
-      });
-    },
-
-    // 删除已上传图片
-    handleDelete  (index) {
-      uni.showModal({
-        title: '提示',
-        content: '确定要删除这张图片吗？',
-        success: (res) => {
-          if (res.confirm) {
-            this.fileList.splice(index, 1);
-          }
-        }
-      });
-    },
-    // 预览图片
-    handlePreview  (current) {
-      const urls = this.fileList.map(item => item.url);
-      uni.previewImage({
-        urls,
-        current: current.url
-      });
-    },
+   
   }
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
 /* 基础布局 */
 .publish-page {
   display: flex;
@@ -246,45 +180,118 @@ export default {
   background-color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
-
-/* 顶部导航栏 */
-.top-nav {
-  background-color: #fbeaea;
-  padding: 15px 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.back-btn {
-  font-size: 16px;
-  color: #333;
-  cursor: pointer;
-}
-
-.page-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-}
-
-.submit-btn {
-  font-size: 16px;
-  color: #ff4400;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 /* 表单内容区 */
 .form-container {
   flex: 1;
   overflow-y: auto;
-  padding: 15px;
+  padding-right: 10px;
 }
 
-/* 图片上传区域 */
-.image-upload-section {
-  margin-bottom: 20px;
+
+.upload-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.upload-item {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  position: relative;
+}
+
+.upload-img {
+  width: 100%;
+  height: 100%;
+}
+
+.upload-delete {
+  position: absolute;
+  top: 10rpx;
+  right: 10rpx;
+  width: 36rpx;
+  height: 36rpx;
+  line-height: 36rpx;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 24rpx;
+}
+
+.upload-add {
+  border: 2rpx dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-add-icon {
+  font-size: 48rpx;
+  color: #ccc;
+}
+
+.form-item {
+  margin: 20rpx;
+  padding: 20rpx;
+  background: #fff;
+  border-radius: 8rpx;
+}
+.label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 15rpx;
+  display: block;
+}
+input, textarea {
+  width: 100%;
+  padding: 15rpx;
+  border: 1px solid #eee;
+  border-radius: 6rpx;
+  font-size: 26rpx;
+}
+textarea {
+  min-height: 200rpx;
+  resize: none;
+}
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  margin-top: 10rpx;
+}
+.category-item {
+  padding: 12rpx 24rpx;
+  background: #f5f5f5;
+  border-radius: 20rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+.category-item.active {
+  background: #d6e9c6;
+  color: #3c763d;
+}
+
+.footer-box {
+  display: flex;
+  padding: 10px 0;
+  // background-color: rgb(206, 236, 157);
+  uni-button {
+    flex: 1;
+    text-align: center;
+    font-weight: bolder;
+  }
+}
+.publish-btn {
+  margin: 40rpx 20rpx;
+  background: #5cb85c;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  padding: 24rpx;
 }
 
 .upload-title {
@@ -340,133 +347,5 @@ export default {
   justify-content: center;
   font-size: 12px;
   cursor: pointer;
-}
-
-/* 表单样式 */
-.product-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.form-label {
-  font-size: 14px;
-  color: #333;
-  font-weight: 500;
-}
-
-.form-input, .form-textarea, .form-select {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #333;
-}
-
-.form-textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.price-group {
-  position: relative;
-}
-
-.price-input-container {
-  display: flex;
-  align-items: center;
-}
-
-.currency-symbol {
-  position: absolute;
-  left: 10px;
-  top: 35px;
-  font-size: 14px;
-  color: #333;
-}
-
-.price-input {
-  padding-left: 25px;
-  width: 100%;
-}
-
-.status-options, .trade-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.status-option, .trade-option {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 14px;
-  color: #333;
-}
-
-.status-option input, .trade-option input {
-  margin: 0;
-}
-
-
-.upload-container {
-  padding: 20rpx;
-}
-
-.upload-title {
-  font-size: 32rpx;
-  color: #333;
-  margin-bottom: 20rpx;
-}
-
-.upload-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20rpx;
-}
-
-.upload-item {
-  width: 160rpx;
-  height: 160rpx;
-  border-radius: 12rpx;
-  overflow: hidden;
-  position: relative;
-}
-
-.upload-img {
-  width: 100%;
-  height: 100%;
-}
-
-.upload-delete {
-  position: absolute;
-  top: 10rpx;
-  right: 10rpx;
-  width: 36rpx;
-  height: 36rpx;
-  line-height: 36rpx;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  border-radius: 50%;
-  font-size: 24rpx;
-}
-
-.upload-add {
-  border: 2rpx dashed #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.upload-add-icon {
-  font-size: 48rpx;
-  color: #ccc;
 }
 </style>

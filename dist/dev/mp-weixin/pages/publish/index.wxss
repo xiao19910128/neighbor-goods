@@ -10,7 +10,7 @@
 
 /* 顶部导航栏 */
 .top-nav.data-v-ce8f53b1 {
-  background-color: #fbeaea;
+  background-color: #ceec9d;
   padding: 15px 10px;
   display: flex;
   justify-content: space-between;

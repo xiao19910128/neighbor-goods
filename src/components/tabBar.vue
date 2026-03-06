@@ -61,7 +61,7 @@ data() {
   color: #ff7676;
 }
 .tab-item.active  .uni-icons {
-  color: #fbeaea!important;
+  color: #ceec9d!important;
 }
 
 .sell-tab {

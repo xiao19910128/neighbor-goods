@@ -43,8 +43,7 @@
 
     <!-- 底部提示栏 -->
     <div class="bottom-tip">
-      <span class="tip-icon">🐟</span>
-      <span class="tip-text">欢迎~ 赶快登录打开新世界吧</span>
+      <span class="tip-text">暂无信息，请先登录</span>
       <button class="login-btn">马上登录</button>
     </div>
     <TabBar defaultTab="home" />
@@ -53,7 +52,7 @@
 
 <script>
 import TabBar from '@/components/TabBar.vue'
-import { goods } from '@/api/goods.js'
+import { goodsApi } from '@/api/goods.js'
 export default {
   name: 'IdleFishIndex',
   components: {  TabBar },
@@ -101,7 +100,7 @@ export default {
 
   methods: {
     async getGoodsList() {
-      const listRes = await goods.getGoodsList({name: this.searchValue})
+      const listRes = await goodsApi.getGoodsList({name: this.searchValue})
       this.products = listRes.data
     },
 
@@ -144,7 +143,7 @@ export default {
 
 /* 顶部导航栏 */
 .top-nav {
-  background-color: #fbeaea;
+  background-color: #ceec9d;
   padding: 10px;
 }
 
@@ -216,15 +215,15 @@ export default {
 }
 
 .view-toggle button:hover {
-  background-color: #fbeaea;
+  background-color: #ceec9d;
   color: #333;
   transform: scale(1.05);
 }
 
 .view-toggle button.active {
-  background-color: #fbeaea;
+  background-color: #ceec9d;
   color: #333;
-  border-color: #fbeaea;
+  border-color: #ceec9d;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
@@ -293,7 +292,7 @@ export default {
 
 /* 底部提示栏 */
 .bottom-tip {
-  background-color: #fbeaea;
+  background-color: #ceec9d;
   display: flex;
   align-items: center;
   padding: 0 10px;
@@ -311,7 +310,7 @@ export default {
 
 .login-btn {
   background-color: #000;
-  color: #fbeaea;
+  color: #ceec9d;
   border: none;
   padding: 5px 10px;
   border-radius: 4px;

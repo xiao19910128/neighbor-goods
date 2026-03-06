@@ -10,7 +10,7 @@
 
 /* 顶部导航栏 */
 .top-nav.data-v-83a5a03c {
-  background-color: #fbeaea;
+  background-color: #ceec9d;
   padding: 10px;
 }
 .search-container.data-v-83a5a03c {
@@ -74,14 +74,14 @@
   height: 50px;
 }
 .view-toggle button.data-v-83a5a03c:hover {
-  background-color: #fbeaea;
+  background-color: #ceec9d;
   color: #333;
   transform: scale(1.05);
 }
 .view-toggle button.active.data-v-83a5a03c {
-  background-color: #fbeaea;
+  background-color: #ceec9d;
   color: #333;
-  border-color: #fbeaea;
+  border-color: #ceec9d;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 .product-grid.data-v-83a5a03c {
@@ -143,7 +143,7 @@
 
 /* 底部提示栏 */
 .bottom-tip.data-v-83a5a03c {
-  background-color: #fbeaea;
+  background-color: #ceec9d;
   display: flex;
   align-items: center;
   padding: 0 10px;
@@ -158,7 +158,7 @@
 }
 .login-btn.data-v-83a5a03c {
   background-color: #000;
-  color: #fbeaea;
+  color: #ceec9d;
   border: none;
   padding: 5px 10px;
   border-radius: 4px;

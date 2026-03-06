@@ -5,15 +5,8 @@
       <div class="avatar-container">
         <div class="avatar">👤</div>
         <div class="user-details">
-          <div class="username">肖肖爱宝宝 ></div>
-          <div class="fish-power">鱼力值 626 ></div>
+          <div class="username">用户名 </div>
         </div>
-        <div class="settings-btn">设置</div>
-      </div>
-      
-      <div class="fish-ball-section">
-        <div class="fish-ball-info">我的鱼丸 0</div>
-        <div class="fish-ball-action">每日首次免费抽 ></div>
       </div>
     </div>
 
@@ -48,21 +41,6 @@
         <span class="tool-text">收货地址</span>
         <span class="tool-arrow">></span>
       </div>
-      <div class="tool-item">
-        <span class="tool-icon">⭐</span>
-        <span class="tool-text">我的收藏</span>
-        <span class="tool-arrow">></span>
-      </div>
-      <div class="tool-item">
-        <span class="tool-icon">🔔</span>
-        <span class="tool-text">订阅中心</span>
-        <span class="tool-arrow">></span>
-      </div>
-      <div class="tool-item">
-        <span class="tool-icon">📍</span>
-        <span class="tool-text">收货地址</span>
-        <span class="tool-arrow">></span>
-      </div>
     </div>
 
     
@@ -71,7 +49,7 @@
 </template>
 
 <script>
-import TabBar from '../../components/TabBar.vue'
+import TabBar from '@/components/TabBar.vue'
 export default {
   name: 'MinePage',
   components: {  TabBar },
@@ -89,7 +67,7 @@ export default {
 
 /* 用户信息区域 */
 .user-info-section {
-  background-color: #ffd100;
+  background-color: #ceec9d;
   color: #333;
   padding: 20px;
 }
@@ -150,7 +128,7 @@ export default {
 .fish-ball-action {
   font-size: 14px;
   color: #fff;
-  background-color: #ffd100;
+  background-color: #ceec9d;
   padding: 5px 10px;
   border-radius: 20px;
 }
@@ -239,7 +217,7 @@ export default {
 }
 
 .tab-item.active {
-  color: #ffd100;
+  color: #ceec9d;
 }
 
 .sell-tab {

@@ -19,7 +19,7 @@
   color: #ff7676;
 }
 .tab-item.active  .uni-icons.data-v-7d9a6b19 {
-  color: #fbeaea!important;
+  color: #ceec9d!important;
 }
 .sell-tab.data-v-7d9a6b19 {
   position: relative;

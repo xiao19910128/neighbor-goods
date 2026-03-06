@@ -45,7 +45,7 @@ service.interceptors.response.use(
     // 统一捕获网络/接口错误
     console.error('接口请求错误：', error);
     uni.showToast({
-      title: error.message || '网络异常，请稍后重试',
+      title: error.msg || '网络异常，请稍后重试',
       icon: 'none'
     });
     return Promise.reject(error);

@@ -1,13 +1,7 @@
-// src/api/goods.js
 // 引入封装好的 axios 实例
 import request from '@/utils/https.js';
-
-/**
- * 获取商品列表
- * @param {Object} params - 查询参数（比如页码、页数、筛选条件）
- * @returns {Promise} 返回商品列表数据
- */
-export const goods = {
+export const goodsApi = {
+  // 获取商品列表
   getGoodsList(params) {
     return request({
       url: '/goods/query',
@@ -15,11 +9,20 @@ export const goods = {
       params
     });
   }, 
+  // 获取商品详情
   getGoodsDetail(id) {
       return request({
         url: `/goods/detail/${id}`,
         method: 'get'
       });
+  },
+  // 发布商品信息
+  publishGoods(data) {
+    return request({
+      url: "/goods/publish",
+      method: "post",
+      data
+    });
   },
   addGoods(data) {
     return request({

@@ -132,6 +132,9 @@ export default {
           uni.showToast({ title: '发布成功', icon: 'success' });
           // 重置表单
           this.form = { name: '', price: 0, categoryId: null, desc: '' };
+
+          // 跳转到我的发布列表
+          wx.navigateTo({ url: '/pages/mine/publish-list' });
         } else {
           uni.showToast({ title: publisgRes.msg, icon: 'none' });
         }

@@ -16,6 +16,12 @@
       "style": {
         "navigationBarTitleText": "我的"
       }
+    },
+    {
+      "path": "pages/mine/publish-list",
+      "style": {
+        "navigationBarTitleText": "我的发布列表"
+      }
     }
 	],
 	"easycom": {

@@ -42,10 +42,10 @@
     </div>
 
     <!-- 底部提示栏 -->
-    <div class="bottom-tip">
+    <!-- <div class="bottom-tip">
       <span class="tip-text">暂无信息，请先登录</span>
       <button class="login-btn">马上登录</button>
-    </div>
+    </div> -->
     <TabBar defaultTab="home" />
   </div>
 </template>

@@ -10,7 +10,7 @@
             class="upload-item" 
             v-for="(item, index) in fileList" 
             :key="index"
-            @click="handlePreview(item, index)"
+            @click.stop="handlePreview(item, index)"
           >
             <image :src="item" class="upload-img" mode="aspectFill" crossorigin="anonymous" />
             <view class="upload-delete" @click.stop="handleDelete(index)">×</view>
@@ -19,7 +19,7 @@
           <view 
             class="upload-item upload-add" 
             v-if="fileList.length < 9"
-            @click="handleChooseImage"
+            @click.stop="handleChooseImage"
           >
             <view class="upload-add-icon">+</view>
           </view>
@@ -40,10 +40,6 @@
 
        <!-- 地址区域配置 -->
       <view class="address-section form-item">
-        <!-- 1. 省市区三级联动（这里可以用 uni-ui 的 ui-picker 或自定义组件） -->
-        <picker mode="region" :value="regionValue" @change="handleRegionChange">
-          <view class="picker-text">{{ regionText }}</view>
-        </picker>
 
         <!-- 2. 街道/社区选择（默认是你的目标社区） -->
         <picker :range="streetList" @change="handleStreetChange">
@@ -65,7 +61,7 @@
             v-for="cat in categoryList"
             :key="cat.category_id"
             :class="['category-item', { active: form.categoryId === cat.category_id }]"
-            @click="selectCategory(cat.category_id)"
+            @click.stop="selectCategory(cat.category_id)"
           >
             {{ cat.name }}
           </view>
@@ -81,7 +77,7 @@
 
     <!-- 发布按钮 -->
     <view class="footer-box">
-      <uni-button class="publish-btn" @click="publishGoods">发布闲置</uni-button>
+      <uni-button class="publish-btn" @click.stop="publishGoods">发布闲置</uni-button>
     </view>
 
     <TabBar defaultTab="publish" />
@@ -111,11 +107,10 @@ export default {
       fileList: [], // 存储已上传的图片信息，包括url和name等
       form: { ...initialData},
       // 省市区联动
-      regionValue: [],
-      regionText: '',
+      regionValue: ['上海市', '上海市', '闵行区'],
       // 街道列表（可以根据 district 动态加载）
       streetList: ['梅陇镇', '吴泾镇', '颛桥镇', '华漕镇'], 
-      streetName: '请选择社区',
+      streetName: '梅陇镇',
       streetId: ''
     };
   },
@@ -252,6 +247,18 @@ export default {
     handleDelete(index) {
       this.fileList.splice(index, 1);
     },
+    async getUserLocation() {
+      try {
+        // 不管是浏览器还是真机，都直接固定为梅陇镇
+        this.regionValue = ['上海市', '上海市', '闵行区'];
+        this.detailAddress = '请输入小区/楼栋';
+        uni.showToast({ title: '已定位到梅陇镇（社区默认）', icon: 'none' });
+      } catch (err) {
+        uni.showToast({ title: '定位失败，默认选择梅陇镇', icon: 'none' });
+          uni.hideLoading();
+        }
+    },
+
 
     // 1. 处理省市区变化
     handleRegionChange(e) {
@@ -259,7 +266,6 @@ export default {
       this.form.province = value[0];
       this.form.city = value[1];
       this.form.district = value[2];
-      this.regionText = value.join('');
     },
 
     // 2. 处理街道/社区变化

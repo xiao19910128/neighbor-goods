@@ -92,7 +92,16 @@
 import TabBar from '@/components/TabBar.vue'
 import { goodsApi } from '@/api/goods';
 import { categoryApi } from '@/api/category';
-
+const initialData = {
+  price: '',
+  categoryId: null, // 选中的分类ID
+  desc: '',
+  province: '',
+  city: '',
+  district: '',
+  street: '',
+  detail_address: ''
+};
 export default {
   name: 'PublishPage',
   components: {  TabBar },
@@ -100,18 +109,7 @@ export default {
     return {
       categoryList: [], // 分类列表
       fileList: [], // 存储已上传的图片信息，包括url和name等
-      form: {
-        name: '',
-        price: '',
-        categoryId: null, // 选中的分类ID
-        desc: '',
-        province: '',
-        city: '',
-        district: '',
-        street: '',
-        detail_address: ''
-      },
-
+      form: { ...initialData},
       // 省市区联动
       regionValue: [],
       regionText: '',
@@ -122,6 +120,7 @@ export default {
     };
   },
   async onLoad() {
+    this.form = { ...initialData };
     // 加载分类列表
     await this.loadCategories();
   },
@@ -165,7 +164,6 @@ export default {
           uni.showToast({ title: '发布成功', icon: 'success' });
           // 重置表单
           this.form = { name: '', price: 0, categoryId: null, desc: '' };
-
           // 跳转到我的发布列表
           wx.navigateTo({ url: '/pages/mine/publish-list' });
         } else {

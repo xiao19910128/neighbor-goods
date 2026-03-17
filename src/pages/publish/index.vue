@@ -38,6 +38,25 @@
         <input v-model.number="form.price" type="number" placeholder="0.00" />
       </view>
 
+       <!-- 地址区域配置 -->
+      <view class="address-section form-item">
+        <!-- 1. 省市区三级联动（这里可以用 uni-ui 的 ui-picker 或自定义组件） -->
+        <picker mode="region" :value="regionValue" @change="handleRegionChange">
+          <view class="picker-text">{{ regionText }}</view>
+        </picker>
+
+        <!-- 2. 街道/社区选择（默认是你的目标社区） -->
+        <picker :range="streetList" @change="handleStreetChange">
+          <view class="picker-text">当前社区：{{ streetName }}</view>
+        </picker>
+
+        <!-- 3. 详细地址（精确到小区/门口） -->
+        <input 
+          placeholder="请输入详细地址（如：阳光花园3栋）" 
+          v-model="form.detail_address" 
+        />
+      </view>
+
       <!-- 平铺分类选择 -->
       <view class="form-item">
         <text class="label">商品分类</text>
@@ -86,7 +105,20 @@ export default {
         price: 10,
         categoryId: null, // 选中的分类ID
         desc: 'descdesc',
-      }
+        province: '',
+        city: '',
+        district: '',
+        street: '',
+        detail_address: ''
+      },
+
+      // 省市区联动
+      regionValue: [],
+      regionText: '',
+      // 街道列表（可以根据 district 动态加载）
+      streetList: ['梅陇镇', '吴泾镇', '颛桥镇', '华漕镇'], 
+      streetName: '请选择社区',
+      streetId: ''
     };
   },
   async onLoad() {
@@ -191,7 +223,7 @@ export default {
       });
     },
 
-// 图片预览核心方法
+    // 图片预览核心方法
     handlePreview(currentImg, currentIndex) {
       // 调用 uni-app 原生预览图片 API
       uni.previewImage({
@@ -216,6 +248,21 @@ export default {
           }
         }
       });
+    },
+
+    // 1. 处理省市区变化
+    handleRegionChange(e) {
+      const { code, value } = e.detail;
+      this.form.province = value[0];
+      this.form.city = value[1];
+      this.form.district = value[2];
+      this.regionText = value.join('');
+    },
+
+    // 2. 处理街道/社区变化
+    handleStreetChange(e) {
+      this.form.street = this.streetList[e.detail.value];
+      this.streetName = this.form.street;
     },
    
   }

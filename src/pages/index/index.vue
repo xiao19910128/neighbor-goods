@@ -27,10 +27,13 @@
         <div class="product-card" v-for="(product, index) in products" :key="index" @click="toDetail(product)">
           <img :src="product.image_url" alt="商品图片" class="product-image" />
           <div class="product-title">{{ product.name }}</div>
+          <div class="product-meta">
+            <span class="want-count">{{ product.description }}</span>
+          </div>
           <div class="product-price">￥{{ product.price }}</div>
           <!-- <div class="product-meta">
-            <span class="want-count">{{ product.wantCount }}人想要</span>
-            <span class="seller-info">{{ product.seller }}</span>
+            <span class="want-count">{{ product.wantCount || 2 }}人想要</span>
+            <span class="seller-info">{{ product.seller || 1 }}</span>
           </div> -->
         </div>
       </div>
@@ -257,6 +260,7 @@ export default {
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
+  padding-bottom: 10rpx;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
@@ -270,7 +274,7 @@ export default {
   font-size: 13px;
   padding: 8px;
   line-height: 1.4;
-  height: 40px;
+  /* height: 40px; */
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -291,6 +295,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  height: 72rpx;
 }
 
 /* 底部提示栏 */

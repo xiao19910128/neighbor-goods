@@ -2,7 +2,7 @@
   <view class="publish-page">
     <view class="form-container">
       <!-- 商品图片上传 -->
-      <view class="form-item" style="display: none">
+      <view class="form-item">
         <view class="upload-title">添加商品图片（最多9张）</view>
         <view class="upload-list">
           <!-- 已上传图片 -->
@@ -10,9 +10,9 @@
             class="upload-item" 
             v-for="(item, index) in fileList" 
             :key="index"
-            @click="handlePreview(item)"
+            @click="handlePreview(item, index)"
           >
-            <image :src="item.url" class="upload-img" mode="aspectFill" />
+            <image :src="item" class="upload-img" mode="aspectFill" crossorigin="anonymous" />
             <view class="upload-delete" @click.stop="handleDelete(index)">×</view>
           </view>
           <!-- 添加图片按钮 -->
@@ -85,7 +85,7 @@ export default {
         name: 'namename',
         price: 10,
         categoryId: null, // 选中的分类ID
-        desc: 'descdesc'
+        desc: 'descdesc',
       }
     };
   },
@@ -124,7 +124,7 @@ export default {
           price: this.form.price,
           category_id: this.form.categoryId,
           description: this.form.desc,
-          image_urls: this.fileList.map(item => item.url),
+          image_url: this.fileList?.join(','),
           user_id: uni.getStorageSync('userId') || 2 // TODO 这里待拿到用户登录信息
         });
         
@@ -143,28 +143,77 @@ export default {
       }
     },
      // 选择图片
-    handleChooseImage  () {
-      // 计算还能选几张
-      const count = 9 - this.fileList.length;
-      uni.chooseImage({
-        count,
-        sizeType: ['original', 'compressed'],
-        sourceType: ['album', 'camera'],
-        success: (res) => {
-          const tempFilePaths = res.tempFilePaths;
-          // 模拟上传到服务器（替换为你的真实上传接口）
-          tempFilePaths.forEach((path) => {
-            // 这里可以调用 uni.uploadFile 上传到服务器
-            // 上传成功后，将返回的 url 存入 fileList
-            this.fileList.push({
-              url: path, // 这里先用本地路径，实际项目应替换为服务器返回的 url
-              name: `image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-            });
-          });
-        },
-        fail: (err) => {
-          console.error('选择图片失败：', err);
-          uni.showToast({ title: '选择图片失败', icon: 'none' });
+    async handleChooseImage  () {
+      try {
+        // 计算还能选几张
+        const count = 9 - this.fileList.length;
+        const res = await uni.chooseImage({
+          count,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera'],
+        });
+        console.log(99999, res.tempFilePaths);
+        
+        // 遍历选中的图片，逐个上传
+        for (const tempFilePath of res.tempFilePaths) {
+          const uploadFiles =  await this.uploadImageToServer(tempFilePath);
+          // 上传成功后，把 URL 加入 fileList
+          console.log(132424345, uploadFiles);
+          
+          this.fileList = [...this.fileList, uploadFiles]; // 推荐用新数组赋值，触发更新
+        }
+      } catch (err) {
+        uni.showToast({ title: '选择图片失败', icon: 'none' });
+      }
+    },
+    // 上传图片到 kstore
+    uploadImageToServer(tempFilePath) {
+      return new Promise((resolve, reject) => {
+        uni.uploadFile({
+          url: 'http://localhost:5173/api/upload/image', 
+          filePath: tempFilePath,
+          name: 'file',
+          success: (uploadRes) => {
+            const data = JSON.parse(uploadRes.data);
+            if (data.code === 200) {
+              // 直接使用后端返回的公共 URL，不需要替换
+              resolve(data.data.url);
+            } else {
+              uni.showToast({ title: data.message, icon: 'none' });
+              reject();
+            }
+          },
+          fail: (err) => {
+            uni.showToast({ title: '图片上传失败', icon: 'none' });
+            reject(err);
+          }
+        });
+      });
+    },
+
+// 图片预览核心方法
+    handlePreview(currentImg, currentIndex) {
+      // 调用 uni-app 原生预览图片 API
+      uni.previewImage({
+        current: currentIndex,  // 当前预览图片的索引
+        urls: this.fileList,    // 所有可预览的图片 URL 数组
+        loop: true,             // 支持循环预览
+        longPressActions: {     // 长按图片操作（可选）
+          itemList: ['保存图片', '取消'],
+          success: (res) => {
+            if (res.tapIndex === 0) {
+              // 保存图片到本地
+              uni.saveImageToPhotosAlbum({
+                filePath: currentImg,
+                success: () => {
+                  uni.showToast({ title: '保存成功', icon: 'success' });
+                },
+                fail: () => {
+                  uni.showToast({ title: '保存失败', icon: 'none' });
+                }
+              });
+            }
+          }
         }
       });
     },

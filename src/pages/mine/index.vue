@@ -20,7 +20,7 @@
         <span class="module-arrow">></span>
       </div>
 
-      <div class="tool-item">
+      <div class="tool-item" @click="toDetail('publish-list')">
         <span class="tool-icon">📤</span>
         <span class="tool-text">我发布的</span>
         <span class="tool-arrow">></span>
@@ -29,16 +29,6 @@
       <div class="tool-item">
         <span class="tool-icon">⭐</span>
         <span class="tool-text">我的收藏</span>
-        <span class="tool-arrow">></span>
-      </div>
-      <div class="tool-item">
-        <span class="tool-icon">🔔</span>
-        <span class="tool-text">订阅中心</span>
-        <span class="tool-arrow">></span>
-      </div>
-      <div class="tool-item">
-        <span class="tool-icon">📍</span>
-        <span class="tool-text">收货地址</span>
         <span class="tool-arrow">></span>
       </div>
     </div>
@@ -53,6 +43,16 @@ import TabBar from '@/components/TabBar.vue'
 export default {
   name: 'MinePage',
   components: {  TabBar },
+
+  data() {
+    return {}
+  },
+
+  methods: {
+    toDetail(path) {
+      wx.navigateTo({ url: `/pages/mine/${path}` });
+    }
+  },
 }
 </script>
 

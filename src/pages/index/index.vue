@@ -25,7 +25,7 @@
     <div class="product-display">
       <div class="product-grid" :class="viewMode === 'single' ? 'single-column' : 'double-column'" v-if="products.length">
         <div class="product-card" v-for="(product, index) in products" :key="index" @click="toDetail(product)">
-          <img :src="product.image" alt="商品图片" class="product-image" />
+          <img :src="product.image_url" alt="商品图片" class="product-image" />
           <div class="product-title">{{ product.name }}</div>
           <div class="product-price">￥{{ product.price }}</div>
           <!-- <div class="product-meta">
@@ -101,7 +101,10 @@ export default {
   methods: {
     async getGoodsList() {
       const listRes = await goodsApi.getGoodsList({name: this.searchValue})
-      this.products = listRes.data
+      this.products = listRes.data?.map(item => ({
+        ...item,
+        image_url: item.image_url?.split(',')[0], // 首页只展示第一张图片
+      }))
     },
 
     handleClear(){

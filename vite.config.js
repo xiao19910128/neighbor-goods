@@ -8,16 +8,17 @@ export default defineConfig({
     // 开启代理
     proxy: {
       // 匹配以 /api 开头的请求
+      // 保留其他接口的代理（比如 /api/user、/api/goods 等）
       '/api': {
-        // 目标服务器地址（你的 Node.js 接口服务）
         target: 'http://localhost:3000',
-        // 是否开启跨域（必须设置为 true）
         changeOrigin: true,
-        // 可选：是否重写路径（如果后端接口本身就带 /api，这里不需要重写）
-        // 比如前端请求 /api/goods/query，转发后就是 http://localhost:3000/api/goods/query
-        rewrite: (path) => path, 
-        // 可选：如果是 https 接口，需要配置 secure: false
-        // secure: false
+        // 排除图片 URL 的代理（以 /api/upload/image 开头的请求正常代理，返回的图片 URL 直接访问）
+        bypass: function (req, res, options) {
+          // 如果是图片上传接口，正常代理；如果是图片 URL，直接放行
+          if (req.url.startsWith('/api/upload/image')) {
+            return; // 正常代理到后端
+          }
+        }
       }
     }
   }

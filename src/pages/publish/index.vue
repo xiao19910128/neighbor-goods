@@ -101,10 +101,10 @@ export default {
       categoryList: [], // 分类列表
       fileList: [], // 存储已上传的图片信息，包括url和name等
       form: {
-        name: 'namename',
-        price: 10,
+        name: '',
+        price: '',
         categoryId: null, // 选中的分类ID
-        desc: 'descdesc',
+        desc: '',
         province: '',
         city: '',
         district: '',
@@ -147,6 +147,7 @@ export default {
       if (!this.form.name) return uni.showToast({ title: '请输入商品标题', icon: 'none' });
       if (!this.form.price) return uni.showToast({ title: '请输入商品价格', icon: 'none' });
       if (!this.form.categoryId) return uni.showToast({ title: '请选择商品分类', icon: 'none' });
+      if (!this.form.street) return uni.showToast({ title: '请选择社区信息', icon: 'none' });
 
       try {
         console.log(11, this.form.name, this.form.price, this.form.categoryId, this.form.desc);
@@ -248,6 +249,10 @@ export default {
           }
         }
       });
+    },
+    // 删除图片
+    handleDelete(index) {
+      this.fileList.splice(index, 1);
     },
 
     // 1. 处理省市区变化

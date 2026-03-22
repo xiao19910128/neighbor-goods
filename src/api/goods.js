@@ -39,4 +39,22 @@ export const goodsApi = {
         params,
       });
   },
+
+  // 获取商品详情
+  getGoodsDetail(params) {
+    return request({
+      url: '/goods/detail',
+      method: 'get',
+      params: params
+    });
+  },
+  
+  // 更新商品（编辑提交）
+  updateGoods(data) {
+    return request({
+      url: '/goods/update',
+      method: 'post',
+      data: data
+    });
+  }
 }

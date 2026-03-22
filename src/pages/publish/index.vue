@@ -43,7 +43,7 @@
 
         <!-- 2. 街道/社区选择（默认是你的目标社区） -->
         <picker :range="streetList" @change="handleStreetChange">
-          <view class="picker-text">当前社区：{{ streetName }}</view>
+          <view class="picker-text">当前社区：{{ form.streetName }}</view>
         </picker>
 
         <!-- 3. 详细地址（精确到小区/门口） -->
@@ -60,7 +60,7 @@
           <view
             v-for="cat in categoryList"
             :key="cat.category_id"
-            :class="['category-item', { active: form.categoryId === cat.category_id }]"
+            :class="['category-item', { active: form.category_id === cat.category_id }]"
             @click.stop="selectCategory(cat.category_id)"
           >
             {{ cat.name }}
@@ -71,7 +71,7 @@
       <!-- 商品描述（包含成色/品牌等信息） -->
       <view class="form-item">
         <text class="label">商品描述（可填写成色、品牌、使用情况等）</text>
-        <textarea v-model="form.desc" placeholder="例如：99新小米14，全套配件，无拆无修..." />
+        <textarea v-model="form.description" placeholder="例如：99新小米14，全套配件，无拆无修..." />
       </view>
     </view>
 
@@ -90,13 +90,14 @@ import { goodsApi } from '@/api/goods';
 import { categoryApi } from '@/api/category';
 const initialData = {
   price: '',
-  categoryId: null, // 选中的分类ID
-  desc: '',
+  category_id: null, // 选中的分类ID
+  description: '',
   province: '',
   city: '',
   district: '',
   street: '',
-  detail_address: ''
+  detail_address: '',
+  streetName: '梅陇镇',
 };
 export default {
   name: 'PublishPage',
@@ -110,14 +111,19 @@ export default {
       regionValue: ['上海市', '上海市', '闵行区'],
       // 街道列表（可以根据 district 动态加载）
       streetList: ['梅陇镇', '吴泾镇', '颛桥镇', '华漕镇'], 
-      streetName: '梅陇镇',
-      streetId: ''
+      streetId: '',
+      goodsId: '', // 编辑模式下，商品的ID
     };
   },
-  async onLoad() {
+  async onLoad(options = {}) {
     this.form = { ...initialData };
     // 加载分类列表
     await this.loadCategories();
+    // 从路由获取 goods_id
+    if (options.goods_id) {
+      this.goodsId = options.goods_id;
+      this.getGoodsDetail(this.goodsId);
+    }
   },
   methods: {
     // 加载分类列表
@@ -133,39 +139,67 @@ export default {
     },
     // 选择分类
     selectCategory(id) {
-      this.form.categoryId = id;
+      this.form.category_id = id;
     },
     // 发布商品
     async publishGoods() {
       // 简单校验
       if (!this.form.name) return uni.showToast({ title: '请输入商品标题', icon: 'none' });
       if (!this.form.price) return uni.showToast({ title: '请输入商品价格', icon: 'none' });
-      if (!this.form.categoryId) return uni.showToast({ title: '请选择商品分类', icon: 'none' });
+      if (!this.form.category_id) return uni.showToast({ title: '请选择商品分类', icon: 'none' });
       if (!this.form.street) return uni.showToast({ title: '请选择社区信息', icon: 'none' });
 
       try {
-        console.log(11, this.form.name, this.form.price, this.form.categoryId, this.form.desc);
-        
-        const publishRes = await goodsApi.publishGoods({
-          name: this.form.name,
-          price: this.form.price,
-          category_id: this.form.categoryId,
-          description: this.form.desc,
+        const params = {
+          ...this.form,
           image_url: this.fileList?.join(','),
           user_id: uni.getStorageSync('userId') || 2 // TODO 这里待拿到用户登录信息
-        });
-        
+        }
+        let publishRes = null;        
+        if (this.goodsId) {
+          // 编辑模式：调用更新接口
+          publishRes = await goodsApi.updateGoods({
+            ...params,
+            goods_id: this.goodsId
+          });
+        } else {
+          // 发布模式：调用发布接口
+          publishRes = await goodsApi.publishGoods(params);
+        }        
         if (publishRes?.code === 200) {
-          uni.showToast({ title: '发布成功', icon: 'success' });
+          uni.showToast({ title: '商品信息提交成功', icon: 'none' });
           // 重置表单
-          this.form = { name: '', price: 0, categoryId: null, desc: '' };
+          this.form = { name: '', price: 0, category_id: null, description: '' };
           // 跳转到我的发布列表
           wx.navigateTo({ url: '/pages/mine/publish-list' });
         } else {
           uni.showToast({ title: publishRes.msg, icon: 'none' });
         }
       } catch (err) {
-        uni.showToast({ title: '发布失败', icon: 'none' });
+        uni.showToast({ title: '商品信息提交失败', icon: 'none' });
+      }
+    },
+    
+    // 查询闲置详情
+    async getGoodsDetail(goodsId) {
+      try {
+        const res = await goodsApi.getGoodsDetail({ goods_id: goodsId });
+        const {data, code} = res
+        if (code === 200) {
+          // 回填表单数据
+          this.form = {
+            ...data,
+            // streetName: 
+          };
+          this.fileList = data?.image_url?.split(',')
+          // 页面标题改为“编辑闲置”
+          uni.setNavigationBarTitle({ title: '编辑闲置' });
+          // 按钮文字改为“更新闲置”
+          this.btnText = '更新闲置';
+          // this.form = { ...initialData };
+        }
+      } catch (err) {
+        uni.showToast({ title: '获取商品详情失败', icon: 'none' });
       }
     },
      // 选择图片
@@ -178,14 +212,10 @@ export default {
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
         });
-        console.log(99999, res.tempFilePaths);
-        
         // 遍历选中的图片，逐个上传
         for (const tempFilePath of res.tempFilePaths) {
           const uploadFiles =  await this.uploadImageToServer(tempFilePath);
           // 上传成功后，把 URL 加入 fileList
-          console.log(132424345, uploadFiles);
-          
           this.fileList = [...this.fileList, uploadFiles]; // 推荐用新数组赋值，触发更新
         }
       } catch (err) {
@@ -271,7 +301,7 @@ export default {
     // 2. 处理街道/社区变化
     handleStreetChange(e) {
       this.form.street = this.streetList[e.detail.value];
-      this.streetName = this.form.street;
+      this.form.streetName = this.form.street;
     },
    
   }
@@ -399,7 +429,7 @@ textarea {
   border: none;
   border-radius: 8rpx;
   font-size: 32rpx;
-  padding: 24rpx;
+  padding: 15rpx;
 }
 
 .upload-title {

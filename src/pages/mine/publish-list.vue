@@ -124,7 +124,7 @@ export default {
     },
     // 编辑商品
     editGoods(goods) {
-      uni.navigateTo({ url: `/pages/publish/index?editId=${goods.goods_id}` });
+      uni.navigateTo({ url: `/pages/publish/index?goods_id=${goods.goods_id}` });
     },
     // 删除商品
     async deleteGoods(goodsId) {

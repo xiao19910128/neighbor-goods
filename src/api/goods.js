@@ -54,7 +54,16 @@ export const goodsApi = {
     return request({
       url: '/goods/update',
       method: 'post',
-      data: data
+      data
+    });
+  },
+  
+  // 删除发布的商品
+  deleteGoods(data) {
+    return request({
+      url: '/goods/deletePublished',
+      method: 'post',
+      data
     });
   }
 }

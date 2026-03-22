@@ -16,7 +16,7 @@
     <view class="goods-list" v-else>
       <view class="goods-item" v-for="item in goodsList" :key="item.goods_id">
         <!-- 商品图片 -->
-        <image class="goods-img" :src="item.image_url.split(',')[0]" mode="aspectFill"></image>
+        <image class="goods-img" :src="item.fileList[0]" mode="aspectFill"></image>
         
         <!-- 商品信息 -->
         <view class="goods-info">
@@ -75,9 +75,9 @@ export default {
     // 获取我发布的商品列表
     async getPublishedGoods() {
       try {
+        this.goodsList = [];
         this.loading = true;
         this.loadMoreStatus = 'loading';
-        
         // 调用后端接口（根据用户ID筛选）    
             // published这个接口根本没有请求，页面控制台也没有报错
         const publishedRes = await goodsApi.getGoodsPublished({
@@ -85,18 +85,22 @@ export default {
         }); 
         if (publishedRes?.code === 200) {
           const { list, total } = publishedRes?.data;
+          const commonList = list.map(item => ({
+            ...item,
+            fileList: item.image_url?.split(',') || [],
+          }));
           // 第一页清空列表，后续页面追加
           if (this.page === 1) {
-            this.goodsList = list;
+            this.goodsList = [...commonList];
           } else {
-            this.goodsList = [...this.goodsList, ...list];
+            this.goodsList = [...this.goodsList, ...commonList];
           }
           // 判断是否有更多数据
           this.hasMore = this.goodsList?.length < total;
           this.loadMoreStatus = this.hasMore ? 'more' : 'noMore';
         }
       } catch (err) {
-        uni.showToast({ title: '111获取数据失败', icon: 'none' });
+        uni.showToast({ title: '获取数据失败', icon: 'none' });
       } finally {
         this.loading = false;
         this.loadMoreStatus = 'more';
@@ -127,19 +131,15 @@ export default {
       uni.navigateTo({ url: `/pages/publish/index?goods_id=${goods.goods_id}` });
     },
     // 删除商品
-    async deleteGoods(goodsId) {
+    async deleteGoods(goods_id) {
       uni.showModal({
         title: '确认删除',
         content: '删除后无法恢复，确定要删除吗？',
-        async success(res) {
+        success: async(res) => {
           if (res.confirm) {
             try {
-              const delRes = await uni.request({
-                url: '/api/goods/deletePublished',
-                method: 'POST',
-                data: { id: goodsId }
-              });
-              if (delRes.data.code === 200) {
+              const delRes = await goodsApi.deleteGoods({ goods_id });
+              if (delRes?.code === 200) {
                 uni.showToast({ title: '删除成功' });
                 // 重新加载列表
                 this.page = 1;

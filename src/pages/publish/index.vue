@@ -171,7 +171,7 @@ export default {
           // 重置表单
           this.form = { name: '', price: 0, category_id: null, description: '' };
           // 跳转到我的发布列表
-          wx.navigateTo({ url: '/pages/mine/publish-list' });
+          wx.navigateTo({ url: '/pages/mine/publish-list?from=publish' });
         } else {
           uni.showToast({ title: publishRes.msg, icon: 'none' });
         }

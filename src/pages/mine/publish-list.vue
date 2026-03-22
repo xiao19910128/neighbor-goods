@@ -1,48 +1,44 @@
 <template>
-  <view class="published-page">
+  <view class="publish-list-page">
     <!-- 页面标题 -->
-    <view class="page-header">
-      <text class="title">我发布的</text>
-    </view>
+    <!-- <view class="page-header">
+      <text class="title">我的发布列表</text>
+    </view> -->
+
     <!-- 空数据提示 -->
-    <view class="empty-view" v-if="goodsList && !goodsList.length && !loading">
+    <view class="empty-state" v-if="goodsList.length === 0 && !loading">
       <image src="/static/empty-published.png" class="empty-img"></image>
       <text class="empty-text">你还没有发布任何闲置~</text>
-      <button type="primary" class="publish-btn" @click="gotoPublish">去发布</button>
+      <button class="publish-btn" @click="gotoPublish">去发布</button>
     </view>
 
     <!-- 商品列表 -->
     <view class="goods-list" v-else>
-      <view class="goods-item" v-for="(item, index) in goodsList" :key="index" @click="gotoDetail(item.id)">
+      <view class="goods-item" v-for="item in goodsList" :key="item.goods_id">
         <!-- 商品图片 -->
-        <view class="goods-img">
-          <image :src="item.image_url.split(',')[0]" mode="aspectFill"></image>
-        </view>
+        <image class="goods-img" :src="item.image_url.split(',')[0]" mode="aspectFill"></image>
+        
         <!-- 商品信息 -->
         <view class="goods-info">
-          <text class="goods-title">{{ item.name }}</text>
-          <text class="goods-price">¥{{ item.price }}</text>
-          <text class="goods-address">{{ item.street }}{{ item.detail_address || '' }}</text>
-          <text class="goods-time">{{ formatTime(item.create_time) }}</text>
+          <text class="goods-name">{{ item.name }}</text>
+          <view class="price-area">
+            <text class="goods-price">¥{{ item.price }}</text>
+            <text class="goods-street">{{ item.street }}</text>
+          </view>
+          
+          <!-- 审核状态标签 -->
+          <view class="status-tag" :class="getStatusClass(item.audit_status)">
+            {{ getStatusText(item.audit_status) }}
+          </view>
         </view>
+
         <!-- 操作按钮 -->
-        <view class="goods-actions">
-          <button class="action-btn edit" @click.stop="editGoods(item)">编辑</button>
-          <button class="action-btn delete" @click.stop="deleteGoods(item.id)">删除</button>
+        <view class="action-buttons">
+          <button class="btn-edit" @click="editGoods(item)">编辑</button>
+          <button class="btn-delete" @click="deleteGoods(item.goods_id)">删除</button>
         </view>
       </view>
     </view>
-
-    <!-- 加载中提示 -->
-    <view class="loading-view" v-if="loading">
-      <text>加载中...</text>
-    </view>
-
-    <!-- 下拉加载更多 -->
-    <uni-load-more 
-      :status="loadMoreStatus" 
-      @clickLoadMore="loadMore"
-    ></uni-load-more>
   </view>
 </template>
 
@@ -128,13 +124,13 @@ export default {
     },
     // 编辑商品
     editGoods(goods) {
-      uni.navigateTo({ url: `/pages/publish/index?editId=${goods.id}` });
+      uni.navigateTo({ url: `/pages/publish/index?editId=${goods.goods_id}` });
     },
     // 删除商品
     async deleteGoods(goodsId) {
       uni.showModal({
-        title: '提示',
-        content: '确定要删除该商品吗？删除后不可恢复',
+        title: '确认删除',
+        content: '删除后无法恢复，确定要删除吗？',
         async success(res) {
           if (res.confirm) {
             try {
@@ -155,7 +151,29 @@ export default {
           }
         }
       });
-    }
+    },
+
+    // 映射审核状态文字
+    getStatusText(status) {
+      const statusMap = {
+        0: '待审核',
+        1: '审核通过',
+        2: '审核拒绝',
+        3: '已下架'
+      };
+      return statusMap[status] || '未知状态';
+    },
+
+    // 映射状态标签样式类
+    getStatusClass(status) {
+      const classMap = {
+        0: 'status-pending',
+        1: 'status-pass',
+        2: 'status-reject',
+        3: 'status-offline'
+      };
+      return classMap[status] || 'status-default';
+    },
   }
 };
 </script>
@@ -280,5 +298,142 @@ export default {
   text-align: center;
   font-size: 28rpx;
   color: #999;
+}
+
+.publish-list-page {
+  background-color: #f7f8fa;
+  min-height: 100vh;
+}
+
+/* 页面标题 */
+.page-header {
+  background-color: #fff;
+  padding: 30rpx;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+.title {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+/* 空数据状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+}
+.empty-img {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 30rpx;
+}
+.empty-text {
+  font-size: 32rpx;
+  color: #999;
+  margin-bottom: 40rpx;
+}
+.publish-btn {
+  width: 60%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #007aff;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 32rpx;
+}
+
+/* 商品列表 */
+.goods-list {
+  padding: 20rpx;
+}
+.goods-item {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+.goods-img {
+  width: 100%;
+  height: 360rpx;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+}
+.goods-info {
+  margin-bottom: 24rpx;
+}
+.goods-name {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 12rpx;
+}
+.price-area {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.goods-price {
+  font-size: 36rpx;
+  color: #ff3b30;
+  font-weight: 600;
+  margin-right: 16rpx;
+}
+.goods-street {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 审核状态标签 */
+.status-tag {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+.status-pending {
+  background-color: #fff7e6;
+  color: #fa8c16;
+}
+.status-pass {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+.status-reject {
+  background-color: #fff2f0;
+  color: #ff4d4f;
+}
+.status-offline {
+  background-color: #f5f5f5;
+  color: #999;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+  justify-content: end;
+}
+.btn-edit, .btn-delete {
+  /* flex: 1; */
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  text-align: center;
+  margin: 0;
+}
+.btn-edit {
+  background-color: #e9ffe1;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+.btn-delete {
+  background-color: #ff4d4f;
+  color: #fff;
 }
 </style>

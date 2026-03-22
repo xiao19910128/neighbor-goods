@@ -146,7 +146,7 @@ export default {
       try {
         console.log(11, this.form.name, this.form.price, this.form.categoryId, this.form.desc);
         
-        const publisgRes = await goodsApi.publishGoods({
+        const publishRes = await goodsApi.publishGoods({
           name: this.form.name,
           price: this.form.price,
           category_id: this.form.categoryId,
@@ -155,14 +155,14 @@ export default {
           user_id: uni.getStorageSync('userId') || 2 // TODO 这里待拿到用户登录信息
         });
         
-        if (publisgRes?.code === 200) {
+        if (publishRes?.code === 200) {
           uni.showToast({ title: '发布成功', icon: 'success' });
           // 重置表单
           this.form = { name: '', price: 0, categoryId: null, desc: '' };
           // 跳转到我的发布列表
           wx.navigateTo({ url: '/pages/mine/publish-list' });
         } else {
-          uni.showToast({ title: publisgRes.msg, icon: 'none' });
+          uni.showToast({ title: publishRes.msg, icon: 'none' });
         }
       } catch (err) {
         uni.showToast({ title: '发布失败', icon: 'none' });

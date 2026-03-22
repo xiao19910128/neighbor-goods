@@ -30,5 +30,13 @@ export const goodsApi = {
       method: 'post',
       data
     });
-  }
+  },
+  // 获取已发布商品列表
+  getGoodsPublished(params) {
+      return request({
+        url: `/goods/published`,
+        method: 'get',
+        params,
+      });
+  },
 }

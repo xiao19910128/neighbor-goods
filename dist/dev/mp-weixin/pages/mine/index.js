@@ -94,7 +94,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   }, !$data.isLogin ? {
     b: common_vendor.o((...args) => $options.wxLogin && $options.wxLogin(...args))
   } : common_vendor.e({
-    c: $data.userInfo.avatarUrl || "/static/default-avatar.png",
+    c: $data.userInfo.avatarUrl || "/static/default-avatar.jpg",
     d: common_vendor.t($data.userInfo.nickName || "微信昵称"),
     e: common_vendor.p({
       type: "gift",

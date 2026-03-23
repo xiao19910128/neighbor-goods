@@ -77,7 +77,7 @@
 
     <!-- 发布按钮 -->
     <view class="footer-box">
-      <uni-button class="publish-btn" @click.stop="publishGoods">发布闲置</uni-button>
+      <button class="publish-btn" @click.stop="publishGoods">发布闲置</button>
     </view>
 
     <TabBar defaultTab="publish" />

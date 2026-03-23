@@ -1,62 +1,123 @@
 <template>
-  <div class="mine-page">
-    <!-- 顶部用户信息区域 -->
-    <div class="user-info-section">
-      <div class="avatar-container">
-        <div class="avatar">👤</div>
-        <div class="user-details">
-          <div class="username">用户名 </div>
-        </div>
-      </div>
-    </div>
+  <view class="mine-page">
+    <view class="main-content">
+      <!-- 未登录：显示微信登录按钮 -->
+      <view v-if="!isLogin" class="no-login">
+        <view class="login-tip">还没有登录，请先登录</view>
+        <button class="btn-login" @click="wxLogin">微信登录</button>
+      </view>
+      <!-- 已登录：显示退出登录按钮 -->
+      <view  v-else class="login-content">
+        <!-- 顶部用户信息区域 -->
+        <view class="user-info-section">
+          <view class="avatar-container">
+            <!-- <img :src="userInfo.avatarUrl" alt="用户头像" class="avatar" /> -->
+            <view class="user-details">
+              <view class="username">{{userInfo.nickName}} </view>
+            </view>
+          </view>
+        </view>
 
-    <!-- 功能模块区域 -->
-    <!-- 常用工具区域 -->
-    <div class="common-tools">
-      <div class="module-item">
-        <span class="module-icon">📦</span>
-        <span class="module-text">我卖出的</span>
-        <span class="module-count">10</span>
-        <span class="module-arrow">></span>
-      </div>
+        <!-- 功能模块区域 -->
+        <view class="common-tools">
+          <view class="module-item">
+            <span class="module-icon">📦</span>
+            <span class="module-text">我卖出的</span>
+            <span class="module-count">10</span>
+            <span class="module-arrow">></span>
+          </view>
 
-      <div class="tool-item" @click="toDetail('publish-list')">
-        <span class="tool-icon">📤</span>
-        <span class="tool-text">我发布的</span>
-        <span class="tool-arrow">></span>
-      </div>
+          <view class="tool-item" @click="toDetail('publish-list')">
+            <span class="tool-icon">📤</span>
+            <span class="tool-text">我发布的</span>
+            <span class="tool-arrow">></span>
+          </view>
 
-      <div class="tool-item">
-        <span class="tool-icon">⭐</span>
-        <span class="tool-text">我的收藏</span>
-        <span class="tool-arrow">></span>
-      </div>
-    </div>
-
-    
+          <view class="tool-item">
+            <span class="tool-icon">⭐</span>
+            <span class="tool-text">我的收藏</span>
+            <span class="tool-arrow">></span>
+          </view>
+        </view>
+        <button class="btn-logout" @click="logout">
+          退出登录
+        </button>
+      </view>
+      
+    </view>
     <TabBar  defaultTab="mine" />
-  </div>
+  </view>
 </template>
 
 <script>
+import { userApi } from '@/api/user';
 import TabBar from '@/components/TabBar.vue'
 export default {
   name: 'MinePage',
   components: {  TabBar },
 
   data() {
-    return {}
+    return {
+      isLogin: false,
+      userInfo: {},
+    }
+  },
+
+  onLoad() {
   },
 
   methods: {
+     // 微信登录
+    async wxLogin() {
+      uni.login({
+        provider: 'weixin',
+        success: async (res) => {
+          const wxRes = await userApi.wxLogin({ code: res.code });
+          this.isLogin = !!wxRes?.data?.token;
+          this.userInfo = wxRes?.data?.userInfo || {};
+          uni.setStorageSync('token', wxRes?.data?.token);
+          uni.setStorageSync('userInfo', wxRes?.data?.userInfo);
+        },
+        fail: (err) => {
+          console.error('uni.login 失败:', err);
+          uni.showToast({ title: '登录失败', icon: 'none' });
+        }
+      });
+    },
+    // 退出登录
+    logout() {
+      uni.showModal({
+        title: '确认退出',
+        content: '确定要退出登录吗？',
+        success: (res) => {
+          if (res.confirm) {
+            this.isLogin = false;
+            this.userInfo = {};
+            // 清除本地存储
+            uni.removeStorageSync('token');
+            uni.removeStorageSync('userInfo');
+            uni.removeStorageSync('userId');
+            uni.showToast({ title: '已退出登录' });
+            // 跳转到首页或登录页
+            uni.reLaunch({ url: '/pages/index/index' });
+          }
+        }
+      });
+    },
+
+
     toDetail(path) {
+      if (!this.isLogin) {
+        uni.showToast({ title: '请先登录', icon: 'none' });
+        return;
+      }
       wx.navigateTo({ url: `/pages/mine/${path}` });
-    }
+    },
   },
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .mine-page {
   display: flex;
   flex-direction: column;
@@ -240,5 +301,71 @@ export default {
 
 .sell-tab .text {
   margin-top: 25px;
+}
+
+
+.user-info {
+  background-color: #fff;
+  padding: 40rpx;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  margin-right: 30rpx;
+}
+.menu-list {
+  background-color: #fff;
+}
+.menu-item {
+  padding: 30rpx;
+  border-bottom: 1px solid #eee;
+  font-size: 32rpx;
+}
+.main-content{
+  flex: 1;
+  .no-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 500rpx;
+    .login-tip {
+      color: #999;
+      margin-bottom: 20rpx;
+    }
+  }
+  .login-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .nickname {
+    font-size: 32rpx;
+    font-weight: 500;
+  }
+  .tip {
+    font-size: 28rpx;
+    color: #999;
+  }
+  .btn-login, .btn-logout {
+    width: 100%;
+    height: 88rpx;
+    line-height: 88rpx;
+    border-radius: 44rpx;
+    font-size: 32rpx;
+  }
+  .btn-login {
+    background-color: #09bb07; 
+    color: #fff;
+  }
+  .btn-logout {
+    background-color: #fff;
+    color: #ff4d4f;
+    border: 1px solid #ff4d4f;
+  }
 }
 </style>

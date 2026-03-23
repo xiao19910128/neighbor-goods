@@ -2,13 +2,19 @@
   "pages": [
     "pages/index/index",
     "pages/publish/index",
-    "pages/mine/index"
+    "pages/mine/index",
+    "pages/mine/publish-list"
   ],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "闲置中心",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": ""
+    }
   },
   "usingComponents": {
     "uni-icons": "/node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons"

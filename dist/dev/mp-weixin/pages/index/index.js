@@ -48,8 +48,16 @@ const _sfc_main = {
   },
   methods: {
     async getGoodsList() {
-      const listRes = await api_goods.goods.getGoodsList({ name: this.searchValue });
-      this.products = listRes.data;
+      var _a;
+      const listRes = await api_goods.goodsApi.getGoodsList({ name: this.searchValue });
+      this.products = (_a = listRes.data) == null ? void 0 : _a.map((item) => {
+        var _a2;
+        return {
+          ...item,
+          image_url: (_a2 = item.image_url) == null ? void 0 : _a2.split(",")[0]
+          // 首页只展示第一张图片
+        };
+      });
     },
     handleClear() {
       this.searchValue = "";
@@ -72,43 +80,48 @@ const _sfc_main = {
   }
 };
 if (!Array) {
-  const _component_van_button = common_vendor.resolveComponent("van-button");
-  const _component_van_search = common_vendor.resolveComponent("van-search");
+  const _easycom_uni_search_bar2 = common_vendor.resolveComponent("uni-search-bar");
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
   const _component_TabBar = common_vendor.resolveComponent("TabBar");
-  (_component_van_button + _component_van_search + _component_TabBar)();
+  (_easycom_uni_search_bar2 + _easycom_uni_icons2 + _component_TabBar)();
+}
+const _easycom_uni_search_bar = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-search-bar/uni-search-bar.js";
+const _easycom_uni_icons = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons.js";
+if (!Math) {
+  (_easycom_uni_search_bar + _easycom_uni_icons)();
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: common_vendor.o($options.handleSearch),
-    b: common_vendor.p({
-      size: "mini",
-      type: "primary"
-    }),
-    c: common_vendor.o($options.handleSearch),
-    d: common_vendor.o($options.handleClear),
-    e: common_vendor.o(($event) => $data.searchValue = $event),
-    f: common_vendor.p({
-      placeholder: "请输入关键词筛选商品",
-      shape: "round",
-      background: "#f5f5f5",
-      clearable: true,
-      ["show-action"]: true,
+    b: common_vendor.o($options.handleClear),
+    c: common_vendor.o(($event) => $data.searchValue = $event),
+    d: common_vendor.p({
+      cancelButton: "none",
+      clearButton: "always",
+      placeholder: "请输入名称筛选商品",
       modelValue: $data.searchValue
     }),
-    g: $data.products.length
+    e: $data.products.length
   }, $data.products.length ? {
-    h: common_vendor.f($data.products, (product, index, i0) => {
+    f: common_vendor.f($data.products, (product, index, i0) => {
       return {
-        a: product.image,
+        a: product.image_url,
         b: common_vendor.t(product.name),
-        c: common_vendor.t(product.price),
-        d: index,
-        e: common_vendor.o(($event) => $options.toDetail(product), index)
+        c: common_vendor.t(product.description),
+        d: common_vendor.t(product.price),
+        e: index,
+        f: common_vendor.o(($event) => $options.toDetail(product), index)
       };
     }),
-    i: common_vendor.n($data.viewMode === "single" ? "single-column" : "double-column")
-  } : {}, {
-    j: common_vendor.p({
+    g: common_vendor.n($data.viewMode === "single" ? "single-column" : "double-column")
+  } : {
+    h: common_vendor.p({
+      type: "info",
+      size: "60",
+      color: "#999"
+    })
+  }, {
+    i: common_vendor.p({
       defaultTab: "home"
     })
   });

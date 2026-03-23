@@ -56,6 +56,11 @@ export default {
       userId: uni.getStorageSync('userId') || 1 // 当前登录用户ID（需替换为实际用户ID）
     };
   },
+  computed: {
+    user_id() {
+      return uni.getStorageSync('userInfo')?.user_id;
+    }
+  },
   onLoad(options) {
     // 页面加载时获取我发布的商品列表
     this.getPublishedGoods();
@@ -76,7 +81,7 @@ export default {
         const publishedRes = await goodsApi.getGoodsPublished({
           page: this.page,
           size: this.size,
-          user_id: 2 || uni.getStorageSync('userId') // TODO 这里待拿到用户登录信息
+          user_id: this.user_id
         }); 
         if (publishedRes?.code === 200) {
           const { list, pagination } = publishedRes?.data;

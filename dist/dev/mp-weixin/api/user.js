@@ -14,6 +14,20 @@ const userApi = {
       method: "post",
       data
     });
+  },
+  getSmsCode(data) {
+    return utils_https.service({
+      url: "/users/getSmsCode",
+      method: "post",
+      data
+    });
+  },
+  phoneLogin(data) {
+    return utils_https.service({
+      url: "/users/phoneLogin",
+      method: "post",
+      data
+    });
   }
 };
 exports.userApi = userApi;

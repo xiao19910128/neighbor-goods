@@ -115,6 +115,12 @@ export default {
       goodsId: '', // 编辑模式下，商品的ID
     };
   },
+
+  computed: {
+    user_id() {
+      return uni.getStorageSync('userInfo')?.user_id;
+    }
+  },
   async onLoad(options = {}) {
     this.form = { ...initialData };
     // 加载分类列表
@@ -153,7 +159,7 @@ export default {
         const params = {
           ...this.form,
           image_url: this.fileList?.join(','),
-          user_id: uni.getStorageSync('userId') || 2 // TODO 这里待拿到用户登录信息
+          user_id: this.user_id
         }
         let publishRes = null;        
         if (this.goodsId) {

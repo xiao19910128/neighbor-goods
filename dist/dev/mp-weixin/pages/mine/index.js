@@ -69,7 +69,7 @@ const _sfc_main = {
             common_vendor.index.removeStorageSync("userInfo");
             common_vendor.index.removeStorageSync("userId");
             common_vendor.index.showToast({ title: "已退出登录" });
-            common_vendor.index.reLaunch({ url: "/pages/index/index" });
+            common_vendor.index.navigateTo({ url: "/pages/login/index" });
           }
         }
       });

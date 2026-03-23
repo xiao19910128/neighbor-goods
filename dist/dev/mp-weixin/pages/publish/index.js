@@ -34,6 +34,12 @@ const _sfc_main = {
       // 编辑模式下，商品的ID
     };
   },
+  computed: {
+    user_id() {
+      var _a;
+      return (_a = common_vendor.index.getStorageSync("userInfo")) == null ? void 0 : _a.user_id;
+    }
+  },
   async onLoad(options = {}) {
     this.form = { ...initialData };
     await this.loadCategories();
@@ -73,8 +79,7 @@ const _sfc_main = {
         const params = {
           ...this.form,
           image_url: (_a = this.fileList) == null ? void 0 : _a.join(","),
-          user_id: common_vendor.index.getStorageSync("userId") || 2
-          // TODO 这里待拿到用户登录信息
+          user_id: this.user_id
         };
         let publishRes = null;
         if (this.goodsId) {

@@ -5,7 +5,8 @@
 			"style": {
 				"navigationBarTitleText": "闲置中心"
 			}
-		},{
+		},
+		{
 			"path": "pages/publish/index",
 			"style": {
 				"navigationBarTitleText": "发布闲置"
@@ -17,6 +18,12 @@
         "navigationBarTitleText": "我的"
       }
     },
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
     {
       "path": "pages/mine/publish-list",
       "style": {

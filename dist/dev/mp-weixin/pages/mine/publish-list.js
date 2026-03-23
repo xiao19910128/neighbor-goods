@@ -21,6 +21,12 @@ const _sfc_main = {
       // 当前登录用户ID（需替换为实际用户ID）
     };
   },
+  computed: {
+    user_id() {
+      var _a;
+      return (_a = common_vendor.index.getStorageSync("userInfo")) == null ? void 0 : _a.user_id;
+    }
+  },
   onLoad(options) {
     this.getPublishedGoods();
     if (options.from === "publish") {
@@ -37,8 +43,7 @@ const _sfc_main = {
         const publishedRes = await api_goods.goodsApi.getGoodsPublished({
           page: this.page,
           size: this.size,
-          user_id: 2
-          // TODO 这里待拿到用户登录信息
+          user_id: this.user_id
         });
         if ((publishedRes == null ? void 0 : publishedRes.code) === 200) {
           const { list, pagination } = publishedRes == null ? void 0 : publishedRes.data;

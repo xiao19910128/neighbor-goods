@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/publish/index",
     "pages/mine/index",
+    "pages/login/index",
     "pages/mine/publish-list"
   ],
   "window": {

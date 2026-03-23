@@ -172,7 +172,7 @@ export default {
             uni.removeStorageSync('userInfo');
             uni.removeStorageSync('userId');
             uni.showToast({ title: '已退出登录' });
-            uni.reLaunch({ url: '/pages/index/index' });
+            uni.navigateTo({ url: '/pages/login/index' });
           }
         }
       });

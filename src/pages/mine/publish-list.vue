@@ -65,38 +65,33 @@ export default {
       uni.showToast({ title: '发布成功！', icon: 'success' });
     }
   },
-  onReachBottom() {
-    // 下拉触底加载更多
-    if (this.hasMore && !this.loading) {
-      this.loadMore();
-    }
-  },
+  
   methods: {
     // 获取我发布的商品列表
     async getPublishedGoods() {
       try {
-        this.goodsList = [];
         this.loading = true;
         this.loadMoreStatus = 'loading';
-        // 调用后端接口（根据用户ID筛选）    
-            // published这个接口根本没有请求，页面控制台也没有报错
+        // published这个接口根本没有请求，页面控制台也没有报错
         const publishedRes = await goodsApi.getGoodsPublished({
+          page: this.page,
+          size: this.size,
           user_id: 2 || uni.getStorageSync('userId') // TODO 这里待拿到用户登录信息
         }); 
         if (publishedRes?.code === 200) {
-          const { list, total } = publishedRes?.data;
+          const { list, pagination } = publishedRes?.data;
           const commonList = list.map(item => ({
             ...item,
             fileList: item.image_url?.split(',') || [],
           }));
           // 第一页清空列表，后续页面追加
           if (this.page === 1) {
-            this.goodsList = [...commonList];
+            this.goodsList = [].concat(commonList);
           } else {
-            this.goodsList = [...this.goodsList, ...commonList];
+            this.goodsList = this.goodsList.concat(commonList);
           }
           // 判断是否有更多数据
-          this.hasMore = this.goodsList?.length < total;
+          this.hasMore = this.goodsList?.length < pagination.total;
           this.loadMoreStatus = this.hasMore ? 'more' : 'noMore';
         }
       } catch (err) {
@@ -174,7 +169,14 @@ export default {
       };
       return classMap[status] || 'status-default';
     },
-  }
+  },
+
+  onReachBottom() {
+    // 下拉触底加载更多
+    if (this.hasMore && !this.loading) {
+      this.loadMore();
+    }
+  },
 };
 </script>
 

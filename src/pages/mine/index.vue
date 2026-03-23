@@ -64,6 +64,8 @@ export default {
   },
 
   onLoad() {
+    this.isLogin = !!uni.getStorageSync('token');
+    this.userInfo = uni.getStorageSync('userInfo');
   },
 
   methods: {

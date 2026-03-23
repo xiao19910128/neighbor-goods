@@ -12,6 +12,8 @@ const _sfc_main = {
     };
   },
   onLoad() {
+    this.isLogin = !!common_vendor.index.getStorageSync("token");
+    this.userInfo = common_vendor.index.getStorageSync("userInfo");
   },
   methods: {
     // 微信登录

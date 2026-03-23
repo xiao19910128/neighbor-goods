@@ -6,44 +6,95 @@
         <view class="login-tip">还没有登录，请先登录</view>
         <button class="btn-login" @click="wxLogin">微信登录</button>
       </view>
-      <!-- 已登录：显示退出登录按钮 -->
-      <view  v-else class="login-content">
-        <!-- 顶部用户信息区域 -->
-        <view class="user-info-section">
-          <view class="avatar-container">
-            <!-- <img :src="userInfo.avatarUrl" alt="用户头像" class="avatar" /> -->
-            <view class="user-details">
-              <view class="username">{{userInfo.nickName}} </view>
+      <view v-else class="login-content">
+        <!-- 顶部：头像 + 昵称 -->
+        <view class="user-section">
+          <image 
+            class="avatar" 
+            :src="userInfo.avatarUrl || '/static/default-avatar.png'" 
+            mode="aspectFill"
+          ></image>
+          <text class="nickname">{{ userInfo.nickName || '微信昵称' }}</text>
+        </view>
+
+        <!-- 功能区：3列网格 -->
+        <view class="menu-grid">
+          <!-- 交易管理 -->
+          <view class="grid-group">
+            <text class="group-title">交易管理</text>
+            <view class="grid-container">
+              <view class="grid-item" @click="goToMySold">
+                <view class="icon-wrapper">
+                <uni-icons type="gift" size="24" color="#666"></uni-icons>
+                </view>
+                <text class="item-text">我卖出的</text>
+              </view>
+              <view class="grid-item" @click="goToMyPublish">
+                <view class="icon-wrapper">
+                  <uni-icons type="shop" size="24" color="#666"></uni-icons>
+                </view>
+                <text class="item-text">我发布的</text>
+              </view>
+              <view class="grid-item" @click="goToMyCollect">
+                <view class="icon-wrapper">
+                  <uni-icons type="star" size="24" color="#666"></uni-icons>
+                </view>
+                <text class="item-text">我的收藏</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 偏好管理 -->
+          <view class="grid-group">
+            <text class="group-title">偏好管理</text>
+            <view class="grid-container">
+              <view class="grid-item" @click="goToAddress">
+                <view class="icon-wrapper">
+                  <uni-icons type="location" size="24" color="#666"></uni-icons>
+                </view>
+                <text class="item-text">地址管理</text>
+              </view>
+              <view class="grid-item" @click="goToMessage">
+                <view class="icon-wrapper">
+                  <uni-icons type="chat" size="24" color="#666"></uni-icons>
+                </view>
+                <text class="item-text">我的消息</text>
+              </view>
+              <view class="grid-item"></view>
+            </view>
+          </view>
+
+          <!-- 设置 -->
+          <view class="grid-group">
+            <text class="group-title">设置</text>
+            <view class="grid-container">
+              <view class="grid-item" @click="goToSecurity">
+                <view class="icon-wrapper">
+                  <uni-icons type="locked" size="24" color="#666"></uni-icons>
+                </view>
+                <text class="item-text">账号与安全</text>
+              </view>
+              <view class="grid-item" @click="goToPrivacy">
+                <view class="icon-wrapper">
+                  <uni-icons type="eye" size="24" color="#666"></uni-icons>
+                </view>
+                <text class="item-text">隐私设置</text>
+              </view>
+              <view class="grid-item" @click="goToHelp">
+                <view class="icon-wrapper">
+                  <uni-icons type="help" size="24" color="#666"></uni-icons>
+                </view>
+                <text class="item-text">帮助与客服</text>
+              </view>
             </view>
           </view>
         </view>
 
-        <!-- 功能模块区域 -->
-        <view class="common-tools">
-          <view class="module-item">
-            <span class="module-icon">📦</span>
-            <span class="module-text">我卖出的</span>
-            <span class="module-count">10</span>
-            <span class="module-arrow">></span>
-          </view>
-
-          <view class="tool-item" @click="toDetail('publish-list')">
-            <span class="tool-icon">📤</span>
-            <span class="tool-text">我发布的</span>
-            <span class="tool-arrow">></span>
-          </view>
-
-          <view class="tool-item">
-            <span class="tool-icon">⭐</span>
-            <span class="tool-text">我的收藏</span>
-            <span class="tool-arrow">></span>
-          </view>
+        <!-- 底部：退出登录 -->
+        <view class="logout-section" v-if="isLogin">
+          <text class="logout-btn" @click="handleLogout">退出登录</text>
         </view>
-        <button class="btn-logout" @click="logout">
-          退出登录
-        </button>
       </view>
-      
     </view>
     <TabBar  defaultTab="mine" />
   </view>
@@ -55,21 +106,18 @@ import TabBar from '@/components/TabBar.vue'
 export default {
   name: 'MinePage',
   components: {  TabBar },
-
   data() {
     return {
-      isLogin: false,
-      userInfo: {},
+      userInfo: uni.getStorageSync('userInfo') || {},
+      isLogin: !!uni.getStorageSync('token')
     }
   },
-
-  onLoad() {
+  onShow() {
+    this.userInfo = uni.getStorageSync('userInfo') || {};
     this.isLogin = !!uni.getStorageSync('token');
-    this.userInfo = uni.getStorageSync('userInfo');
   },
-
-  methods: {
-     // 微信登录
+  methods: { 
+    // 微信登录
     async wxLogin() {
       uni.login({
         provider: 'weixin',
@@ -87,7 +135,7 @@ export default {
       });
     },
     // 退出登录
-    logout() {
+    handleLogout() {
       uni.showModal({
         title: '确认退出',
         content: '确定要退出登录吗？',
@@ -100,233 +148,108 @@ export default {
             uni.removeStorageSync('userInfo');
             uni.removeStorageSync('userId');
             uni.showToast({ title: '已退出登录' });
-            // 跳转到首页或登录页
             uni.reLaunch({ url: '/pages/index/index' });
           }
         }
       });
     },
-
-
-    toDetail(path) {
-      if (!this.isLogin) {
-        uni.showToast({ title: '请先登录', icon: 'none' });
-        return;
-      }
-      wx.navigateTo({ url: `/pages/mine/${path}` });
-    },
-  },
+    // 页面跳转（根据实际路由修改）
+    goToMySold() { uni.navigateTo({ url: '/pages/mine/my-sold' }) },
+    goToMyPublish() { uni.navigateTo({ url: '/pages/mine/my-publish' }) },
+    goToMyCollect() { uni.navigateTo({ url: '/pages/mine/my-collect' }) },
+    goToAddress() { uni.navigateTo({ url: '/pages/mine/address' }) },
+    goToMessage() { uni.navigateTo({ url: '/pages/mine/message' }) },
+    goToSecurity() { uni.navigateTo({ url: '/pages/mine/security' }) },
+    goToPrivacy() { uni.navigateTo({ url: '/pages/mine/privacy' }) },
+    goToHelp() { uni.navigateTo({ url: '/pages/mine/help' }) }
+  }
 }
 </script>
 
 <style scoped lang="scss">
 .mine-page {
   display: flex;
-  flex-direction: column;
   height: calc(100vh - 90rpx);
-  background-color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  flex-direction: column;
+  background-color: #f5f7fa;
+  /* min-height: 100vh; */
+  /* padding: 40rpx 30rpx; */
 }
 
-/* 用户信息区域 */
-.user-info-section {
-  background-color: #ceec9d;
-  color: #333;
-  padding: 20px;
-}
-
-.avatar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  margin-right: 15px;
-}
-
-.user-details {
-  flex: 1;
-}
-
-.username {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.fish-power {
-  font-size: 14px;
-  color: #666;
-}
-
-.settings-btn {
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.fish-ball-section {
-  background-color: #fff3cd;
-  padding: 10px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.fish-ball-info {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.fish-ball-action {
-  font-size: 14px;
-  color: #fff;
-  background-color: #ceec9d;
-  padding: 5px 10px;
-  border-radius: 20px;
-}
-
-.module-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 16px;
-}
-
-.module-icon {
-  font-size: 24px;
-  margin-right: 15px;
-}
-
-.module-text {
-  flex: 1;
-}
-
-.module-action {
-  background-color: #4cd964;
-  color: #fff;
-  border-radius: 20px;
-  padding: 5px 10px;
-  font-size: 14px;
-}
-
-.module-count {
-  color: #ff4400;
-  margin-right: 5px;
-}
-
-.module-arrow {
-  font-size: 18px;
-  color: #999;
-}
-
-/* 常用工具区域 */
-.common-tools {
-  flex: 1;
-  overflow: auto;
-  padding: 0 20px 20px;
-}
-
-.tool-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 16px;
-}
-
-.tool-icon {
-  font-size: 24px;
-  margin-right: 15px;
-}
-
-.tool-text {
-  flex: 1;
-}
-
-.tool-arrow {
-  font-size: 18px;
-  color: #999;
-}
-
-/* 底部导航栏 */
-.bottom-tab {
-  display: flex;
-  justify-content: space-around;
-  background-color: #fff;
-  padding: 5px 0;
-  border-top: 1px solid #eee;
-}
-
-.tab-item {
+/* 顶部用户区 */
+.user-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 10px;
-  color: #666;
+  margin: 40rpx 0 60rpx;
 }
-
-.tab-item.active {
-  color: #ceec9d;
-}
-
-.sell-tab {
-  position: relative;
-}
-
-.sell-tab .icon-sell {
-  background-color: #ff4400;
-  color: #fff;
-  width: 40px;
-  height: 40px;
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: -20px;
-  font-size: 20px;
-}
-
-.sell-tab .text {
-  margin-top: 25px;
-}
-
-
-.user-info {
-  background-color: #fff;
-  padding: 40rpx;
-  display: flex;
-  align-items: center;
+  border: 4rpx solid #fff;
   margin-bottom: 20rpx;
 }
-.avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 60rpx;
-  margin-right: 30rpx;
+.nickname {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
 }
-.menu-list {
+
+/* 功能网格区 */
+.menu-grid {
   background-color: #fff;
-}
-.menu-item {
+  border-radius: 20rpx;
   padding: 30rpx;
-  border-bottom: 1px solid #eee;
-  font-size: 32rpx;
 }
+.grid-group {
+  margin-bottom: 40rpx;
+}
+.grid-group:last-child {
+  margin-bottom: 0;
+}
+.group-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 30rpx;
+  display: block;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30rpx;
+}
+.grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.icon-wrapper {
+  width: 60rpx;
+  height: 60rpx;
+  background-color: #f5f7fa;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+}
+.item-text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 底部退出登录 */
+.logout-section {
+  margin-top: 60rpx;
+  text-align: center;
+}
+.logout-btn {
+  font-size: 28rpx;
+  color: #999;
+}
+
 .main-content{
   flex: 1;
   .no-login {
@@ -344,30 +267,6 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100%;
-  }
-  .nickname {
-    font-size: 32rpx;
-    font-weight: 500;
-  }
-  .tip {
-    font-size: 28rpx;
-    color: #999;
-  }
-  .btn-login, .btn-logout {
-    width: 100%;
-    height: 88rpx;
-    line-height: 88rpx;
-    border-radius: 44rpx;
-    font-size: 32rpx;
-  }
-  .btn-login {
-    background-color: #09bb07; 
-    color: #fff;
-  }
-  .btn-logout {
-    background-color: #fff;
-    color: #ff4d4f;
-    border: 1px solid #ff4d4f;
   }
 }
 </style>

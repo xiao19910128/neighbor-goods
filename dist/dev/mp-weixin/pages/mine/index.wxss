@@ -25,184 +25,85 @@
 /* 文章场景相关 */
 .mine-page.data-v-9023ef44 {
   display: flex;
-  flex-direction: column;
   height: calc(100vh - 90rpx);
-  background-color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  flex-direction: column;
+  background-color: #f5f7fa;
+  /* min-height: 100vh; */
+  /* padding: 40rpx 30rpx; */
 }
 
-/* 用户信息区域 */
-.user-info-section.data-v-9023ef44 {
-  background-color: #ceec9d;
-  color: #333;
-  padding: 20px;
-}
-.avatar-container.data-v-9023ef44 {
+/* 顶部用户区 */
+.user-section.data-v-9023ef44 {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 15px;
+  margin: 40rpx 0 60rpx;
 }
 .avatar.data-v-9023ef44 {
-  width: 60px;
-  height: 60px;
+  width: 140rpx;
+  height: 140rpx;
   border-radius: 50%;
-  background-color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  margin-right: 15px;
-}
-.user-details.data-v-9023ef44 {
-  flex: 1;
-}
-.username.data-v-9023ef44 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-.fish-power.data-v-9023ef44 {
-  font-size: 14px;
-  color: #666;
-}
-.settings-btn.data-v-9023ef44 {
-  font-size: 16px;
-  cursor: pointer;
-}
-.fish-ball-section.data-v-9023ef44 {
-  background-color: #fff3cd;
-  padding: 10px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.fish-ball-info.data-v-9023ef44 {
-  font-size: 16px;
-  font-weight: bold;
-}
-.fish-ball-action.data-v-9023ef44 {
-  font-size: 14px;
-  color: #fff;
-  background-color: #ceec9d;
-  padding: 5px 10px;
-  border-radius: 20px;
-}
-.module-item.data-v-9023ef44 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 16px;
-}
-.module-icon.data-v-9023ef44 {
-  font-size: 24px;
-  margin-right: 15px;
-}
-.module-text.data-v-9023ef44 {
-  flex: 1;
-}
-.module-action.data-v-9023ef44 {
-  background-color: #4cd964;
-  color: #fff;
-  border-radius: 20px;
-  padding: 5px 10px;
-  font-size: 14px;
-}
-.module-count.data-v-9023ef44 {
-  color: #ff4400;
-  margin-right: 5px;
-}
-.module-arrow.data-v-9023ef44 {
-  font-size: 18px;
-  color: #999;
-}
-
-/* 常用工具区域 */
-.common-tools.data-v-9023ef44 {
-  flex: 1;
-  overflow: auto;
-  padding: 0 20px 20px;
-}
-.tool-item.data-v-9023ef44 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 16px;
-}
-.tool-icon.data-v-9023ef44 {
-  font-size: 24px;
-  margin-right: 15px;
-}
-.tool-text.data-v-9023ef44 {
-  flex: 1;
-}
-.tool-arrow.data-v-9023ef44 {
-  font-size: 18px;
-  color: #999;
-}
-
-/* 底部导航栏 */
-.bottom-tab.data-v-9023ef44 {
-  display: flex;
-  justify-content: space-around;
-  background-color: #fff;
-  padding: 5px 0;
-  border-top: 1px solid #eee;
-}
-.tab-item.data-v-9023ef44 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 10px;
-  color: #666;
-}
-.tab-item.active.data-v-9023ef44 {
-  color: #ceec9d;
-}
-.sell-tab.data-v-9023ef44 {
-  position: relative;
-}
-.sell-tab .icon-sell.data-v-9023ef44 {
-  background-color: #ff4400;
-  color: #fff;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: -20px;
-  font-size: 20px;
-}
-.sell-tab .text.data-v-9023ef44 {
-  margin-top: 25px;
-}
-.user-info.data-v-9023ef44 {
-  background-color: #fff;
-  padding: 40rpx;
-  display: flex;
-  align-items: center;
+  border: 4rpx solid #fff;
   margin-bottom: 20rpx;
 }
-.avatar.data-v-9023ef44 {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 60rpx;
-  margin-right: 30rpx;
+.nickname.data-v-9023ef44 {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
 }
-.menu-list.data-v-9023ef44 {
+
+/* 功能网格区 */
+.menu-grid.data-v-9023ef44 {
   background-color: #fff;
-}
-.menu-item.data-v-9023ef44 {
+  border-radius: 20rpx;
   padding: 30rpx;
-  border-bottom: 1px solid #eee;
+}
+.grid-group.data-v-9023ef44 {
+  margin-bottom: 40rpx;
+}
+.grid-group.data-v-9023ef44:last-child {
+  margin-bottom: 0;
+}
+.group-title.data-v-9023ef44 {
   font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 30rpx;
+  display: block;
+}
+.grid-container.data-v-9023ef44 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30rpx;
+}
+.grid-item.data-v-9023ef44 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.icon-wrapper.data-v-9023ef44 {
+  width: 60rpx;
+  height: 60rpx;
+  background-color: #f5f7fa;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+}
+.item-text.data-v-9023ef44 {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 底部退出登录 */
+.logout-section.data-v-9023ef44 {
+  margin-top: 60rpx;
+  text-align: center;
+}
+.logout-btn.data-v-9023ef44 {
+  font-size: 28rpx;
+  color: #999;
 }
 .main-content.data-v-9023ef44 {
   flex: 1;
@@ -222,28 +123,4 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-.main-content .nickname.data-v-9023ef44 {
-  font-size: 32rpx;
-  font-weight: 500;
-}
-.main-content .tip.data-v-9023ef44 {
-  font-size: 28rpx;
-  color: #999;
-}
-.main-content .btn-login.data-v-9023ef44, .main-content .btn-logout.data-v-9023ef44 {
-  width: 100%;
-  height: 88rpx;
-  line-height: 88rpx;
-  border-radius: 44rpx;
-  font-size: 32rpx;
-}
-.main-content .btn-login.data-v-9023ef44 {
-  background-color: #09bb07;
-  color: #fff;
-}
-.main-content .btn-logout.data-v-9023ef44 {
-  background-color: #fff;
-  color: #ff4d4f;
-  border: 1px solid #ff4d4f;
 }

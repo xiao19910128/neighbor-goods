@@ -7,13 +7,13 @@ const _sfc_main = {
   components: { TabBar },
   data() {
     return {
-      isLogin: false,
-      userInfo: {}
+      userInfo: common_vendor.index.getStorageSync("userInfo") || {},
+      isLogin: !!common_vendor.index.getStorageSync("token")
     };
   },
-  onLoad() {
+  onShow() {
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
     this.isLogin = !!common_vendor.index.getStorageSync("token");
-    this.userInfo = common_vendor.index.getStorageSync("userInfo");
   },
   methods: {
     // 微信登录
@@ -35,7 +35,7 @@ const _sfc_main = {
       });
     },
     // 退出登录
-    logout() {
+    handleLogout() {
       common_vendor.index.showModal({
         title: "确认退出",
         content: "确定要退出登录吗？",
@@ -52,30 +52,103 @@ const _sfc_main = {
         }
       });
     },
-    toDetail(path) {
-      if (!this.isLogin) {
-        common_vendor.index.showToast({ title: "请先登录", icon: "none" });
-        return;
-      }
-      common_vendor.wx$1.navigateTo({ url: `/pages/mine/${path}` });
+    // 页面跳转（根据实际路由修改）
+    goToMySold() {
+      common_vendor.index.navigateTo({ url: "/pages/mine/my-sold" });
+    },
+    goToMyPublish() {
+      common_vendor.index.navigateTo({ url: "/pages/mine/my-publish" });
+    },
+    goToMyCollect() {
+      common_vendor.index.navigateTo({ url: "/pages/mine/my-collect" });
+    },
+    goToAddress() {
+      common_vendor.index.navigateTo({ url: "/pages/mine/address" });
+    },
+    goToMessage() {
+      common_vendor.index.navigateTo({ url: "/pages/mine/message" });
+    },
+    goToSecurity() {
+      common_vendor.index.navigateTo({ url: "/pages/mine/security" });
+    },
+    goToPrivacy() {
+      common_vendor.index.navigateTo({ url: "/pages/mine/privacy" });
+    },
+    goToHelp() {
+      common_vendor.index.navigateTo({ url: "/pages/mine/help" });
     }
   }
 };
 if (!Array) {
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
   const _component_TabBar = common_vendor.resolveComponent("TabBar");
-  _component_TabBar();
+  (_easycom_uni_icons2 + _component_TabBar)();
+}
+const _easycom_uni_icons = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons.js";
+if (!Math) {
+  _easycom_uni_icons();
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: !$data.isLogin
   }, !$data.isLogin ? {
     b: common_vendor.o((...args) => $options.wxLogin && $options.wxLogin(...args))
-  } : {
-    c: common_vendor.t($data.userInfo.nickName),
-    d: common_vendor.o(($event) => $options.toDetail("publish-list")),
-    e: common_vendor.o((...args) => $options.logout && $options.logout(...args))
-  }, {
-    f: common_vendor.p({
+  } : common_vendor.e({
+    c: $data.userInfo.avatarUrl || "/static/default-avatar.png",
+    d: common_vendor.t($data.userInfo.nickName || "微信昵称"),
+    e: common_vendor.p({
+      type: "gift",
+      size: "24",
+      color: "#666"
+    }),
+    f: common_vendor.o((...args) => $options.goToMySold && $options.goToMySold(...args)),
+    g: common_vendor.p({
+      type: "shop",
+      size: "24",
+      color: "#666"
+    }),
+    h: common_vendor.o((...args) => $options.goToMyPublish && $options.goToMyPublish(...args)),
+    i: common_vendor.p({
+      type: "star",
+      size: "24",
+      color: "#666"
+    }),
+    j: common_vendor.o((...args) => $options.goToMyCollect && $options.goToMyCollect(...args)),
+    k: common_vendor.p({
+      type: "location",
+      size: "24",
+      color: "#666"
+    }),
+    l: common_vendor.o((...args) => $options.goToAddress && $options.goToAddress(...args)),
+    m: common_vendor.p({
+      type: "chat",
+      size: "24",
+      color: "#666"
+    }),
+    n: common_vendor.o((...args) => $options.goToMessage && $options.goToMessage(...args)),
+    o: common_vendor.p({
+      type: "locked",
+      size: "24",
+      color: "#666"
+    }),
+    p: common_vendor.o((...args) => $options.goToSecurity && $options.goToSecurity(...args)),
+    q: common_vendor.p({
+      type: "eye",
+      size: "24",
+      color: "#666"
+    }),
+    r: common_vendor.o((...args) => $options.goToPrivacy && $options.goToPrivacy(...args)),
+    s: common_vendor.p({
+      type: "help",
+      size: "24",
+      color: "#666"
+    }),
+    t: common_vendor.o((...args) => $options.goToHelp && $options.goToHelp(...args)),
+    v: $data.isLogin
+  }, $data.isLogin ? {
+    w: common_vendor.o((...args) => $options.handleLogout && $options.handleLogout(...args))
+  } : {}), {
+    x: common_vendor.p({
       defaultTab: "mine"
     })
   });

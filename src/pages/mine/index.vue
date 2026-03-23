@@ -119,20 +119,44 @@ export default {
   methods: { 
     // 微信登录
     async wxLogin() {
-      uni.login({
-        provider: 'weixin',
-        success: async (res) => {
-          const wxRes = await userApi.wxLogin({ code: res.code });
-          this.isLogin = !!wxRes?.data?.token;
-          this.userInfo = wxRes?.data?.userInfo || {};
-          uni.setStorageSync('token', wxRes?.data?.token);
-          uni.setStorageSync('userInfo', wxRes?.data?.userInfo);
-        },
-        fail: (err) => {
-          console.error('uni.login 失败:', err);
+      try {
+        // 第一步：调用 uni.getUserProfile 获取用户授权（头像/昵称）
+        const profileRes = await new Promise((resolve, reject) => {
+          uni.getUserProfile({
+            desc: '用于完善您的个人资料',
+            success: resolve,
+            fail: reject
+          });
+        });
+
+        // 第二步：调用 uni.login 获取 code
+        uni.login({
+          provider: 'weixin',
+          success: async (res) => {
+            // 第三步：调用后端登录接口，传 code + 头像 + 昵称
+            const wxRes = await userApi.wxLogin({ 
+              code: res.code, // 微信登录 code
+              nickName: profileRes.userInfo.nickName, // 授权获取的昵称
+              avatarUrl: profileRes.userInfo.avatarUrl // 授权获取的头像
+             });
+            this.isLogin = !!wxRes?.data?.token;
+            this.userInfo = wxRes?.data?.userInfo || {};
+            uni.setStorageSync('token', wxRes?.data?.token);
+            uni.setStorageSync('userInfo', wxRes?.data?.userInfo);
+          },
+          fail: (err) => {
+            console.error('uni.login 失败:', err);
+            uni.showToast({ title: '登录失败', icon: 'none' });
+          }
+        });
+      } catch (error) {
+        // 处理授权取消/登录失败
+        if (err.errMsg.includes('getUserProfile:fail')) {
+          uni.showToast({ title: '您取消了授权，无法登录', icon: 'none' });
+        } else {
           uni.showToast({ title: '登录失败', icon: 'none' });
         }
-      });
+      }
     },
     // 退出登录
     handleLogout() {

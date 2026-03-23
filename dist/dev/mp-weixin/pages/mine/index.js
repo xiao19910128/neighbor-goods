@@ -18,21 +18,43 @@ const _sfc_main = {
   methods: {
     // 微信登录
     async wxLogin() {
-      common_vendor.index.login({
-        provider: "weixin",
-        success: async (res) => {
-          var _a, _b, _c, _d;
-          const wxRes = await api_user.userApi.wxLogin({ code: res.code });
-          this.isLogin = !!((_a = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _a.token);
-          this.userInfo = ((_b = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _b.userInfo) || {};
-          common_vendor.index.setStorageSync("token", (_c = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _c.token);
-          common_vendor.index.setStorageSync("userInfo", (_d = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _d.userInfo);
-        },
-        fail: (err) => {
-          console.error("uni.login 失败:", err);
+      try {
+        const profileRes = await new Promise((resolve, reject) => {
+          common_vendor.index.getUserProfile({
+            desc: "用于完善您的个人资料",
+            success: resolve,
+            fail: reject
+          });
+        });
+        common_vendor.index.login({
+          provider: "weixin",
+          success: async (res) => {
+            var _a, _b, _c, _d;
+            const wxRes = await api_user.userApi.wxLogin({
+              code: res.code,
+              // 微信登录 code
+              nickName: profileRes.userInfo.nickName,
+              // 授权获取的昵称
+              avatarUrl: profileRes.userInfo.avatarUrl
+              // 授权获取的头像
+            });
+            this.isLogin = !!((_a = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _a.token);
+            this.userInfo = ((_b = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _b.userInfo) || {};
+            common_vendor.index.setStorageSync("token", (_c = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _c.token);
+            common_vendor.index.setStorageSync("userInfo", (_d = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _d.userInfo);
+          },
+          fail: (err2) => {
+            console.error("uni.login 失败:", err2);
+            common_vendor.index.showToast({ title: "登录失败", icon: "none" });
+          }
+        });
+      } catch (error) {
+        if (err.errMsg.includes("getUserProfile:fail")) {
+          common_vendor.index.showToast({ title: "您取消了授权，无法登录", icon: "none" });
+        } else {
           common_vendor.index.showToast({ title: "登录失败", icon: "none" });
         }
-      });
+      }
     },
     // 退出登录
     handleLogout() {

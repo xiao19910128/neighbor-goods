@@ -30,8 +30,9 @@ const _sfc_main = {
       // 街道列表（可以根据 district 动态加载）
       streetList: ["梅陇镇", "吴泾镇", "颛桥镇", "华漕镇"],
       streetId: "",
-      goodsId: ""
+      goodsId: "",
       // 编辑模式下，商品的ID
+      isLogin: !!common_vendor.index.getStorageSync("token")
     };
   },
   computed: {
@@ -39,6 +40,9 @@ const _sfc_main = {
       var _a;
       return (_a = common_vendor.index.getStorageSync("userInfo")) == null ? void 0 : _a.user_id;
     }
+  },
+  onShow() {
+    this.isLogin = !!common_vendor.index.getStorageSync("token");
   },
   async onLoad(options = {}) {
     this.form = { ...initialData };
@@ -222,7 +226,13 @@ if (!Array) {
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
-    a: common_vendor.f($data.fileList, (item, index, i0) => {
+    a: !$data.isLogin
+  }, !$data.isLogin ? {
+    b: common_vendor.o(($event) => common_vendor.index.navigateTo({
+      url: "/pages/login/index"
+    }))
+  } : common_vendor.e({
+    c: common_vendor.f($data.fileList, (item, index, i0) => {
       return {
         a: item,
         b: common_vendor.o(($event) => $options.handleDelete(index), index),
@@ -230,22 +240,22 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         d: common_vendor.o(($event) => $options.handlePreview(item, index), index)
       };
     }),
-    b: $data.fileList.length < 9
+    d: $data.fileList.length < 9
   }, $data.fileList.length < 9 ? {
-    c: common_vendor.o((...args) => $options.handleChooseImage && $options.handleChooseImage(...args))
+    e: common_vendor.o((...args) => $options.handleChooseImage && $options.handleChooseImage(...args))
   } : {}, {
-    d: $data.form.name,
-    e: common_vendor.o(($event) => $data.form.name = $event.detail.value),
-    f: $data.form.price,
-    g: common_vendor.o(common_vendor.m(($event) => $data.form.price = $event.detail.value, {
+    f: $data.form.name,
+    g: common_vendor.o(($event) => $data.form.name = $event.detail.value),
+    h: $data.form.price,
+    i: common_vendor.o(common_vendor.m(($event) => $data.form.price = $event.detail.value, {
       number: true
     })),
-    h: common_vendor.t($data.form.streetName),
-    i: $data.streetList,
-    j: common_vendor.o((...args) => $options.handleStreetChange && $options.handleStreetChange(...args)),
-    k: $data.form.detail_address,
-    l: common_vendor.o(($event) => $data.form.detail_address = $event.detail.value),
-    m: common_vendor.f($data.categoryList, (cat, k0, i0) => {
+    j: common_vendor.t($data.form.streetName),
+    k: $data.streetList,
+    l: common_vendor.o((...args) => $options.handleStreetChange && $options.handleStreetChange(...args)),
+    m: $data.form.detail_address,
+    n: common_vendor.o(($event) => $data.form.detail_address = $event.detail.value),
+    o: common_vendor.f($data.categoryList, (cat, k0, i0) => {
       return {
         a: common_vendor.t(cat.name),
         b: cat.category_id,
@@ -255,10 +265,11 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         d: common_vendor.o(($event) => $options.selectCategory(cat.category_id), cat.category_id)
       };
     }),
-    n: $data.form.description,
-    o: common_vendor.o(($event) => $data.form.description = $event.detail.value),
-    p: common_vendor.o((...args) => $options.publishGoods && $options.publishGoods(...args)),
-    q: common_vendor.p({
+    p: $data.form.description,
+    q: common_vendor.o(($event) => $data.form.description = $event.detail.value),
+    r: common_vendor.o((...args) => $options.publishGoods && $options.publishGoods(...args))
+  }), {
+    s: common_vendor.p({
       defaultTab: "publish"
     })
   });

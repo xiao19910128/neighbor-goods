@@ -16,28 +16,37 @@ const _sfc_main = {
   },
   methods: {
     // 微信登录（整合之前的授权逻辑）
-    async wxLogin(e) {
+    async wxLogin() {
       try {
-        const profile = e.detail.userInfo;
+        const profileRes = await new Promise((resolve, reject) => {
+          common_vendor.index.getUserProfile({
+            desc: "用于完善您的个人资料",
+            // 必须填写，否则授权失败
+            success: resolve,
+            fail: reject
+          });
+        });
+        const profile = profileRes.userInfo;
         if (!profile)
           throw new Error("取消授权");
-        console.log(111, profile);
         const loginRes = await new Promise((resolve) => {
           common_vendor.index.login({ provider: "weixin", success: resolve });
         });
-        console.log(33333, loginRes);
         const res = await api_user.userApi.wxLogin({
           code: loginRes.code,
           nickName: profile.nickName,
           avatarUrl: profile.avatarUrl
         });
-        console.log(33333, res);
         common_vendor.index.setStorageSync("token", res.data.token);
         common_vendor.index.setStorageSync("userInfo", res.data.userInfo);
         common_vendor.index.showToast({ title: "登录成功" });
         common_vendor.index.navigateBack();
       } catch (err) {
-        common_vendor.index.showToast({ title: "登录失败", icon: "none" });
+        if (err.errMsg.includes("getUserProfile:fail")) {
+          common_vendor.index.showToast({ title: "您取消了授权，无法登录", icon: "none" });
+        } else {
+          common_vendor.index.showToast({ title: "登录失败", icon: "none" });
+        }
       }
     },
     // 获取验证码

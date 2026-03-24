@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const api_user = require("../../api/user.js");
 const TabBar = () => "../../components/TabBar.js";
 const _sfc_main = {
   name: "MinePage",
@@ -16,46 +15,6 @@ const _sfc_main = {
     this.isLogin = !!common_vendor.index.getStorageSync("token");
   },
   methods: {
-    // 微信登录
-    async wxLogin() {
-      try {
-        const profileRes = await new Promise((resolve, reject) => {
-          common_vendor.index.getUserProfile({
-            desc: "用于完善您的个人资料",
-            success: resolve,
-            fail: reject
-          });
-        });
-        common_vendor.index.login({
-          provider: "weixin",
-          success: async (res) => {
-            var _a, _b, _c, _d;
-            const wxRes = await api_user.userApi.wxLogin({
-              code: res.code,
-              // 微信登录 code
-              nickName: profileRes.userInfo.nickName,
-              // 授权获取的昵称
-              avatarUrl: profileRes.userInfo.avatarUrl
-              // 授权获取的头像
-            });
-            this.isLogin = !!((_a = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _a.token);
-            this.userInfo = ((_b = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _b.userInfo) || {};
-            common_vendor.index.setStorageSync("token", (_c = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _c.token);
-            common_vendor.index.setStorageSync("userInfo", (_d = wxRes == null ? void 0 : wxRes.data) == null ? void 0 : _d.userInfo);
-          },
-          fail: (err2) => {
-            console.error("uni.login 失败:", err2);
-            common_vendor.index.showToast({ title: "登录失败", icon: "none" });
-          }
-        });
-      } catch (error) {
-        if (err.errMsg.includes("getUserProfile:fail")) {
-          common_vendor.index.showToast({ title: "您取消了授权，无法登录", icon: "none" });
-        } else {
-          common_vendor.index.showToast({ title: "登录失败", icon: "none" });
-        }
-      }
-    },
     // 退出登录
     handleLogout() {
       common_vendor.index.showModal({
@@ -79,7 +38,7 @@ const _sfc_main = {
       common_vendor.index.navigateTo({ url: "/pages/mine/my-sold" });
     },
     goToMyPublish() {
-      common_vendor.index.navigateTo({ url: "/pages/mine/my-publish" });
+      common_vendor.index.navigateTo({ url: "/pages/mine/publish-list" });
     },
     goToMyCollect() {
       common_vendor.index.navigateTo({ url: "/pages/mine/my-collect" });
@@ -114,7 +73,9 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: !$data.isLogin
   }, !$data.isLogin ? {
-    b: common_vendor.o((...args) => $options.wxLogin && $options.wxLogin(...args))
+    b: common_vendor.o(($event) => common_vendor.index.navigateTo({
+      url: "/pages/login/index"
+    }))
   } : common_vendor.e({
     c: $data.userInfo.avatarUrl || "/static/default-avatar.jpg",
     d: common_vendor.t($data.userInfo.nickName || "微信昵称"),

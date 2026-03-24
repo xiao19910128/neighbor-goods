@@ -127,7 +127,8 @@ textarea.data-v-ce8f53b1 {
   font-weight: bolder;
 }
 .publish-btn.data-v-ce8f53b1 {
-  margin: 40rpx 20rpx;
+  width: 100%;
+  margin: 20rpx;
   background: #5cb85c;
   color: #fff;
   border: none;
@@ -184,4 +185,22 @@ textarea.data-v-ce8f53b1 {
   justify-content: center;
   font-size: 12px;
   cursor: pointer;
+}
+.no-login.data-v-ce8f53b1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.no-login .login-tip.data-v-ce8f53b1 {
+  color: #999;
+  margin-bottom: 20rpx;
+}
+.main-publish.data-v-ce8f53b1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }

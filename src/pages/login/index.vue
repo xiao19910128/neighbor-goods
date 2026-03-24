@@ -16,7 +16,7 @@
 
     <!-- 微信登录 -->
     <view v-if="loginType === 'wechat'" class="wechat-login">
-      <button class="wechat-btn" open-type="getUserProfile" @getuserprofile="wxLogin">
+      <button class="wechat-btn" @click="wxLogin">
         微信授权登录
       </button>
     </view>
@@ -53,7 +53,6 @@
 
 <script>
 import { userApi } from '@/api/user.js';
-
 export default {
   data() {
     return {
@@ -66,26 +65,28 @@ export default {
   },
   methods: {
     // 微信登录（整合之前的授权逻辑）
-    async wxLogin(e) {
+    async wxLogin() {
       try {
-        // 1. 获取用户信息
-        const profile = e.detail.userInfo;
+        // 1. 手动调用 uni.getUserProfile() 获取用户授权
+        const profileRes = await new Promise((resolve, reject) => {
+          uni.getUserProfile({
+            desc: '用于完善您的个人资料', // 必须填写，否则授权失败
+            success: resolve,
+            fail: reject
+          });
+        });
+        const profile = profileRes.userInfo;
         if (!profile) throw new Error('取消授权');
-console.log(111, profile);
-
         // 2. 获取 code
         const loginRes = await new Promise((resolve) => {
           uni.login({ provider: 'weixin', success: resolve });
         });
-console.log(33333, loginRes);
-
-        // 3. 调用后端接口
+        // 3. 调用后端微信登录接口
         const res = await userApi.wxLogin({
           code: loginRes.code,
           nickName: profile.nickName,
           avatarUrl: profile.avatarUrl
         });
-console.log(33333, res);
 
         // 4. 存储数据
         uni.setStorageSync('token', res.data.token);
@@ -93,7 +94,11 @@ console.log(33333, res);
         uni.showToast({ title: '登录成功' });
         uni.navigateBack(); // 返回上一页
       } catch (err) {
-        uni.showToast({ title: '登录失败', icon: 'none' });
+        if (err.errMsg.includes('getUserProfile:fail')) {
+          uni.showToast({ title: '您取消了授权，无法登录', icon: 'none' });
+        } else {
+          uni.showToast({ title: '登录失败', icon: 'none' });
+        }
       }
     },
 

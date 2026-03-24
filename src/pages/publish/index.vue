@@ -1,85 +1,90 @@
 <template>
   <view class="publish-page">
-    <view class="form-container">
-      <!-- 商品图片上传 -->
-      <view class="form-item">
-        <view class="upload-title">添加商品图片（最多9张）</view>
-        <view class="upload-list">
-          <!-- 已上传图片 -->
-          <view 
-            class="upload-item" 
-            v-for="(item, index) in fileList" 
-            :key="index"
-            @click.stop="handlePreview(item, index)"
-          >
-            <image :src="item" class="upload-img" mode="aspectFill" crossorigin="anonymous" />
-            <view class="upload-delete" @click.stop="handleDelete(index)">×</view>
-          </view>
-          <!-- 添加图片按钮 -->
-          <view 
-            class="upload-item upload-add" 
-            v-if="fileList.length < 9"
-            @click.stop="handleChooseImage"
-          >
-            <view class="upload-add-icon">+</view>
+    <!-- 未登录 -->
+    <view v-if="!isLogin" class="no-login">
+      <view class="login-tip">还没有登录，请先登录</view>
+      <button class="btn-login" @click="uni.navigateTo({ url: '/pages/login/index' })">登录</button>
+    </view>
+    <!-- 已登录--可发布闲置 -->
+    <view v-else class="main-publish">
+      <view class="form-container">
+        <!-- 商品图片上传 -->
+        <view class="form-item">
+          <view class="upload-title">添加商品图片（最多9张）</view>
+          <view class="upload-list">
+            <!-- 已上传图片 -->
+            <view 
+              class="upload-item" 
+              v-for="(item, index) in fileList" 
+              :key="index"
+              @click.stop="handlePreview(item, index)"
+            >
+              <image :src="item" class="upload-img" mode="aspectFill" crossorigin="anonymous" />
+              <view class="upload-delete" @click.stop="handleDelete(index)">×</view>
+            </view>
+            <!-- 添加图片按钮 -->
+            <view 
+              class="upload-item upload-add" 
+              v-if="fileList.length < 9"
+              @click.stop="handleChooseImage"
+            >
+              <view class="upload-add-icon">+</view>
+            </view>
           </view>
         </view>
-      </view>
 
-      <!-- 商品标题 -->
-      <view class="form-item">
-        <text class="label">商品标题</text>
-        <input v-model="form.name" placeholder="请输入商品标题" />
-      </view>
+        <!-- 商品标题 -->
+        <view class="form-item">
+          <text class="label">商品标题</text>
+          <input v-model="form.name" placeholder="请输入商品标题" />
+        </view>
 
-      <!-- 商品价格 -->
-      <view class="form-item">
-        <text class="label">价格（元）</text>
-        <input v-model.number="form.price" type="number" placeholder="0.00" />
-      </view>
+        <!-- 商品价格 -->
+        <view class="form-item">
+          <text class="label">价格（元）</text>
+          <input v-model.number="form.price" type="number" placeholder="0.00" />
+        </view>
 
-       <!-- 地址区域配置 -->
-      <view class="address-section form-item">
+        <!-- 地址区域配置 -->
+        <view class="address-section form-item">
 
-        <!-- 2. 街道/社区选择（默认是你的目标社区） -->
-        <picker :range="streetList" @change="handleStreetChange">
-          <view class="picker-text">当前社区：{{ form.streetName }}</view>
-        </picker>
+          <!-- 2. 街道/社区选择（默认是你的目标社区） -->
+          <picker :range="streetList" @change="handleStreetChange">
+            <view class="picker-text">当前社区：{{ form.streetName }}</view>
+          </picker>
 
-        <!-- 3. 详细地址（精确到小区/门口） -->
-        <input 
-          placeholder="请输入详细地址（如：阳光花园3栋）" 
-          v-model="form.detail_address" 
-        />
-      </view>
+          <!-- 3. 详细地址（精确到小区/门口） -->
+          <input 
+            placeholder="请输入详细地址（如：阳光花园3栋）" 
+            v-model="form.detail_address" 
+          />
+        </view>
 
-      <!-- 平铺分类选择 -->
-      <view class="form-item">
-        <text class="label">商品分类</text>
-        <view class="category-list">
-          <view
-            v-for="cat in categoryList"
-            :key="cat.category_id"
-            :class="['category-item', { active: form.category_id === cat.category_id }]"
-            @click.stop="selectCategory(cat.category_id)"
-          >
-            {{ cat.name }}
+        <!-- 平铺分类选择 -->
+        <view class="form-item">
+          <text class="label">商品分类</text>
+          <view class="category-list">
+            <view
+              v-for="cat in categoryList"
+              :key="cat.category_id"
+              :class="['category-item', { active: form.category_id === cat.category_id }]"
+              @click.stop="selectCategory(cat.category_id)"
+            >
+              {{ cat.name }}
+            </view>
           </view>
         </view>
-      </view>
 
-      <!-- 商品描述（包含成色/品牌等信息） -->
-      <view class="form-item">
-        <text class="label">商品描述（可填写成色、品牌、使用情况等）</text>
-        <textarea v-model="form.description" placeholder="例如：99新小米14，全套配件，无拆无修..." />
+        <!-- 商品描述（包含成色/品牌等信息） -->
+        <view class="form-item">
+          <text class="label">商品描述（可填写成色、品牌、使用情况等）</text>
+          <textarea v-model="form.description" placeholder="例如：99新小米14，全套配件，无拆无修..." />
+        </view>
+      </view>
+      <view class="footer-box">
+        <button class="publish-btn" @click.stop="publishGoods">发布闲置</button>
       </view>
     </view>
-
-    <!-- 发布按钮 -->
-    <view class="footer-box">
-      <button class="publish-btn" @click.stop="publishGoods">发布闲置</button>
-    </view>
-
     <TabBar defaultTab="publish" />
   </view>
 </template>
@@ -113,6 +118,7 @@ export default {
       streetList: ['梅陇镇', '吴泾镇', '颛桥镇', '华漕镇'], 
       streetId: '',
       goodsId: '', // 编辑模式下，商品的ID
+      isLogin: !!uni.getStorageSync('token')
     };
   },
 
@@ -120,6 +126,10 @@ export default {
     user_id() {
       return uni.getStorageSync('userInfo')?.user_id;
     }
+  },
+  onShow() {
+    // 从登录页返回时需要更新token状态，重新判断是否登录
+    this.isLogin = !!uni.getStorageSync('token');
   },
   async onLoad(options = {}) {
     this.form = { ...initialData };
@@ -309,7 +319,6 @@ export default {
       this.form.street = this.streetList[e.detail.value];
       this.form.streetName = this.form.street;
     },
-   
   }
 };
 </script>
@@ -429,7 +438,8 @@ textarea {
   }
 }
 .publish-btn {
-  margin: 40rpx 20rpx;
+  width: 100%;
+  margin: 20rpx;
   background: #5cb85c;
   color: #fff;
   border: none;
@@ -491,5 +501,25 @@ textarea {
   justify-content: center;
   font-size: 12px;
   cursor: pointer;
+}
+
+
+.no-login {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .login-tip {
+    color: #999;
+    margin-bottom: 20rpx;
+  }
+}
+.main-publish {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 </style>

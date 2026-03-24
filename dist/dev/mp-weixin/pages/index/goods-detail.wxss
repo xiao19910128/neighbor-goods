@@ -1,0 +1,137 @@
+
+/* 页面容器 */
+.detail-page.data-v-9c1ceb90 {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 120rpx;
+}
+
+/* 轮播图 */
+.banner-swiper.data-v-9c1ceb90 {
+  width: 100%;
+  height: 500rpx;
+  background-color: #f0f0f0;
+}
+.banner-img.data-v-9c1ceb90 {
+  width: 100%;
+  height: 100%;
+}
+
+/* 商品信息卡片 */
+.goods-info-card.data-v-9c1ceb90 {
+  background-color: #fff;
+  margin: 20rpx;
+  padding: 30rpx;
+  border-radius: 16rpx;
+}
+.goods-title.data-v-9c1ceb90 {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 20rpx;
+}
+.goods-price.data-v-9c1ceb90 {
+  font-size: 44rpx;
+  color: #ff3b30;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+.goods-seller.data-v-9c1ceb90 {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+.seller-avatar.data-v-9c1ceb90 {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+}
+.seller-name.data-v-9c1ceb90 {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 通用卡片样式 */
+.goods-desc-card.data-v-9c1ceb90, .address-card.data-v-9c1ceb90 {
+  background-color: #fff;
+  margin: 0 20rpx 20rpx;
+  padding: 30rpx;
+  border-radius: 16rpx;
+}
+.card-title.data-v-9c1ceb90 {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+/* 商品描述 */
+.desc-content.data-v-9c1ceb90 {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 自提地址模块 */
+.address-content.data-v-9c1ceb90 {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
+.address-full.data-v-9c1ceb90 {
+  display: block;
+  margin-bottom: 10rpx;
+}
+.address-tip.data-v-9c1ceb90 {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 底部操作栏 */
+.footer-bar.data-v-9c1ceb90 {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 98rpx;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-top: 1rpx solid #f0f0f0;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+}
+.collect-btn.data-v-9c1ceb90 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+}
+.collect-icon.data-v-9c1ceb90 {
+  font-size: 36rpx;
+  color: #999;
+  transition: all 0.3s;
+}
+.collect-icon.active.data-v-9c1ceb90 {
+  color: #ff3b30;
+}
+.collect-text.data-v-9c1ceb90 {
+  font-size: 24rpx;
+  color: #666;
+}
+.buy-btn.data-v-9c1ceb90 {
+  flex: 2;
+  height: 70rpx;
+  line-height: 70rpx;
+  background-color: #ff3b30;
+  color: #fff;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+}

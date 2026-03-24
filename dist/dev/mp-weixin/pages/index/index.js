@@ -75,7 +75,7 @@ const _sfc_main = {
       console.log("切换到标签:", tabName);
     },
     toDetail(product) {
-      common_vendor.index.navigateTo({ url: "/pages/mine/index" });
+      common_vendor.index.navigateTo({ url: `/pages/index/goods-detail?goods_id=${product.goods_id}` });
     }
   }
 };

@@ -131,7 +131,7 @@ export default {
       console.log('切换到标签:', tabName);
     },
     toDetail(product) {
-      uni.navigateTo({url: '/pages/mine/index'})
+      uni.navigateTo({url: `/pages/index/goods-detail?goods_id=${product.goods_id}`})
     },
   }
 };

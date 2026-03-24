@@ -53,7 +53,13 @@
       "style": {
         "navigationBarTitleText": "编辑地址"
       }
-    }
+    },
+		{
+			"path": "pages/index/goods-detail",
+			"style": {
+				"navigationBarTitleText": "闲置商品详情"
+			}
+		}
 	],
 	"easycom": {
    "autoscan": true,

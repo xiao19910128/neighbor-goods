@@ -8,7 +8,8 @@
     "pages/mine/collection-list",
     "pages/mine/message-list",
     "pages/mine/address-list",
-    "pages/mine/address-edit"
+    "pages/mine/address-edit",
+    "pages/index/goods-detail"
   ],
   "window": {
     "navigationBarTextStyle": "black",

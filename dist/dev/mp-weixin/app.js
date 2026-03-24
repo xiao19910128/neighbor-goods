@@ -7,6 +7,10 @@ if (!Math) {
   "./pages/mine/index.js";
   "./pages/login/index.js";
   "./pages/mine/publish-list.js";
+  "./pages/mine/collection-list.js";
+  "./pages/mine/message-list.js";
+  "./pages/mine/address-list.js";
+  "./pages/mine/address-edit.js";
 }
 const _sfc_main = {
   onLaunch: function() {

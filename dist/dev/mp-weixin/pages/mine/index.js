@@ -32,31 +32,6 @@ const _sfc_main = {
           }
         }
       });
-    },
-    // 页面跳转（根据实际路由修改）
-    goToMySold() {
-      common_vendor.index.navigateTo({ url: "/pages/mine/my-sold" });
-    },
-    goToMyPublish() {
-      common_vendor.index.navigateTo({ url: "/pages/mine/publish-list" });
-    },
-    goToMyCollect() {
-      common_vendor.index.navigateTo({ url: "/pages/mine/my-collect" });
-    },
-    goToAddress() {
-      common_vendor.index.navigateTo({ url: "/pages/mine/address" });
-    },
-    goToMessage() {
-      common_vendor.index.navigateTo({ url: "/pages/mine/message" });
-    },
-    goToSecurity() {
-      common_vendor.index.navigateTo({ url: "/pages/mine/security" });
-    },
-    goToPrivacy() {
-      common_vendor.index.navigateTo({ url: "/pages/mine/privacy" });
-    },
-    goToHelp() {
-      common_vendor.index.navigateTo({ url: "/pages/mine/help" });
     }
   }
 };
@@ -84,49 +59,59 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    f: common_vendor.o((...args) => $options.goToMySold && $options.goToMySold(...args)),
+    f: common_vendor.o(($event) => common_vendor.index.navigateTo({
+      url: "/pages/mine/publish-list"
+    })),
     g: common_vendor.p({
       type: "shop",
       size: "24",
       color: "#666"
     }),
-    h: common_vendor.o((...args) => $options.goToMyPublish && $options.goToMyPublish(...args)),
+    h: common_vendor.o(($event) => common_vendor.index.navigateTo({
+      url: "/pages/mine/publish-list"
+    })),
     i: common_vendor.p({
       type: "star",
       size: "24",
       color: "#666"
     }),
-    j: common_vendor.o((...args) => $options.goToMyCollect && $options.goToMyCollect(...args)),
+    j: common_vendor.o(($event) => common_vendor.index.navigateTo({
+      url: "/pages/mine/collection-list"
+    })),
     k: common_vendor.p({
       type: "location",
       size: "24",
       color: "#666"
     }),
-    l: common_vendor.o((...args) => $options.goToAddress && $options.goToAddress(...args)),
+    l: common_vendor.o(($event) => common_vendor.index.navigateTo({
+      url: "/pages/mine/address-list"
+    })),
     m: common_vendor.p({
       type: "chat",
       size: "24",
       color: "#666"
     }),
-    n: common_vendor.o((...args) => $options.goToMessage && $options.goToMessage(...args)),
+    n: common_vendor.o(($event) => common_vendor.index.navigateTo({
+      url: "/pages/mine/message-list"
+    })),
     o: common_vendor.p({
       type: "locked",
       size: "24",
       color: "#666"
     }),
-    p: common_vendor.o((...args) => $options.goToSecurity && $options.goToSecurity(...args)),
+    p: common_vendor.o((...args) => _ctx.goToSecurity && _ctx.goToSecurity(...args)),
     q: common_vendor.p({
       type: "eye",
       size: "24",
       color: "#666"
     }),
-    r: common_vendor.o((...args) => $options.goToPrivacy && $options.goToPrivacy(...args)),
+    r: common_vendor.o((...args) => _ctx.goToPrivacy && _ctx.goToPrivacy(...args)),
     s: common_vendor.p({
       type: "help",
       size: "24",
       color: "#666"
     }),
-    t: common_vendor.o((...args) => $options.goToHelp && $options.goToHelp(...args)),
+    t: common_vendor.o((...args) => _ctx.goToHelp && _ctx.goToHelp(...args)),
     v: $data.isLogin
   }, $data.isLogin ? {
     w: common_vendor.o((...args) => $options.handleLogout && $options.handleLogout(...args))

@@ -1,0 +1,1 @@
+<view class="collect-list"><view wx:for="{{a}}" wx:for-item="item" wx:key="d" class="goods-card"><image class="goods-img" src="{{item.a}}" mode="aspectFill"></image><view class="goods-info"><text class="title">{{item.b}}</text><text class="price">¥{{item.c}}</text></view></view><view wx:if="{{b}}" class="empty"><text>暂无收藏</text></view></view>

@@ -4,7 +4,11 @@
     "pages/publish/index",
     "pages/mine/index",
     "pages/login/index",
-    "pages/mine/publish-list"
+    "pages/mine/publish-list",
+    "pages/mine/collection-list",
+    "pages/mine/message-list",
+    "pages/mine/address-list",
+    "pages/mine/address-edit"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -12,9 +16,15 @@
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
   },
+  "requiredPrivateInfos": [
+    "chooseAddress"
+  ],
   "permission": {
     "scope.userLocation": {
-      "desc": ""
+      "desc": "用于获取地址"
+    },
+    "scope.address": {
+      "desc": "用于获取地址"
     }
   },
   "usingComponents": {

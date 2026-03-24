@@ -23,19 +23,19 @@
           <view class="grid-group">
             <text class="group-title">交易管理</text>
             <view class="grid-container">
-              <view class="grid-item" @click="goToMySold">
+              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/publish-list' })">
                 <view class="icon-wrapper">
                 <uni-icons type="gift" size="24" color="#666"></uni-icons>
                 </view>
                 <text class="item-text">我卖出的</text>
               </view>
-              <view class="grid-item" @click="goToMyPublish">
+              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/publish-list' })">
                 <view class="icon-wrapper">
                   <uni-icons type="shop" size="24" color="#666"></uni-icons>
                 </view>
                 <text class="item-text">我发布的</text>
               </view>
-              <view class="grid-item" @click="goToMyCollect">
+              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/collection-list' })">
                 <view class="icon-wrapper">
                   <uni-icons type="star" size="24" color="#666"></uni-icons>
                 </view>
@@ -48,13 +48,13 @@
           <view class="grid-group">
             <text class="group-title">偏好管理</text>
             <view class="grid-container">
-              <view class="grid-item" @click="goToAddress">
+              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/address-list' })">
                 <view class="icon-wrapper">
                   <uni-icons type="location" size="24" color="#666"></uni-icons>
                 </view>
                 <text class="item-text">地址管理</text>
               </view>
-              <view class="grid-item" @click="goToMessage">
+              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/message-list' })">
                 <view class="icon-wrapper">
                   <uni-icons type="chat" size="24" color="#666"></uni-icons>
                 </view>
@@ -135,15 +135,6 @@ export default {
         }
       });
     },
-    // 页面跳转（根据实际路由修改）
-    goToMySold() { uni.navigateTo({ url: '/pages/mine/my-sold' }) },
-    goToMyPublish() { uni.navigateTo({ url: '/pages/mine/publish-list' }) },
-    goToMyCollect() { uni.navigateTo({ url: '/pages/mine/my-collect' }) },
-    goToAddress() { uni.navigateTo({ url: '/pages/mine/address' }) },
-    goToMessage() { uni.navigateTo({ url: '/pages/mine/message' }) },
-    goToSecurity() { uni.navigateTo({ url: '/pages/mine/security' }) },
-    goToPrivacy() { uni.navigateTo({ url: '/pages/mine/privacy' }) },
-    goToHelp() { uni.navigateTo({ url: '/pages/mine/help' }) }
   }
 }
 </script>

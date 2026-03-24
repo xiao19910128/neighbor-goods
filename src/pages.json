@@ -1,5 +1,5 @@
 {
-	"pages": [ 
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -27,7 +27,31 @@
     {
       "path": "pages/mine/publish-list",
       "style": {
-        "navigationBarTitleText": "我的发布列表"
+        "navigationBarTitleText": "我发布的"
+      }
+    },
+    {
+      "path": "pages/mine/collection-list",
+      "style": {
+        "navigationBarTitleText": "我收藏的"
+      }
+    },
+    {
+      "path": "pages/mine/message-list",
+      "style": {
+        "navigationBarTitleText": "我的消息"
+      }
+    },
+    {
+      "path": "pages/mine/address-list",
+      "style": {
+        "navigationBarTitleText": "地址管理"
+      }
+    },
+    {
+      "path": "pages/mine/address-edit",
+      "style": {
+        "navigationBarTitleText": "编辑地址"
       }
     }
 	],

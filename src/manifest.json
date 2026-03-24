@@ -56,9 +56,13 @@
             "urlCheck" : false
         },
         "usingComponents" : true, // 开启小程序自定义组件支持
+        "requiredPrivateInfos": ["chooseAddress"], // requiredPrivateInfos 声明 chooseAddress，选择系统地址必须前提条件
         "permission" : {
             "scope.userLocation" : {
-                "desc" : ""
+                "desc" : "用于获取地址"
+            },
+            "scope.address": {
+                "desc": "用于获取地址"
             }
         }
     },

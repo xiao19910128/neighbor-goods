@@ -106,10 +106,10 @@ export default {
         uni.showToast({ title: '请先登录', icon: 'none' })
         return
       }
-
+      
       // 跳转到地址选择页，选择自提/收货地址
-      uni.navigateTo({
-        url: '/pages/mine/address-list?from=order&goods_id=' + this.goods_id
+      uni.navigateTo({  
+        url: `/pages/mine/address-list?from=buy&goods_id=${this.goods_id}`
       })
     },
 

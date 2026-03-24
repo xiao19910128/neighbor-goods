@@ -63,7 +63,7 @@ const _sfc_main = {
         return;
       }
       common_vendor.index.navigateTo({
-        url: "/pages/mine/address-list?from=order&goods_id=" + this.goods_id
+        url: `/pages/mine/address-list?from=buy&goods_id=${this.goods_id}`
       });
     },
     // 图片加载失败兜底

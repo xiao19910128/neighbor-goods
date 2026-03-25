@@ -107,7 +107,7 @@ export default {
   components: {  TabBar },
   data() {
     return {
-      userInfo: uni.getStorageSync('userInfo') || {},
+      userInfo: {},
       isLogin: !!uni.getStorageSync('token')
     }
   },

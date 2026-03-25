@@ -32,17 +32,14 @@ const _sfc_main = {
       streetId: "",
       goodsId: "",
       // 编辑模式下，商品的ID
-      isLogin: !!common_vendor.index.getStorageSync("token")
+      isLogin: !!common_vendor.index.getStorageSync("token"),
+      userInfo: {}
+      // 用户信息
     };
-  },
-  computed: {
-    user_id() {
-      var _a;
-      return (_a = common_vendor.index.getStorageSync("userInfo")) == null ? void 0 : _a.user_id;
-    }
   },
   onShow() {
     this.isLogin = !!common_vendor.index.getStorageSync("token");
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
   },
   async onLoad(options = {}) {
     this.form = { ...initialData };
@@ -70,7 +67,7 @@ const _sfc_main = {
     },
     // 发布商品
     async publishGoods() {
-      var _a;
+      var _a, _b;
       if (!this.form.name)
         return common_vendor.index.showToast({ title: "请输入商品标题", icon: "none" });
       if (!this.form.price)
@@ -83,7 +80,7 @@ const _sfc_main = {
         const params = {
           ...this.form,
           image_url: (_a = this.fileList) == null ? void 0 : _a.join(","),
-          user_id: this.user_id
+          user_id: (_b = this.userInfo) == null ? void 0 : _b.user_id
         };
         let publishRes = null;
         if (this.goodsId) {

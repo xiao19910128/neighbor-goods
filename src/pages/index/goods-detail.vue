@@ -55,15 +55,12 @@ export default {
       goods_id: 0,
       detail: {},
       imgs: [],
-      isCollect: false
-    }
-  },
-  computed: {
-    userInfo() {
-      return uni.getStorageSync('userInfo') || {}
+      isCollect: false,
+      userInfo: {}
     }
   },
   onLoad(options) {
+    this.userInfo = uni.getStorageSync('user_info') || {}
     this.goods_id = options.goods_id
     this.getDetail()
     this.getCollectStatus()
@@ -93,6 +90,9 @@ export default {
     async doCollect() {
       if (!this.userInfo?.user_id) {
         uni.showToast({ title: '请先登录', icon: 'none' })
+        setTimeout(() => {
+          uni.navigateTo({ url: '/pages/login/index' })
+        }, 300)
         return
       }
       const res = await collectionsApi.toggleCollection({user_id: this.userInfo?.user_id, goods_id: this.goods_id})
@@ -104,9 +104,12 @@ export default {
     async toBuy() {
       if (!this.userInfo?.user_id) {
         uni.showToast({ title: '请先登录', icon: 'none' })
+        setTimeout(() => {
+          uni.navigateTo({ url: '/pages/login/index' })
+        }, 300)
         return
       }
-      
+
       // 跳转到地址选择页，选择自提/收货地址
       uni.navigateTo({  
         url: `/pages/mine/address-list?from=buy&goods_id=${this.goods_id}`

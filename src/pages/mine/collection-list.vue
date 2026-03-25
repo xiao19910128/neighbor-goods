@@ -45,18 +45,20 @@ import { collectionsApi } from '@/api/collection.js'
 export default {
   data() {
     return {
-      collectList: []
+      collectList: [],
+      userInfo: {},
     }
   },
   onShow() {
+    this.userInfo = uni.getStorageSync('user_info') || {}
     this.getCollectList()
   },
   methods: {
     // 获取收藏列表
     async getCollectList() {
-      const userInfo = uni.getStorageSync('userInfo')
-      if (!userInfo?.user_id) return
-      const res = await collectionsApi.getCollectionsList({user_id: userInfo.user_id})
+      const { user_id = '' } = this.userInfo || {}
+      if ( !user_id ) return
+      const res = await collectionsApi.getCollectionsList({ user_id })
       if (res.code === 200) {
         this.collectList = res.data?.map(item=> ({
           ...item,
@@ -71,9 +73,9 @@ export default {
         title: '提示',
         content: '确定取消收藏该商品吗？',
         success: async () => {
-          const user = uni.getStorageSync('userInfo')
+          const { user_id = '' } = this.userInfo || {}    
           await collectionsApi.toggleCollection({
-            user_id: user.user_id,
+            user_id,
             goods_id: goods_id
           })
           uni.showToast({ title: '取消收藏成功' })

@@ -70,17 +70,12 @@ export default {
       addressLists: [],
       isSelectMode: false, // 是否为选择模式（从商品详情跳转）
       selectedId: 0,      // 选中的地址ID
-      goods_id: 0         // 下单的商品ID
+      goods_id: 0,       // 下单的商品ID
+      userInfo: {},
     };
   },
 
-  computed: {
-    userInfo() {
-      return uni.getStorageSync('userInfo') || {}
-    }
-  },
   onLoad(options) {
-    // 🔥 核心：判断是否为选择模式
     if (options.from === 'buy') {
       this.isSelectMode = true;
       this.goods_id = options.goods_id;
@@ -90,6 +85,7 @@ export default {
     this.getList();
   },
   onShow() {
+    this.userInfo = uni.getStorageSync('userInfo') || {};
     this.getList();
   },
   methods: {
@@ -123,6 +119,9 @@ export default {
       const { user_id = '' } = this.userInfo;
       if (!user_id) {
         uni.showToast({ title: '请先登录', icon: 'none' });
+        setTimeout(() => {
+          uni.navigateTo({ url: '/pages/login/index' })
+        }, 300)
         return;
       }
       try {
@@ -168,6 +167,9 @@ export default {
           const { user_id = '' } = this.userInfo;
           if (!user_id) {
             uni.showToast({ title: '请先登录', icon: 'none' });
+            setTimeout(() => {
+              uni.navigateTo({ url: '/pages/login/index' })
+            }, 300)
             return;
           }
           await addressApi.deleteAddress({ address_id,user_id });
@@ -189,6 +191,9 @@ export default {
         const { user_id = '' } = this.userInfo;
         if (!user_id) {
           uni.showToast({ title: '请先登录', icon: 'none' });
+          setTimeout(() => {
+            uni.navigateTo({ url: '/pages/login/index' })
+          }, 300)
           return;
         }
         

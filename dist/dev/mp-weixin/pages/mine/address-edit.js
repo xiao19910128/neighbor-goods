@@ -30,6 +30,9 @@ const _sfc_main = {
       const user = common_vendor.index.getStorageSync("userInfo");
       if (!user || !user.user_id) {
         common_vendor.index.showToast({ title: "请先登录", icon: "none" });
+        setTimeout(() => {
+          common_vendor.index.navigateTo({ url: "/pages/login/index" });
+        }, 300);
         return;
       }
       const phoneReg = /^1[3-9]\d{9}$/;

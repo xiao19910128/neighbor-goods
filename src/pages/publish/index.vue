@@ -118,18 +118,15 @@ export default {
       streetList: ['梅陇镇', '吴泾镇', '颛桥镇', '华漕镇'], 
       streetId: '',
       goodsId: '', // 编辑模式下，商品的ID
-      isLogin: !!uni.getStorageSync('token')
+      isLogin: !!uni.getStorageSync('token'),
+      userInfo: {}, // 用户信息
     };
   },
-
-  computed: {
-    user_id() {
-      return uni.getStorageSync('userInfo')?.user_id;
-    }
-  },
+  
   onShow() {
     // 从登录页返回时需要更新token状态，重新判断是否登录
     this.isLogin = !!uni.getStorageSync('token');
+    this.userInfo = uni.getStorageSync('userInfo') || {};
   },
   async onLoad(options = {}) {
     this.form = { ...initialData };
@@ -164,12 +161,11 @@ export default {
       if (!this.form.price) return uni.showToast({ title: '请输入商品价格', icon: 'none' });
       if (!this.form.category_id) return uni.showToast({ title: '请选择商品分类', icon: 'none' });
       if (!this.form.street) return uni.showToast({ title: '请选择社区信息', icon: 'none' });
-
       try {
         const params = {
           ...this.form,
           image_url: this.fileList?.join(','),
-          user_id: this.user_id
+          user_id: this.userInfo?.user_id
         }
         let publishRes = null;        
         if (this.goodsId) {

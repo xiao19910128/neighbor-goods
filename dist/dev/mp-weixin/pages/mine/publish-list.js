@@ -16,17 +16,11 @@ const _sfc_main = {
       // 是否有更多数据
       loadMoreStatus: "more",
       // 加载更多状态：more/noMore/loading
-      userId: common_vendor.index.getStorageSync("userId") || 1
-      // 当前登录用户ID（需替换为实际用户ID）
+      userInfo: {}
     };
   },
-  computed: {
-    user_id() {
-      var _a;
-      return (_a = common_vendor.index.getStorageSync("userInfo")) == null ? void 0 : _a.user_id;
-    }
-  },
   onLoad(options) {
+    this.userInfo = common_vendor.index.$u.getStorageSync("user_info") || {};
     this.getPublishedGoods();
     if (options.from === "publish") {
       common_vendor.index.showToast({ title: "发布成功！", icon: "success" });
@@ -35,14 +29,14 @@ const _sfc_main = {
   methods: {
     // 获取我发布的商品列表
     async getPublishedGoods() {
-      var _a;
+      var _a, _b;
       try {
         this.loading = true;
         this.loadMoreStatus = "loading";
         const publishedRes = await api_goods.goodsApi.getGoodsPublished({
           page: this.page,
           size: this.size,
-          user_id: this.user_id
+          user_id: (_a = this.userInfo) == null ? void 0 : _a.user_id
         });
         if ((publishedRes == null ? void 0 : publishedRes.code) === 200) {
           const { list, pagination } = publishedRes == null ? void 0 : publishedRes.data;
@@ -58,7 +52,7 @@ const _sfc_main = {
           } else {
             this.goodsList = this.goodsList.concat(commonList);
           }
-          this.hasMore = ((_a = this.goodsList) == null ? void 0 : _a.length) < pagination.total;
+          this.hasMore = ((_b = this.goodsList) == null ? void 0 : _b.length) < pagination.total;
           this.loadMoreStatus = this.hasMore ? "more" : "noMore";
         }
       } catch (err) {

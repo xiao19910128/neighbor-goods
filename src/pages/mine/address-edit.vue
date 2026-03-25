@@ -63,6 +63,9 @@ export default {
       const user = uni.getStorageSync('userInfo')
       if (!user || !user.user_id) {
         uni.showToast({ title: '请先登录', icon: 'none' })
+        setTimeout(() => {
+          uni.navigateTo({ url: '/pages/login/index' })
+        }, 300)
         return
       }
       const phoneReg = /^1[3-9]\d{9}$/

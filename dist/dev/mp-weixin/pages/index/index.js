@@ -8,47 +8,19 @@ const _sfc_main = {
   data() {
     return {
       products: [],
-      // products: [
-      //   {
-      //     image: '/src/static/logo.png',
-      //     title: '个人出售dji大疆osmo pocket',
-      //     price: '¥20',
-      //     wantCount: 417,
-      //     seller: 'mrten先生 芝麻信用极好'
-      //   },
-      //   {
-      //     image: '/src/static/logo.png',
-      //     title: 'AirPods Pro 2 个人闲置',
-      //     price: '¥300',
-      //     wantCount: 523,
-      //     seller: '青岛优... 芝麻信用优秀'
-      //   },
-      //   {
-      //     image: '/src/static/logo.png',
-      //     title: '全新未拆封iPhone 14 Pro',
-      //     price: '¥8500',
-      //     wantCount: 1245,
-      //     seller: '科技爱好者 芝麻信用极好'
-      //   },
-      //   {
-      //     image: '/src/static/logo.png',
-      //     title: 'Nike Air Max 90 全新',
-      //     price: '¥650',
-      //     wantCount: 328,
-      //     seller: '运动达人 芝麻信用优秀'
-      //   }
-      // ],
       searchValue: "",
+      userInfo: {},
       viewMode: "double"
       // 初始为双排模式
     };
   },
-  mounted() {
+  onShow() {
     this.getGoodsList();
   },
   methods: {
     async getGoodsList() {
       var _a;
+      this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
       const listRes = await api_goods.goodsApi.getGoodsList({ name: this.searchValue });
       this.products = (_a = listRes.data) == null ? void 0 : _a.map((item) => {
         var _a2;
@@ -72,7 +44,6 @@ const _sfc_main = {
       if (event && event.target) {
         event.target.classList.add("active");
       }
-      console.log("切换到标签:", tabName);
     },
     toDetail(product) {
       common_vendor.index.navigateTo({ url: `/pages/index/goods-detail?goods_id=${product.goods_id}` });
@@ -121,7 +92,13 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       color: "#999"
     })
   }, {
-    i: common_vendor.p({
+    i: !$data.userInfo.user_id
+  }, !$data.userInfo.user_id ? {
+    j: common_vendor.o(($event) => common_vendor.index.navigateTo({
+      url: "/pages/login/index"
+    }))
+  } : {}, {
+    k: common_vendor.p({
       defaultTab: "home"
     })
   });

@@ -5,20 +5,22 @@ const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   data() {
     return {
-      collectList: []
+      collectList: [],
+      userInfo: {}
     };
   },
   onShow() {
+    this.userInfo = common_vendor.index.getStorageSync("user_info") || {};
     this.getCollectList();
   },
   methods: {
     // 获取收藏列表
     async getCollectList() {
       var _a;
-      const userInfo = common_vendor.index.getStorageSync("userInfo");
-      if (!(userInfo == null ? void 0 : userInfo.user_id))
+      const { user_id = "" } = this.userInfo || {};
+      if (!user_id)
         return;
-      const res = await api_collection.collectionsApi.getCollectionsList({ user_id: userInfo.user_id });
+      const res = await api_collection.collectionsApi.getCollectionsList({ user_id });
       if (res.code === 200) {
         this.collectList = (_a = res.data) == null ? void 0 : _a.map((item) => {
           var _a2;
@@ -35,9 +37,9 @@ const _sfc_main = {
         title: "提示",
         content: "确定取消收藏该商品吗？",
         success: async () => {
-          const user = common_vendor.index.getStorageSync("userInfo");
+          const { user_id = "" } = this.userInfo || {};
           await api_collection.collectionsApi.toggleCollection({
-            user_id: user.user_id,
+            user_id,
             goods_id
           });
           common_vendor.index.showToast({ title: "取消收藏成功" });

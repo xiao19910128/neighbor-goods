@@ -179,6 +179,8 @@ export default {
 }
 .phone-login {
   gap: 30rpx;
+  display: flex;
+  flex-direction: column;
 }
 .input-item {
   border: 1rpx solid #eee;
@@ -191,6 +193,7 @@ export default {
   justify-content: space-between;
 }
 .get-code-btn {
+  margin: 0;
   background-color: #f5f5f5;
   color: #666;
   padding: 10rpx 20rpx;
@@ -198,6 +201,7 @@ export default {
   font-size: 24rpx;
 }
 .login-btn {
+  width: 100%;
   background-color: #07c160;
   color: #fff;
   border-radius: 8rpx;

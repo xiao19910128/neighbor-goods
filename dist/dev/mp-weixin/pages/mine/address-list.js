@@ -10,14 +10,10 @@ const _sfc_main = {
       // 是否为选择模式（从商品详情跳转）
       selectedId: 0,
       // 选中的地址ID
-      goods_id: 0
+      goods_id: 0,
       // 下单的商品ID
+      userInfo: {}
     };
-  },
-  computed: {
-    userInfo() {
-      return common_vendor.index.getStorageSync("userInfo") || {};
-    }
   },
   onLoad(options) {
     if (options.from === "buy") {
@@ -28,6 +24,7 @@ const _sfc_main = {
     this.getList();
   },
   onShow() {
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
     this.getList();
   },
   methods: {
@@ -60,6 +57,9 @@ const _sfc_main = {
       const { user_id = "" } = this.userInfo;
       if (!user_id) {
         common_vendor.index.showToast({ title: "请先登录", icon: "none" });
+        setTimeout(() => {
+          common_vendor.index.navigateTo({ url: "/pages/login/index" });
+        }, 300);
         return;
       }
       try {
@@ -99,6 +99,9 @@ const _sfc_main = {
           const { user_id = "" } = this.userInfo;
           if (!user_id) {
             common_vendor.index.showToast({ title: "请先登录", icon: "none" });
+            setTimeout(() => {
+              common_vendor.index.navigateTo({ url: "/pages/login/index" });
+            }, 300);
             return;
           }
           await api_address.addressApi.deleteAddress({ address_id, user_id });
@@ -119,6 +122,9 @@ const _sfc_main = {
         const { user_id = "" } = this.userInfo;
         if (!user_id) {
           common_vendor.index.showToast({ title: "请先登录", icon: "none" });
+          setTimeout(() => {
+            common_vendor.index.navigateTo({ url: "/pages/login/index" });
+          }, 300);
           return;
         }
         await api_address.addressApi.addAddress({

@@ -6,7 +6,7 @@ const _sfc_main = {
   components: { TabBar },
   data() {
     return {
-      userInfo: common_vendor.index.getStorageSync("userInfo") || {},
+      userInfo: {},
       isLogin: !!common_vendor.index.getStorageSync("token")
     };
   },

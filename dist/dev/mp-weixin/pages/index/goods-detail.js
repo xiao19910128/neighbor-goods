@@ -9,15 +9,12 @@ const _sfc_main = {
       goods_id: 0,
       detail: {},
       imgs: [],
-      isCollect: false
+      isCollect: false,
+      userInfo: {}
     };
   },
-  computed: {
-    userInfo() {
-      return common_vendor.index.getStorageSync("userInfo") || {};
-    }
-  },
   onLoad(options) {
+    this.userInfo = common_vendor.index.getStorageSync("user_info") || {};
     this.goods_id = options.goods_id;
     this.getDetail();
     this.getCollectStatus();
@@ -49,6 +46,9 @@ const _sfc_main = {
       var _a, _b;
       if (!((_a = this.userInfo) == null ? void 0 : _a.user_id)) {
         common_vendor.index.showToast({ title: "请先登录", icon: "none" });
+        setTimeout(() => {
+          common_vendor.index.navigateTo({ url: "/pages/login/index" });
+        }, 300);
         return;
       }
       const res = await api_collection.collectionsApi.toggleCollection({ user_id: (_b = this.userInfo) == null ? void 0 : _b.user_id, goods_id: this.goods_id });
@@ -60,6 +60,9 @@ const _sfc_main = {
       var _a;
       if (!((_a = this.userInfo) == null ? void 0 : _a.user_id)) {
         common_vendor.index.showToast({ title: "请先登录", icon: "none" });
+        setTimeout(() => {
+          common_vendor.index.navigateTo({ url: "/pages/login/index" });
+        }, 300);
         return;
       }
       common_vendor.index.navigateTo({

@@ -45,10 +45,10 @@
     </div>
 
     <!-- 底部提示栏 -->
-    <!-- <div class="bottom-tip">
-      <span class="tip-text">暂无信息，请先登录</span>
-      <button class="login-btn">马上登录</button>
-    </div> -->
+    <div class="bottom-tip" v-if="!userInfo.user_id">
+      <span class="tip-text">请先登录，查看更多信息</span>
+      <button class="login-btn" @tap="uni.navigateTo({ url: '/pages/login/index' })">马上登录</button>
+    </div>
     <TabBar defaultTab="home" />
   </div>
 </template>
@@ -62,47 +62,20 @@ export default {
   data() {
     return {
       products: [],
-      // products: [
-      //   {
-      //     image: '/src/static/logo.png',
-      //     title: '个人出售dji大疆osmo pocket',
-      //     price: '¥20',
-      //     wantCount: 417,
-      //     seller: 'mrten先生 芝麻信用极好'
-      //   },
-      //   {
-      //     image: '/src/static/logo.png',
-      //     title: 'AirPods Pro 2 个人闲置',
-      //     price: '¥300',
-      //     wantCount: 523,
-      //     seller: '青岛优... 芝麻信用优秀'
-      //   },
-      //   {
-      //     image: '/src/static/logo.png',
-      //     title: '全新未拆封iPhone 14 Pro',
-      //     price: '¥8500',
-      //     wantCount: 1245,
-      //     seller: '科技爱好者 芝麻信用极好'
-      //   },
-      //   {
-      //     image: '/src/static/logo.png',
-      //     title: 'Nike Air Max 90 全新',
-      //     price: '¥650',
-      //     wantCount: 328,
-      //     seller: '运动达人 芝麻信用优秀'
-      //   }
-      // ],
       searchValue: '',
+      userInfo: {},
       viewMode: 'double' // 初始为双排模式
     };
   },
 
-   mounted() {
+   onShow() {
     this.getGoodsList()
   },
 
   methods: {
     async getGoodsList() {
+      // 不能用计算属性，因为登录成功后重新加载页面，计算属性不会重新执行，需要通过onshow生命周期重新获取数据
+      this.userInfo = uni.getStorageSync('userInfo') || {}
       const listRes = await goodsApi.getGoodsList({name: this.searchValue})
       this.products = listRes.data?.map(item => ({
         ...item,
@@ -127,8 +100,6 @@ export default {
         event.target.classList.add('active');
       }
       
-      // 这里可以添加切换标签页的具体逻辑
-      console.log('切换到标签:', tabName);
     },
     toDetail(product) {
       uni.navigateTo({url: `/pages/index/goods-detail?goods_id=${product.goods_id}`})

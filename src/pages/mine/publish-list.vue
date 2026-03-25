@@ -53,18 +53,14 @@ export default {
       loading: false, // 加载状态
       hasMore: true, // 是否有更多数据
       loadMoreStatus: 'more', // 加载更多状态：more/noMore/loading
-      userId: uni.getStorageSync('userId') || 1 // 当前登录用户ID（需替换为实际用户ID）
+      userInfo: {}
     };
   },
-  computed: {
-    user_id() {
-      return uni.getStorageSync('userInfo')?.user_id;
-    }
-  },
+  
   onLoad(options) {
+    this.userInfo = uni.$u.getStorageSync('user_info') || {};
     // 页面加载时获取我发布的商品列表
     this.getPublishedGoods();
-    
     // 如果是发布成功后跳转过来，显示提示
     if (options.from === 'publish') {
       uni.showToast({ title: '发布成功！', icon: 'success' });
@@ -81,7 +77,7 @@ export default {
         const publishedRes = await goodsApi.getGoodsPublished({
           page: this.page,
           size: this.size,
-          user_id: this.user_id
+          user_id: this.userInfo?.user_id
         }); 
         if (publishedRes?.code === 200) {
           const { list, pagination } = publishedRes?.data;

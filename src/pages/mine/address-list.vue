@@ -12,7 +12,7 @@
         class="address-item" 
         v-for="item in addressLists" 
         :key="item.address_id"
-        :class="{ 'selected': selectedId === item.address_id }"
+        :class="{ 'selected': isSelectMode && selectedId === item.address_id }"
         @click="handleSelect(item)"
       >
         <view class="address-info">
@@ -226,14 +226,13 @@ export default {
 .address-list {
   background-color: #fff;
   border-radius: 16rpx;
-  padding: 20rpx;
   margin-bottom: 20rpx;
 }
 .address-item {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 20rpx 0;
+  padding: 40rpx;
   border-bottom: 1rpx solid #f0f0f0;
   position: relative;
 }
@@ -244,7 +243,6 @@ export default {
 .address-item.selected {
   background-color: #f0f9f4;
   border-radius: 8rpx;
-  padding: 20rpx;
   margin: -20rpx 0;
 }
 

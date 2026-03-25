@@ -11,14 +11,13 @@
 .address-list.data-v-ce825346 {
   background-color: #fff;
   border-radius: 16rpx;
-  padding: 20rpx;
   margin-bottom: 20rpx;
 }
 .address-item.data-v-ce825346 {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 20rpx 0;
+  padding: 40rpx;
   border-bottom: 1rpx solid #f0f0f0;
   position: relative;
 }
@@ -29,7 +28,6 @@
 .address-item.selected.data-v-ce825346 {
   background-color: #f0f9f4;
   border-radius: 8rpx;
-  padding: 20rpx;
   margin: -20rpx 0;
 }
 .address-top.data-v-ce825346 {

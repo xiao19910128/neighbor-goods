@@ -160,7 +160,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         j: $data.isSelectMode && $data.selectedId === item.address_id
       }, $data.isSelectMode && $data.selectedId === item.address_id ? {} : {}, {
         k: item.address_id,
-        l: $data.selectedId === item.address_id ? 1 : "",
+        l: $data.isSelectMode && $data.selectedId === item.address_id ? 1 : "",
         m: common_vendor.o(($event) => $options.handleSelect(item), item.address_id)
       });
     }),

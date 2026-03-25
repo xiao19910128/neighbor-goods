@@ -1,7 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const api_goods = require("../../api/goods.js");
-const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   data() {
     return {
@@ -143,11 +142,23 @@ const _sfc_main = {
     }
   }
 };
+if (!Array) {
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  _easycom_uni_icons2();
+}
+const _easycom_uni_icons = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons.js";
+if (!Math) {
+  _easycom_uni_icons();
+}
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: $data.goodsList.length === 0 && !$data.loading
   }, $data.goodsList.length === 0 && !$data.loading ? {
-    b: common_assets._imports_0,
+    b: common_vendor.p({
+      type: "shop",
+      size: "40",
+      color: "#666"
+    }),
     c: common_vendor.o((...args) => $options.gotoPublish && $options.gotoPublish(...args))
   } : {
     d: common_vendor.f($data.goodsList, (item, k0, i0) => {

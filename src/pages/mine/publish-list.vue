@@ -7,7 +7,7 @@
 
     <!-- 空数据提示 -->
     <view class="empty-state" v-if="goodsList.length === 0 && !loading">
-      <image src="/static/empty-published.png" class="empty-img"></image>
+      <uni-icons type="shop" size="40" color="#666"></uni-icons>
       <text class="empty-text">你还没有发布任何闲置~</text>
       <button class="publish-btn" @click="gotoPublish">去发布</button>
     </view>

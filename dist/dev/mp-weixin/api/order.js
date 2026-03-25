@@ -7,6 +7,20 @@ const orderApi = {
       method: "post",
       data
     });
+  },
+  getOrderList(data) {
+    return utils_https.service({
+      url: "/orders/list",
+      method: "get",
+      data
+    });
+  },
+  updateOrderStatus(data) {
+    return utils_https.service({
+      url: "/orders/updateStatus",
+      method: "post",
+      data
+    });
   }
 };
 exports.orderApi = orderApi;

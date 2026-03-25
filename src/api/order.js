@@ -8,4 +8,20 @@ export const orderApi = {
       data
     });
   }, 
+
+  getOrderList(data) {
+    return request({
+      url: '/orders/list',
+      method: 'get',
+      data
+    });
+  }, 
+
+  updateOrderStatus(data) {
+    return request({
+      url: '/orders/updateStatus',
+      method: 'post',
+      data
+    });
+  }, 
 }

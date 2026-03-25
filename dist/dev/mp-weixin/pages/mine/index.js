@@ -60,7 +60,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       color: "#666"
     }),
     f: common_vendor.o(($event) => common_vendor.index.navigateTo({
-      url: "/pages/mine/publish-list"
+      url: "/pages/orders/order-list?type=buy"
     })),
     g: common_vendor.p({
       type: "shop",

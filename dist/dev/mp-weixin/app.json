@@ -9,7 +9,8 @@
     "pages/mine/message-list",
     "pages/mine/address-list",
     "pages/mine/address-edit",
-    "pages/index/goods-detail"
+    "pages/index/goods-detail",
+    "pages/orders/order-list"
   ],
   "window": {
     "navigationBarTextStyle": "black",

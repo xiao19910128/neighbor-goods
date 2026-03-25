@@ -136,7 +136,7 @@ export default {
           uni.showToast({ title: '下单成功' });
           // 跳转到订单列表
           setTimeout(() => {
-            uni.navigateTo({ url: '/pages/order/order-list?type=buy' });
+            uni.navigateTo({ url: '/pages/orders/order-list?type=buy' });
           }, 1000);
         } else {
           uni.showToast({ title: res.msg || '下单失败', icon: 'none' });

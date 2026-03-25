@@ -23,11 +23,11 @@
           <view class="grid-group">
             <text class="group-title">交易管理</text>
             <view class="grid-container">
-              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/publish-list' })">
+              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/orders/order-list?type=buy' })">
                 <view class="icon-wrapper">
                 <uni-icons type="gift" size="24" color="#666"></uni-icons>
                 </view>
-                <text class="item-text">我卖出的</text>
+                <text class="item-text">我的订单</text>
               </view>
               <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/publish-list' })">
                 <view class="icon-wrapper">

@@ -10,8 +10,9 @@ const initialData = {
   description: "",
   province: "",
   city: "",
+  name: "",
   district: "",
-  street: "",
+  street: "梅陇镇",
   detail_address: "",
   streetName: "梅陇镇"
 };
@@ -37,13 +38,13 @@ const _sfc_main = {
       // 用户信息
     };
   },
-  onShow() {
+  async onShow() {
+    await this.loadCategories();
     this.isLogin = !!common_vendor.index.getStorageSync("token");
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
   },
   async onLoad(options = {}) {
     this.form = { ...initialData };
-    await this.loadCategories();
     if (options.goods_id) {
       this.goodsId = options.goods_id;
       this.getGoodsDetail(this.goodsId);
@@ -99,7 +100,7 @@ const _sfc_main = {
           common_vendor.index.showToast({ title: publishRes.msg, icon: "none" });
         }
       } catch (err) {
-        common_vendor.index.showToast({ title: "商品信息提交失败", icon: "none" });
+        common_vendor.index.showToast({ title: (err == null ? void 0 : err.message) || (err == null ? void 0 : err.msg), icon: "none" });
       }
     },
     // 查询闲置详情

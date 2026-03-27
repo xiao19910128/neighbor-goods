@@ -14,7 +14,7 @@ const _sfc_main = {
     };
   },
   onLoad(options) {
-    this.userInfo = common_vendor.index.getStorageSync("user_info") || {};
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
     this.goods_id = options.goods_id;
     this.getDetail();
     this.getCollectStatus();

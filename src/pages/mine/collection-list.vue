@@ -50,7 +50,7 @@ export default {
     }
   },
   onShow() {
-    this.userInfo = uni.getStorageSync('user_info') || {}
+    this.userInfo = uni.getStorageSync('userInfo') || {}
     this.getCollectList()
   },
   methods: {

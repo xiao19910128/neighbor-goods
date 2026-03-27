@@ -99,8 +99,9 @@ const initialData = {
   description: '',
   province: '',
   city: '',
+  name: '',
   district: '',
-  street: '',
+  street: '梅陇镇',
   detail_address: '',
   streetName: '梅陇镇',
 };
@@ -123,15 +124,15 @@ export default {
     };
   },
   
-  onShow() {
+  async onShow() {
+    // 加载分类列表
+    await this.loadCategories();
     // 从登录页返回时需要更新token状态，重新判断是否登录
     this.isLogin = !!uni.getStorageSync('token');
     this.userInfo = uni.getStorageSync('userInfo') || {};
   },
   async onLoad(options = {}) {
     this.form = { ...initialData };
-    // 加载分类列表
-    await this.loadCategories();
     // 从路由获取 goods_id
     if (options.goods_id) {
       this.goodsId = options.goods_id;
@@ -188,7 +189,8 @@ export default {
           uni.showToast({ title: publishRes.msg, icon: 'none' });
         }
       } catch (err) {
-        uni.showToast({ title: '商品信息提交失败', icon: 'none' });
+        // 异常状态提示信息--账户禁用等
+        uni.showToast({ title:  err?.message || err?.msg, icon: 'none' });
       }
     },
     

@@ -10,7 +10,7 @@ const _sfc_main = {
     };
   },
   onShow() {
-    this.userInfo = common_vendor.index.getStorageSync("user_info") || {};
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
     this.getCollectList();
   },
   methods: {

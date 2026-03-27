@@ -56,11 +56,13 @@ export default {
       userInfo: {}
     };
   },
-  
-  onLoad(options) {
-    this.userInfo = uni.$u.getStorageSync('user_info') || {};
+  onShow() {
+    this.userInfo = uni.getStorageSync('userInfo') || {};
     // 页面加载时获取我发布的商品列表
     this.getPublishedGoods();
+  },
+  
+  onLoad(options) {
     // 如果是发布成功后跳转过来，显示提示
     if (options.from === 'publish') {
       uni.showToast({ title: '发布成功！', icon: 'success' });
@@ -134,7 +136,7 @@ export default {
         success: async(res) => {
           if (res.confirm) {
             try {
-              const delRes = await goodsApi.deleteGoods({ goods_id });
+              const delRes = await goodsApi.deleteGoods({ goods_id, user_id: this.userInfo?.user_id });
               if (delRes?.code === 200) {
                 uni.showToast({ title: '删除成功' });
                 // 重新加载列表
@@ -142,7 +144,8 @@ export default {
                 this.getPublishedGoods();
               }
             } catch (err) {
-              uni.showToast({ title: '删除失败', icon: 'none' });
+              // 异常状态提示信息--账户禁用等
+              uni.showToast({ title:  err?.message || err?.msg, icon: 'none' });
             }
           }
         }

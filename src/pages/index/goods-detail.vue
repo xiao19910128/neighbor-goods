@@ -60,7 +60,7 @@ export default {
     }
   },
   onLoad(options) {
-    this.userInfo = uni.getStorageSync('user_info') || {}
+    this.userInfo = uni.getStorageSync('userInfo') || {}
     this.goods_id = options.goods_id
     this.getDetail()
     this.getCollectStatus()

@@ -19,9 +19,11 @@ const _sfc_main = {
       userInfo: {}
     };
   },
-  onLoad(options) {
-    this.userInfo = common_vendor.index.$u.getStorageSync("user_info") || {};
+  onShow() {
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
     this.getPublishedGoods();
+  },
+  onLoad(options) {
     if (options.from === "publish") {
       common_vendor.index.showToast({ title: "发布成功！", icon: "success" });
     }
@@ -94,16 +96,17 @@ const _sfc_main = {
         title: "确认删除",
         content: "删除后无法恢复，确定要删除吗？",
         success: async (res) => {
+          var _a;
           if (res.confirm) {
             try {
-              const delRes = await api_goods.goodsApi.deleteGoods({ goods_id });
+              const delRes = await api_goods.goodsApi.deleteGoods({ goods_id, user_id: (_a = this.userInfo) == null ? void 0 : _a.user_id });
               if ((delRes == null ? void 0 : delRes.code) === 200) {
                 common_vendor.index.showToast({ title: "删除成功" });
                 this.page = 1;
                 this.getPublishedGoods();
               }
             } catch (err) {
-              common_vendor.index.showToast({ title: "删除失败", icon: "none" });
+              common_vendor.index.showToast({ title: (err == null ? void 0 : err.message) || (err == null ? void 0 : err.msg), icon: "none" });
             }
           }
         }

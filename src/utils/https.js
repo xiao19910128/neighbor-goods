@@ -42,25 +42,57 @@ service.interceptors.response.use(
         uni.removeStorageSync('token');
         uni.removeStorageSync('userInfo');
         uni.showToast({ title: '登录已过期，请重新登录', icon: 'none' });
-        uni.reLaunch({ url: '/pages/mine/index' });
-        return Promise.reject(res);
+        uni.reLaunch({ url: '/pages/login/index' });
       }
-      uni.showToast({ title: res.msg || '请求失败', icon: 'none' });
+      const errMsg = res?.message || res?.msg;
+      // 其他业务错误：直接提示后端message
+      uni.showToast({ 
+        title: errMsg || '请求失败', 
+        icon: 'none' 
+      });
       return Promise.reject(res);
     }
     return res;
   },
   (error) => {
-    // 统一捕获网络/接口错误
-    console.error('接口请求错误：', error);
-    // 区分网络错误和接口错误提示
-    const errMsg = error.message.includes('Network Error') 
-      ? '网络异常，请检查网络连接' 
-      : error.msg || '服务器异常，请稍后重试';
-    uni.showToast({
-      title: errMsg,
-      icon: 'none'
-    });
+    // 区分「网络错误」和「HTTP状态码错误（403/404等）」
+    // 1. 网络错误（无响应）
+    if (error?.message?.includes('Network Error')) {
+      uni.showToast({ 
+        title: '网络异常，请检查网络连接', 
+        icon: 'none' 
+      });
+      return Promise.reject(error);
+    }
+
+    // 2. HTTP状态码错误（403/404/500等，后端有返回数据）
+    if (error?.response?.data) {
+      const resData = error.response.data;
+      const errorMsg = resData?.msg || resData?.message;
+      let errMsg = errorMsg || '请求失败';
+
+      // 🔴 核心：403状态码，优先用后端返回的message
+      if (resData?.code === 403) {
+        errMsg = errorMsg || '账号已被禁用，请联系管理员';
+      } else if (error.response.statusCode === 403) {
+        // 兜底：后端code非403，但状态码是403
+        errMsg = '账号已被禁用，请联系管理员';
+      }
+
+      // 显示错误提示
+      uni.showToast({ 
+        title: errMsg, 
+        icon: 'none' 
+      });
+      // 返回错误信息（Promise.reject）
+      return Promise.reject(error?.response?.data || error);
+    }
+
+    // 3. 其他未知错误兜底
+    uni.showToast({ 
+      title: '服务器异常，请稍后重试', 
+      icon: 'none' 
+      });
     return Promise.reject(error);
   }
 );

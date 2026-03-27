@@ -31,19 +31,43 @@ service.interceptors.response.use(
         common_vendor.index.removeStorageSync("token");
         common_vendor.index.removeStorageSync("userInfo");
         common_vendor.index.showToast({ title: "登录已过期，请重新登录", icon: "none" });
-        common_vendor.index.reLaunch({ url: "/pages/mine/index" });
-        return Promise.reject(res);
+        common_vendor.index.reLaunch({ url: "/pages/login/index" });
       }
-      common_vendor.index.showToast({ title: res.msg || "请求失败", icon: "none" });
+      const errMsg = (res == null ? void 0 : res.message) || (res == null ? void 0 : res.msg);
+      common_vendor.index.showToast({
+        title: errMsg || "请求失败",
+        icon: "none"
+      });
       return Promise.reject(res);
     }
     return res;
   },
   (error) => {
-    console.error("接口请求错误：", error);
-    const errMsg = error.message.includes("Network Error") ? "网络异常，请检查网络连接" : error.msg || "服务器异常，请稍后重试";
+    var _a, _b, _c;
+    if ((_a = error == null ? void 0 : error.message) == null ? void 0 : _a.includes("Network Error")) {
+      common_vendor.index.showToast({
+        title: "网络异常，请检查网络连接",
+        icon: "none"
+      });
+      return Promise.reject(error);
+    }
+    if ((_b = error == null ? void 0 : error.response) == null ? void 0 : _b.data) {
+      const resData = error.response.data;
+      const errorMsg = (resData == null ? void 0 : resData.msg) || (resData == null ? void 0 : resData.message);
+      let errMsg = errorMsg || "请求失败";
+      if ((resData == null ? void 0 : resData.code) === 403) {
+        errMsg = errorMsg || "账号已被禁用，请联系管理员";
+      } else if (error.response.statusCode === 403) {
+        errMsg = "账号已被禁用，请联系管理员";
+      }
+      common_vendor.index.showToast({
+        title: errMsg,
+        icon: "none"
+      });
+      return Promise.reject(((_c = error == null ? void 0 : error.response) == null ? void 0 : _c.data) || error);
+    }
     common_vendor.index.showToast({
-      title: errMsg,
+      title: "服务器异常，请稍后重试",
       icon: "none"
     });
     return Promise.reject(error);

@@ -49,7 +49,7 @@ const _sfc_main = {
           var _a2;
           return {
             ...item,
-            images: ((_a2 = item.goods_imgs) == null ? void 0 : _a2.split(",")) || []
+            images: ((_a2 = item == null ? void 0 : item.image_url) == null ? void 0 : _a2.split(",")) || []
           };
         });
       }
@@ -57,7 +57,10 @@ const _sfc_main = {
     // 修改订单状态
     async updateStatus(order_id, status) {
       try {
-        await api_order.orderApi.updateOrderStatus({ order_id, status });
+        const user = common_vendor.index.getStorageSync("userInfo");
+        if (!(user == null ? void 0 : user.user_id))
+          return;
+        await api_order.orderApi.updateOrderStatus({ order_id, status, user_id: user == null ? void 0 : user.user_id });
         common_vendor.index.showToast({ title: "操作成功" });
         this.getList();
       } catch (err) {
@@ -89,7 +92,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         a: common_vendor.t(item.order_no),
         b: common_vendor.t($data.statusMap[item.status].text),
         c: common_vendor.n($data.statusMap[item.status].status),
-        d: item.images[0] || "/static/default.png",
+        d: item.images[0],
         e: common_vendor.o((...args) => $options.handleImgErr && $options.handleImgErr(...args), item.order_id),
         f: common_vendor.t(item.goods_title),
         g: common_vendor.t(item.goods_price),

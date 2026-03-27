@@ -77,7 +77,7 @@ const _sfc_main = {
           common_vendor.index.showToast({ title: res.msg || "下单失败", icon: "none" });
         }
       } catch (err) {
-        common_vendor.index.showToast({ title: "下单失败", icon: "none" });
+        common_vendor.index.showToast({ title: (err == null ? void 0 : err.message) || (err == null ? void 0 : err.msg), icon: "none" });
       }
     },
     // 新增地址

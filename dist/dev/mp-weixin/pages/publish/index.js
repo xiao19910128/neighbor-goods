@@ -23,8 +23,8 @@ const _sfc_main = {
     return {
       categoryList: [],
       // 分类列表
-      fileList: [],
-      // 存储已上传的图片信息，包括url和name等
+      goodsImages: [],
+      // 存储已上传的图片信息
       form: { ...initialData },
       // 省市区联动
       regionValue: ["上海市", "上海市", "闵行区"],
@@ -80,7 +80,7 @@ const _sfc_main = {
       try {
         const params = {
           ...this.form,
-          image_url: (_a = this.fileList) == null ? void 0 : _a.join(","),
+          image_url: (_a = this.goodsImages) == null ? void 0 : _a.join(","),
           user_id: (_b = this.userInfo) == null ? void 0 : _b.user_id
         };
         let publishRes = null;
@@ -114,7 +114,7 @@ const _sfc_main = {
             ...data
             // streetName: 
           };
-          this.fileList = (_a = data == null ? void 0 : data.image_url) == null ? void 0 : _a.split(",");
+          this.goodsImages = (_a = data == null ? void 0 : data.image_url) == null ? void 0 : _a.split(",");
           common_vendor.index.setNavigationBarTitle({ title: "编辑闲置" });
           this.btnText = "更新闲置";
         }
@@ -122,24 +122,74 @@ const _sfc_main = {
         common_vendor.index.showToast({ title: "获取商品详情失败", icon: "none" });
       }
     },
-    // 选择图片
+    // 选择图片// 选择图片 + 批量上传完整方法（直接复制到发布页）
     async handleChooseImage() {
       try {
-        const count = 9 - this.fileList.length;
         const res = await common_vendor.index.chooseImage({
-          count,
-          sizeType: ["original", "compressed"],
+          count: 9,
+          // 最多9张，和你页面提示一致
+          sizeType: ["compressed"],
+          // 压缩图片，减少上传体积
           sourceType: ["album", "camera"]
+          // 允许相册/相机
         });
-        for (const tempFilePath of res.tempFilePaths) {
-          const uploadFiles = await this.uploadImageToServer(tempFilePath);
-          this.fileList = [...this.fileList, uploadFiles];
-        }
+        const tempFilePaths = res.tempFilePaths;
+        const uploadTasks = tempFilePaths.map((path) => this.uploadImage(path));
+        const imageUrls = await Promise.all(uploadTasks);
+        this.goodsImages = imageUrls.filter((url) => url !== null);
+        common_vendor.index.showToast({
+          title: `成功上传${this.goodsImages.length}张图片`,
+          icon: "none"
+        });
       } catch (err) {
-        common_vendor.index.showToast({ title: "选择图片失败", icon: "none" });
+        console.error("选择/上传图片失败:", err);
+        common_vendor.index.showToast({
+          title: "图片操作失败",
+          icon: "none"
+        });
       }
     },
-    // 上传图片到 kstore
+    // 上传图片方法（完全适配微信小程序/uni-app，直接复制）
+    async uploadImage(tempFilePath) {
+      var _a;
+      try {
+        const res = await common_vendor.index.uploadFile({
+          url: "http://localhost:3000/api/upload/image",
+          filePath: tempFilePath,
+          // 选择图片后返回的临时路径
+          name: "file",
+          formData: {
+            user_id: common_vendor.index.getStorageSync("userInfo").user_id
+          },
+          timeout: 1e4
+          // 超时时间
+        });
+        const data = JSON.parse(res == null ? void 0 : res.data);
+        if ((data == null ? void 0 : data.code) === 200) {
+          common_vendor.index.showToast({
+            title: "上传成功",
+            icon: "none",
+            duration: 1500
+          });
+          return (_a = data == null ? void 0 : data.data) == null ? void 0 : _a.url;
+        } else {
+          common_vendor.index.showToast({
+            title: (data == null ? void 0 : data.message) || "上传失败",
+            icon: "none",
+            duration: 2e3
+          });
+          return null;
+        }
+      } catch (err) {
+        common_vendor.index.showToast({
+          title: "上传失败，请重试",
+          icon: "none",
+          duration: 2e3
+        });
+        return null;
+      }
+    },
+    // 上传图片到服务器
     uploadImageToServer(tempFilePath) {
       return new Promise((resolve, reject) => {
         common_vendor.index.uploadFile({
@@ -167,7 +217,7 @@ const _sfc_main = {
       common_vendor.index.previewImage({
         current: currentIndex,
         // 当前预览图片的索引
-        urls: this.fileList,
+        urls: this.goodsImages,
         // 所有可预览的图片 URL 数组
         loop: true,
         // 支持循环预览
@@ -192,7 +242,7 @@ const _sfc_main = {
     },
     // 删除图片
     handleDelete(index) {
-      this.fileList.splice(index, 1);
+      this.goodsImages.splice(index, 1);
     },
     async getUserLocation() {
       try {
@@ -230,7 +280,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       url: "/pages/login/index"
     }))
   } : common_vendor.e({
-    c: common_vendor.f($data.fileList, (item, index, i0) => {
+    c: common_vendor.f($data.goodsImages, (item, index, i0) => {
       return {
         a: item,
         b: common_vendor.o(($event) => $options.handleDelete(index), index),
@@ -238,8 +288,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         d: common_vendor.o(($event) => $options.handlePreview(item, index), index)
       };
     }),
-    d: $data.fileList.length < 9
-  }, $data.fileList.length < 9 ? {
+    d: $data.goodsImages.length < 9
+  }, $data.goodsImages.length < 9 ? {
     e: common_vendor.o((...args) => $options.handleChooseImage && $options.handleChooseImage(...args))
   } : {}, {
     f: $data.form.name,

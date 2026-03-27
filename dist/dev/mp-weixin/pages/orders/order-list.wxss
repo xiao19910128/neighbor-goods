@@ -163,10 +163,8 @@
   padding: 120rpx 0;
 }
 .empty-img.data-v-2863420b {
-  width: 200rpx;
-  height: 200rpx;
-  opacity: 0.4;
-  margin-bottom: 20rpx;
+  width: 300rpx;
+  height: 300rpx;
 }
 .empty-text.data-v-2863420b {
   font-size: 28rpx;

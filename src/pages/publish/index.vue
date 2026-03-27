@@ -125,6 +125,9 @@ export default {
   },
   
   async onShow() {
+    // onShow 生命周期中重置表单数据，避免编辑时残留旧数据
+    this.goodsImages = []; // 清空图片列表，避免编辑时残留旧数据
+    this.form = { ...initialData };
     // 加载分类列表
     await this.loadCategories();
     // 从登录页返回时需要更新token状态，重新判断是否登录
@@ -132,8 +135,6 @@ export default {
     this.userInfo = uni.getStorageSync('userInfo') || {};
   },
   async onLoad(options = {}) {
-    this.goodsImages = []; // 清空图片列表，避免编辑时残留旧数据
-    this.form = { ...initialData };
     // 从路由获取 goods_id
     if (options.goods_id) {
       this.goodsId = options.goods_id;

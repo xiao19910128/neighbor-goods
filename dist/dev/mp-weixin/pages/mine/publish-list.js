@@ -88,7 +88,7 @@ const _sfc_main = {
     },
     // 编辑商品
     editGoods(goods) {
-      common_vendor.index.switchTab({ url: `/pages/publish/index?goods_id=${goods.goods_id}` });
+      common_vendor.index.navigateTo({ url: `/pages/publish/index?goods_id=${goods.goods_id}` });
     },
     // 删除商品
     async deleteGoods(goods_id) {

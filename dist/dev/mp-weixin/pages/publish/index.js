@@ -39,13 +39,13 @@ const _sfc_main = {
     };
   },
   async onShow() {
+    this.goodsImages = [];
+    this.form = { ...initialData };
     await this.loadCategories();
     this.isLogin = !!common_vendor.index.getStorageSync("token");
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
   },
   async onLoad(options = {}) {
-    this.goodsImages = [];
-    this.form = { ...initialData };
     if (options.goods_id) {
       this.goodsId = options.goods_id;
       this.getGoodsDetail(this.goodsId);

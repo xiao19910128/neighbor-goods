@@ -11,7 +11,7 @@
         <view class="user-section">
           <image 
             class="avatar" 
-            :src="userInfo.avatarUrl || '/static/default-avatar.jpg'" 
+            :src="userInfo.avatarUrl || '/static/default-avatar.png'" 
             mode="aspectFill"
           ></image>
           <text class="nickname">{{ userInfo.nickName || '微信昵称' }}</text>

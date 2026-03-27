@@ -52,7 +52,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       url: "/pages/login/index"
     }))
   } : common_vendor.e({
-    c: $data.userInfo.avatarUrl || "/static/default-avatar.jpg",
+    c: $data.userInfo.avatarUrl || "/static/default-avatar.png",
     d: common_vendor.t($data.userInfo.nickName || "微信昵称"),
     e: common_vendor.p({
       type: "gift",

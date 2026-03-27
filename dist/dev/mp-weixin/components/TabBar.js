@@ -15,7 +15,7 @@ const _sfc_main = {
       tabs: [
         { name: "闲置中心", type: "home", icon: "home-filled", url: "/pages/index/index" },
         { name: "发布", type: "publish", icon: "cloud-upload-filled", url: "/pages/publish/index" },
-        // { name: '消息', type:'chatboxes', icon: 'chatboxes-filled', url: '/pages/message/index' },
+        { name: "消息", type: "chatboxes", icon: "chatboxes-filled", url: "/pages/message/index" },
         { name: "我的", type: "mine", icon: "person-filled", url: "/pages/mine/index" }
       ]
     };

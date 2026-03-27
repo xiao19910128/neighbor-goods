@@ -44,6 +44,7 @@ const _sfc_main = {
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
   },
   async onLoad(options = {}) {
+    this.goodsImages = [];
     this.form = { ...initialData };
     if (options.goods_id) {
       this.goodsId = options.goods_id;
@@ -122,12 +123,11 @@ const _sfc_main = {
         common_vendor.index.showToast({ title: "获取商品详情失败", icon: "none" });
       }
     },
-    // 选择图片// 选择图片 + 批量上传完整方法（直接复制到发布页）
     async handleChooseImage() {
       try {
         const res = await common_vendor.index.chooseImage({
-          count: 9,
-          // 最多9张，和你页面提示一致
+          count: 9 - this.goodsImages.length,
+          // 剩余可选择数量 = 9 - 已选数量
           sizeType: ["compressed"],
           // 压缩图片，减少上传体积
           sourceType: ["album", "camera"]
@@ -135,10 +135,11 @@ const _sfc_main = {
         });
         const tempFilePaths = res.tempFilePaths;
         const uploadTasks = tempFilePaths.map((path) => this.uploadImage(path));
-        const imageUrls = await Promise.all(uploadTasks);
-        this.goodsImages = imageUrls.filter((url) => url !== null);
+        const newImageUrls = await Promise.all(uploadTasks);
+        const validUrls = newImageUrls.filter((url) => url !== null);
+        this.goodsImages = [...this.goodsImages, ...validUrls];
         common_vendor.index.showToast({
-          title: `成功上传${this.goodsImages.length}张图片`,
+          title: `成功上传 ${validUrls.length} 张`,
           icon: "none"
         });
       } catch (err) {

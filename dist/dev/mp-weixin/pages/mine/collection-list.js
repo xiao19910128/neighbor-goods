@@ -59,7 +59,7 @@ const _sfc_main = {
     },
     // 空状态跳转首页
     goHome() {
-      common_vendor.index.navigateTo({
+      common_vendor.index.switchTab({
         url: "/pages/index/index"
       });
     }

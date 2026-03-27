@@ -132,6 +132,7 @@ export default {
     this.userInfo = uni.getStorageSync('userInfo') || {};
   },
   async onLoad(options = {}) {
+    this.goodsImages = []; // 清空图片列表，避免编辑时残留旧数据
     this.form = { ...initialData };
     // 从路由获取 goods_id
     if (options.goods_id) {
@@ -216,25 +217,24 @@ export default {
         uni.showToast({ title: '获取商品详情失败', icon: 'none' });
       }
     },
-    // 选择图片// 选择图片 + 批量上传完整方法（直接复制到发布页）
     async handleChooseImage() {
       try {
         // 1. 选择图片（最多9张）
         const res = await uni.chooseImage({
-          count: 9, // 最多9张，和你页面提示一致
+          count: 9 - this.goodsImages.length, // 剩余可选择数量 = 9 - 已选数量
           sizeType: ['compressed'], // 压缩图片，减少上传体积
           sourceType: ['album', 'camera'] // 允许相册/相机
         });
-
         const tempFilePaths = res.tempFilePaths;
-        // 2. 批量上传所有图片
+        // 2. 批量上传
         const uploadTasks = tempFilePaths.map(path => this.uploadImage(path));
-        const imageUrls = await Promise.all(uploadTasks);
+        const newImageUrls = await Promise.all(uploadTasks);
+        // 3. 过滤有效URL
+        const validUrls = newImageUrls.filter(url => url !== null);
+        this.goodsImages = [...this.goodsImages, ...validUrls];
 
-        // 过滤掉上传失败的null
-        this.goodsImages = imageUrls.filter(url => url !== null);
         uni.showToast({
-          title: `成功上传${this.goodsImages.length}张图片`,
+          title: `成功上传 ${validUrls.length} 张`,
           icon: 'none'
         });
       } catch (err) {

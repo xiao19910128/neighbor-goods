@@ -98,7 +98,7 @@ export default {
 
     // 空状态跳转首页
     goHome() {
-      uni.navigateTo({
+      uni.switchTab({
         url: '/pages/index/index'
       })
     }

@@ -118,7 +118,7 @@ export default {
     },
     // 跳转到发布页
     gotoPublish() {
-      uni.navigateTo({ url: '/pages/publish/index' });
+      uni.switchTab({ url: '/pages/publish/index' });
     },
     // 跳转到商品详情
     gotoDetail(goodsId) {
@@ -126,7 +126,7 @@ export default {
     },
     // 编辑商品
     editGoods(goods) {
-      uni.navigateTo({ url: `/pages/publish/index?goods_id=${goods.goods_id}` });
+      uni.switchTab({ url: `/pages/publish/index?goods_id=${goods.goods_id}` });
     },
     // 删除商品
     async deleteGoods(goods_id) {

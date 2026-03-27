@@ -142,7 +142,8 @@ export default {
         }
 
       } catch (err) {
-        uni.showToast({ title: '下单失败', icon: 'none' });
+        // 异常状态提示信息--账户禁用等
+        uni.showToast({ title:  err?.message || err?.msg, icon: 'none' });
       }
     },
     

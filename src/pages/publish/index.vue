@@ -15,7 +15,7 @@
             <!-- 已上传图片 -->
             <view 
               class="upload-item" 
-              v-for="(item, index) in fileList" 
+              v-for="(item, index) in goodsImages" 
               :key="index"
               @click.stop="handlePreview(item, index)"
             >
@@ -25,7 +25,7 @@
             <!-- 添加图片按钮 -->
             <view 
               class="upload-item upload-add" 
-              v-if="fileList.length < 9"
+              v-if="goodsImages.length < 9"
               @click.stop="handleChooseImage"
             >
               <view class="upload-add-icon">+</view>
@@ -111,7 +111,7 @@ export default {
   data() {
     return {
       categoryList: [], // 分类列表
-      fileList: [], // 存储已上传的图片信息，包括url和name等
+      goodsImages: [], // 存储已上传的图片信息
       form: { ...initialData},
       // 省市区联动
       regionValue: ['上海市', '上海市', '闵行区'],
@@ -165,7 +165,7 @@ export default {
       try {
         const params = {
           ...this.form,
-          image_url: this.fileList?.join(','),
+          image_url: this.goodsImages?.join(','),
           user_id: this.userInfo?.user_id
         }
         let publishRes = null;        
@@ -205,7 +205,7 @@ export default {
             ...data,
             // streetName: 
           };
-          this.fileList = data?.image_url?.split(',')
+          this.goodsImages = data?.image_url?.split(',')
           // 页面标题改为“编辑闲置”
           uni.setNavigationBarTitle({ title: '编辑闲置' });
           // 按钮文字改为“更新闲置”
@@ -216,27 +216,78 @@ export default {
         uni.showToast({ title: '获取商品详情失败', icon: 'none' });
       }
     },
-     // 选择图片
-    async handleChooseImage  () {
+    // 选择图片// 选择图片 + 批量上传完整方法（直接复制到发布页）
+    async handleChooseImage() {
       try {
-        // 计算还能选几张
-        const count = 9 - this.fileList.length;
+        // 1. 选择图片（最多9张）
         const res = await uni.chooseImage({
-          count,
-          sizeType: ['original', 'compressed'],
-          sourceType: ['album', 'camera'],
+          count: 9, // 最多9张，和你页面提示一致
+          sizeType: ['compressed'], // 压缩图片，减少上传体积
+          sourceType: ['album', 'camera'] // 允许相册/相机
         });
-        // 遍历选中的图片，逐个上传
-        for (const tempFilePath of res.tempFilePaths) {
-          const uploadFiles =  await this.uploadImageToServer(tempFilePath);
-          // 上传成功后，把 URL 加入 fileList
-          this.fileList = [...this.fileList, uploadFiles]; // 推荐用新数组赋值，触发更新
-        }
+
+        const tempFilePaths = res.tempFilePaths;
+        // 2. 批量上传所有图片
+        const uploadTasks = tempFilePaths.map(path => this.uploadImage(path));
+        const imageUrls = await Promise.all(uploadTasks);
+
+        // 过滤掉上传失败的null
+        this.goodsImages = imageUrls.filter(url => url !== null);
+        uni.showToast({
+          title: `成功上传${this.goodsImages.length}张图片`,
+          icon: 'none'
+        });
       } catch (err) {
-        uni.showToast({ title: '选择图片失败', icon: 'none' });
+        console.error('选择/上传图片失败:', err);
+        uni.showToast({
+          title: '图片操作失败',
+          icon: 'none'
+        });
       }
     },
-    // 上传图片到 kstore
+
+    // 上传图片方法（完全适配微信小程序/uni-app，直接复制）
+async uploadImage(tempFilePath) {
+  try {
+    const res = await uni.uploadFile({
+      url: 'http://localhost:3000/api/upload/image',
+      filePath: tempFilePath, // 选择图片后返回的临时路径
+      name: 'file',
+      formData: {
+        user_id: uni.getStorageSync('userInfo').user_id
+      },
+      timeout: 10000  // 超时时间
+    });
+
+    // uni.uploadFile返回的data是JSON字符串，须手动解析
+    const data = JSON.parse(res?.data);
+    if (data?.code === 200) {
+      uni.showToast({
+        title: '上传成功',
+        icon: 'none',
+        duration: 1500
+      });
+      // 返回图片URL，给商品表单使用
+      return data?.data?.url;
+    } else {
+      uni.showToast({
+        title: data?.message || '上传失败',
+        icon: 'none',
+        duration: 2000
+      });
+      return null;
+    }
+  } catch (err) {
+    uni.showToast({
+      title: '上传失败，请重试',
+      icon: 'none',
+      duration: 2000
+    });
+    return null;
+  }
+},
+
+    // 上传图片到服务器
     uploadImageToServer(tempFilePath) {
       return new Promise((resolve, reject) => {
         uni.uploadFile({
@@ -266,7 +317,7 @@ export default {
       // 调用 uni-app 原生预览图片 API
       uni.previewImage({
         current: currentIndex,  // 当前预览图片的索引
-        urls: this.fileList,    // 所有可预览的图片 URL 数组
+        urls: this.goodsImages,    // 所有可预览的图片 URL 数组
         loop: true,             // 支持循环预览
         longPressActions: {     // 长按图片操作（可选）
           itemList: ['保存图片', '取消'],
@@ -289,7 +340,7 @@ export default {
     },
     // 删除图片
     handleDelete(index) {
-      this.fileList.splice(index, 1);
+      this.goodsImages.splice(index, 1);
     },
     async getUserLocation() {
       try {

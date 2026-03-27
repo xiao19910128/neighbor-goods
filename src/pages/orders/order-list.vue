@@ -38,7 +38,7 @@
         <view class="goods-box">
           <image 
             class="goods-img" 
-            :src="item.images[0] || '/static/default.png'"
+            :src="item.images[0]"
             mode="aspectFill"
             @error="handleImgErr"
           ></image>
@@ -129,7 +129,7 @@ export default {
       if (res.code === 200) {
         this.list = res.data?.map(item=>({
           ...item,
-          images: item.goods_imgs?.split(',') || []
+          images: item?.image_url?.split(',') || []
         }))
       }
     },
@@ -137,7 +137,9 @@ export default {
     // 修改订单状态
     async updateStatus(order_id, status) {
       try {
-        await orderApi.updateOrderStatus({order_id, status})
+        const user = uni.getStorageSync('userInfo')
+        if (!user?.user_id) return
+        await orderApi.updateOrderStatus({order_id, status, user_id: user?.user_id })
         uni.showToast({ title: '操作成功' })
         this.getList()
       } catch (err) {
@@ -299,10 +301,9 @@ export default {
   padding: 120rpx 0;
 }
 .empty-img {
-  width: 200rpx;
-  height: 200rpx;
-  opacity: 0.4;
-  margin-bottom: 20rpx;
+  width: 300rpx;
+  height: 300rpx;
+  // opacity: 0.4;
 }
 .empty-text {
   font-size: 28rpx;

@@ -13,6 +13,8 @@ if (!Math) {
   "./pages/mine/address-edit.js";
   "./pages/index/goods-detail.js";
   "./pages/orders/order-list.js";
+  "./pages/orders/detail.js";
+  "./pages/chat/chat.js";
 }
 const _sfc_main = {
   onLaunch: function() {

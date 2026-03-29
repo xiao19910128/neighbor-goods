@@ -70,6 +70,16 @@ const _sfc_main = {
     // 图片失败兜底
     handleImgErr(e) {
       e.target.src = "/static/default.png";
+    },
+    // 跳订单详情
+    goDetail(order_id) {
+      common_vendor.index.navigateTo({ url: `/pages/order/detail?order_id=${order_id}` });
+    },
+    // 跳聊天页（传对方ID、订单ID、对方昵称）
+    goChat(oppositeUserId, orderId, oppositeNickname) {
+      common_vendor.index.navigateTo({
+        url: `/pages/chat/chat?to_user_id=${oppositeUserId}&order_id=${orderId}&nickname=${oppositeNickname}`
+      });
     }
   },
   onLoad(options) {
@@ -117,8 +127,10 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         q: item.status === 1
       }, item.status === 1 ? {
         r: common_vendor.o(($event) => $options.updateStatus(item.order_id, 2), item.order_id)
-      } : {}) : {}) : {}, {
-        s: item.order_id
+      } : {}) : {}, {
+        s: common_vendor.o(($event) => $options.goChat(item.opposite_user_id, item.order_id, item.opposite_nickname), item.order_id)
+      }) : {}, {
+        t: item.order_id
       });
     })
   });

@@ -86,37 +86,11 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     l: common_vendor.o(($event) => common_vendor.index.navigateTo({
       url: "/pages/mine/address-list"
     })),
-    m: common_vendor.p({
-      type: "chat",
-      size: "24",
-      color: "#666"
-    }),
-    n: common_vendor.o(($event) => common_vendor.index.navigateTo({
-      url: "/pages/mine/message-list"
-    })),
-    o: common_vendor.p({
-      type: "locked",
-      size: "24",
-      color: "#666"
-    }),
-    p: common_vendor.o((...args) => _ctx.goToSecurity && _ctx.goToSecurity(...args)),
-    q: common_vendor.p({
-      type: "eye",
-      size: "24",
-      color: "#666"
-    }),
-    r: common_vendor.o((...args) => _ctx.goToPrivacy && _ctx.goToPrivacy(...args)),
-    s: common_vendor.p({
-      type: "help",
-      size: "24",
-      color: "#666"
-    }),
-    t: common_vendor.o((...args) => _ctx.goToHelp && _ctx.goToHelp(...args)),
-    v: $data.isLogin
+    m: $data.isLogin
   }, $data.isLogin ? {
-    w: common_vendor.o((...args) => $options.handleLogout && $options.handleLogout(...args))
+    n: common_vendor.o((...args) => $options.handleLogout && $options.handleLogout(...args))
   } : {}), {
-    x: common_vendor.p({
+    o: common_vendor.p({
       defaultTab: "mine"
     })
   });

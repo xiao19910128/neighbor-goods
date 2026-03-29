@@ -54,18 +54,18 @@
                 </view>
                 <text class="item-text">地址管理</text>
               </view>
-              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/message-list' })">
+              <!-- <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/message-list' })">
                 <view class="icon-wrapper">
                   <uni-icons type="chat" size="24" color="#666"></uni-icons>
                 </view>
                 <text class="item-text">我的消息</text>
-              </view>
+              </view> -->
               <view class="grid-item"></view>
             </view>
           </view>
 
           <!-- 设置 -->
-          <view class="grid-group">
+          <!-- <view class="grid-group">
             <text class="group-title">设置</text>
             <view class="grid-container">
               <view class="grid-item" @click="goToSecurity">
@@ -87,7 +87,7 @@
                 <text class="item-text">帮助与客服</text>
               </view>
             </view>
-          </view>
+          </view> -->
         </view>
 
         <!-- 底部：退出登录 -->

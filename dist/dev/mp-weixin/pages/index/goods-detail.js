@@ -76,7 +76,7 @@ const _sfc_main = {
   }
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return {
+  return common_vendor.e({
     a: common_vendor.f($data.imgs, (img, idx, i0) => {
       return {
         a: img,
@@ -94,11 +94,13 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     i: common_vendor.t($data.detail.district || "闵行区"),
     j: common_vendor.t($data.detail.street || "梅陇镇"),
     k: common_vendor.t($data.detail.detail_address || ""),
-    l: $data.isCollect ? 1 : "",
-    m: common_vendor.t($data.isCollect ? "已收藏" : "收藏"),
-    n: common_vendor.o((...args) => $options.doCollect && $options.doCollect(...args)),
-    o: common_vendor.o((...args) => $options.toBuy && $options.toBuy(...args))
-  };
+    l: $data.detail.user_id !== $data.userInfo.user_id
+  }, $data.detail.user_id !== $data.userInfo.user_id ? {
+    m: $data.isCollect ? 1 : "",
+    n: common_vendor.t($data.isCollect ? "已收藏" : "收藏"),
+    o: common_vendor.o((...args) => $options.doCollect && $options.doCollect(...args)),
+    p: common_vendor.o((...args) => $options.toBuy && $options.toBuy(...args))
+  } : {});
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-9c1ceb90"]]);
 wx.createPage(MiniProgramPage);

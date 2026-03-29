@@ -1,39 +1,32 @@
 // 引入封装好的 axios 实例
 import request from '@/utils/https.js';
-export const userApi = {
-  wxLogin(data) {
+export const messageApi = {
+  sendMessage(data) {
     return request({
-      url: '/users/wxLogin',
+      url: '/message/send',
       method: 'post',
       data
     });
   }, 
-  wxLogout(data) {
+  messageLists(data) {
     return request({
-      url: '/users/wxLogout',
+      url: '/message/list',
       method: 'post',
       data
     });
   }, 
-  getSmsCode(data) {
+  markRead(data) {
     return request({
-      url: '/users/getSmsCode',
+      url: '/message/markRead',
       method: 'post',
       data
     });
   }, 
-  phoneLogin(data) {
+  sessionList(data) {
     return request({
-      url: '/users/phoneLogin',
+      url: '/message/sessionList',
       method: 'post',
       data
     });
   },
-  getUserInfo(data) {
-    return request({
-      url: '/users/info',
-      method: 'post',
-      data
-    });
-  }
 }

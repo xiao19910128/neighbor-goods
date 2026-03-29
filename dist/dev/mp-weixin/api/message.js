@@ -1,40 +1,33 @@
 "use strict";
 const utils_https = require("../utils/https.js");
-const userApi = {
-  wxLogin(data) {
+const messageApi = {
+  sendMessage(data) {
     return utils_https.service({
-      url: "/users/wxLogin",
+      url: "/message/send",
       method: "post",
       data
     });
   },
-  wxLogout(data) {
+  messageLists(data) {
     return utils_https.service({
-      url: "/users/wxLogout",
+      url: "/message/list",
       method: "post",
       data
     });
   },
-  getSmsCode(data) {
+  markRead(data) {
     return utils_https.service({
-      url: "/users/getSmsCode",
+      url: "/message/markRead",
       method: "post",
       data
     });
   },
-  phoneLogin(data) {
+  sessionList(data) {
     return utils_https.service({
-      url: "/users/phoneLogin",
-      method: "post",
-      data
-    });
-  },
-  getUserInfo(data) {
-    return utils_https.service({
-      url: "/users/info",
+      url: "/message/sessionList",
       method: "post",
       data
     });
   }
 };
-exports.userApi = userApi;
+exports.messageApi = messageApi;

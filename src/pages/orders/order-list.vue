@@ -62,11 +62,6 @@
               class="order-btn warning"
               @click="updateStatus(item.order_id, 3)"
             >已自提</button>
-            <button 
-              v-if="item.status === 3"
-              class="order-btn primary"
-              @click="updateStatus(item.order_id, 4)"
-            > 确认完成</button>
           </template>
 
           <!-- 我卖出的 → 按钮 -->
@@ -76,10 +71,16 @@
               v-if="item.status === 1"
               @click="updateStatus(item.order_id, 2)"
             >确认交易</button>
+            <!-- 卖家确认完成，订单结束 -->
+            <button 
+              v-if="item.status === 3 && item.seller_id === userInfo.user_id"
+              class="order-btn primary"
+              @click="updateStatus(item.order_id, 4)"
+            > 确认完成</button>
           </template>
           <button 
             class="order-btn primary"
-            @click.stop="goChat(item.opposite_user_id, item.order_id, item.opposite_nickname)"
+            @click.stop="goChat(item.seller_id, item.order_id, item.opposite_nickname)"
           >沟通</button>
         </view>
       </view>
@@ -92,6 +93,7 @@ import { orderApi } from '@/api/order'
 export default {
   data() {
     return {
+      userInfo: uni.getStorageSync('userInfo') || {},
       currentType: 'buy', // buy 我买到的 | sell 我卖出的
       list: [],
       statusMap: {
@@ -126,10 +128,10 @@ export default {
 
     // 获取订单列表
     async getList() {
-      const user = uni.getStorageSync('userInfo')
-      if (!user?.user_id) return
+        const { user_id = '' } = this.userInfo
+      if (!user_id) return
 
-      const res = await orderApi.getOrderList({user_id: user.user_id, type: this.currentType })
+      const res = await orderApi.getOrderList({user_id, type: this.currentType })
       if (res.code === 200) {
         this.list = res.data?.map(item=>({
           ...item,
@@ -141,9 +143,9 @@ export default {
     // 修改订单状态
     async updateStatus(order_id, status) {
       try {
-        const user = uni.getStorageSync('userInfo')
-        if (!user?.user_id) return
-        await orderApi.updateOrderStatus({order_id, status, user_id: user?.user_id })
+        const { user_id = '' } = this.userInfo
+        if (!user_id) return
+        await orderApi.updateOrderStatus({order_id, status, user_id })
         uni.showToast({ title: '操作成功' })
         this.getList()
       } catch (err) {
@@ -166,6 +168,9 @@ export default {
         url: `/pages/chat/chat?to_user_id=${oppositeUserId}&order_id=${orderId}&nickname=${oppositeNickname}` 
       })
     },
+  },
+  onShow() {
+    this.userInfo = uni.getStorageSync('userInfo')
   },
 
   onLoad(options) {

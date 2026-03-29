@@ -1,6 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const utils_https = require("../../utils/https.js");
+const api_message = require("../../api/message.js");
 const _sfc_main = {
   data() {
     return {
@@ -20,11 +20,7 @@ const _sfc_main = {
     // 获取会话列表
     async getSessionList() {
       try {
-        const res = await utils_https.service({
-          url: "/api/message/sessionList",
-          method: "POST",
-          data: { user_id: this.userInfo.user_id }
-        });
+        const res = await api_message.messageApi.sessionList({ user_id: this.userInfo.user_id });
         if (res.code === 200) {
           this.sessionList = res.data;
         }

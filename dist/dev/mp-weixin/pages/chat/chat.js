@@ -1,6 +1,7 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const utils_https = require("../../utils/https.js");
+const api_user = require("../../api/user.js");
+const api_message = require("../../api/message.js");
 const _sfc_main = {
   data() {
     return {
@@ -18,7 +19,7 @@ const _sfc_main = {
     this.order_id = options.order_id;
     this.nickname = options.nickname;
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
-    common_vendor.index.setNavigationBarTitle({ title: this.nickname });
+    common_vendor.index.setNavigationBarTitle({ title: this.nickname || "聊天" });
     this.getOppositeInfo();
     this.getMsgList();
     this.timer = setInterval(() => this.getMsgList(), 3e3);
@@ -28,16 +29,12 @@ const _sfc_main = {
     this.markRead();
   },
   methods: {
-    // 获取对方信息（头像）
+    // 获取对方信息
     async getOppositeInfo() {
       try {
-        const res = await utils_https.service({
-          url: "/api/user/info",
-          method: "POST",
-          data: { user_id: this.to_user_id }
-        });
+        const res = await api_user.userApi.getUserInfo({ user_id: this.to_user_id });
         if (res.code === 200) {
-          this.oppositeAvatar = res.data.avatar_url || "/static/default-avatar.png";
+          this.oppositeAvatar = res.data.avatar_url || "https://picsum.photos/id/1005/100/100";
         }
       } catch (err) {
       }
@@ -45,14 +42,10 @@ const _sfc_main = {
     // 获取消息列表
     async getMsgList() {
       try {
-        const res = await utils_https.service({
-          url: "/api/message/list",
-          method: "POST",
-          data: {
-            user_id: this.userInfo.user_id,
-            to_user_id: this.to_user_id,
-            order_id: this.order_id
-          }
+        const res = await api_message.messageApi.messageLists({
+          user_id: this.userInfo.user_id,
+          to_user_id: this.to_user_id,
+          order_id: this.order_id
         });
         if (res.code === 200) {
           this.msgList = res.data;
@@ -60,11 +53,15 @@ const _sfc_main = {
             const query = common_vendor.index.createSelectorQuery().in(this);
             query.select("#msg-list").boundingClientRect();
             query.exec((res2) => {
-              common_vendor.index.pageScrollTo({ scrollTop: res2[0].height, duration: 0 });
+              var _a;
+              if ((_a = res2[0]) == null ? void 0 : _a.height) {
+                common_vendor.index.pageScrollTo({ scrollTop: res2[0].height, duration: 0 });
+              }
             });
           });
         }
       } catch (err) {
+        console.error("获取消息失败", err);
       }
     },
     // 发送消息
@@ -72,15 +69,11 @@ const _sfc_main = {
       if (!this.msgContent.trim())
         return;
       try {
-        await utils_https.service({
-          url: "/api/message/send",
-          method: "POST",
-          data: {
-            sender_id: this.userInfo.user_id,
-            receiver_id: this.to_user_id,
-            order_id: this.order_id,
-            content: this.msgContent.trim()
-          }
+        await api_message.messageApi.sendMessage({
+          sender_id: this.userInfo.user_id,
+          receiver_id: this.to_user_id,
+          order_id: this.order_id,
+          content: this.msgContent.trim()
         });
         this.msgContent = "";
         this.getMsgList();
@@ -88,17 +81,13 @@ const _sfc_main = {
         common_vendor.index.showToast({ title: "发送失败", icon: "none" });
       }
     },
-    // 标记消息已读
+    // 标记已读
     async markRead() {
       try {
-        await utils_https.service({
-          url: "/api/message/markRead",
-          method: "POST",
-          data: {
-            user_id: this.userInfo.user_id,
-            to_user_id: this.to_user_id,
-            order_id: this.order_id
-          }
+        await api_message.messageApi.markRead({
+          user_id: this.userInfo.user_id,
+          to_user_id: this.to_user_id,
+          order_id: this.order_id
         });
       } catch (err) {
       }

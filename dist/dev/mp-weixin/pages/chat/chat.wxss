@@ -14,13 +14,14 @@
 .msg-item.data-v-a041b13f {
   display: flex;
   margin-bottom: 20rpx;
+  align-items: flex-start;
 }
 .msg-item.self.data-v-a041b13f {
   flex-direction: row-reverse;
 }
 .avatar.data-v-a041b13f {
-  width: 60rpx;
-  height: 60rpx;
+  width: 80rpx;
+  height: 80rpx;
   border-radius: 50%;
   margin: 0 20rpx;
 }
@@ -28,7 +29,7 @@
   max-width: 60%;
   background: #fff;
   padding: 20rpx;
-  border-radius: 12rpx;
+  border-radius: 16rpx;
   position: relative;
 }
 .msg-item.self .msg-content.data-v-a041b13f {

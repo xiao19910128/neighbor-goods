@@ -35,7 +35,7 @@
     </view>
 
     <!-- 5. 底部操作栏：收藏 + 立即购买 -->
-    <view class="footer-bar">
+    <view class="footer-bar" v-if="detail.user_id !== userInfo.user_id">
       <view class="collect-btn" @tap="doCollect">
         <text class="collect-icon" :class="{ 'active': isCollect }">♥</text>
         <text class="collect-text">{{ isCollect ? '已收藏' : '收藏' }}</text>

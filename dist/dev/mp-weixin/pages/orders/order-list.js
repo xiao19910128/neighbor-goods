@@ -5,6 +5,7 @@ const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   data() {
     return {
+      userInfo: common_vendor.index.getStorageSync("userInfo") || {},
       currentType: "buy",
       // buy 我买到的 | sell 我卖出的
       list: [],
@@ -40,10 +41,10 @@ const _sfc_main = {
     // 获取订单列表
     async getList() {
       var _a;
-      const user = common_vendor.index.getStorageSync("userInfo");
-      if (!(user == null ? void 0 : user.user_id))
+      const { user_id = "" } = this.userInfo;
+      if (!user_id)
         return;
-      const res = await api_order.orderApi.getOrderList({ user_id: user.user_id, type: this.currentType });
+      const res = await api_order.orderApi.getOrderList({ user_id, type: this.currentType });
       if (res.code === 200) {
         this.list = (_a = res.data) == null ? void 0 : _a.map((item) => {
           var _a2;
@@ -57,10 +58,10 @@ const _sfc_main = {
     // 修改订单状态
     async updateStatus(order_id, status) {
       try {
-        const user = common_vendor.index.getStorageSync("userInfo");
-        if (!(user == null ? void 0 : user.user_id))
+        const { user_id = "" } = this.userInfo;
+        if (!user_id)
           return;
-        await api_order.orderApi.updateOrderStatus({ order_id, status, user_id: user == null ? void 0 : user.user_id });
+        await api_order.orderApi.updateOrderStatus({ order_id, status, user_id });
         common_vendor.index.showToast({ title: "操作成功" });
         this.getList();
       } catch (err) {
@@ -81,6 +82,9 @@ const _sfc_main = {
         url: `/pages/chat/chat?to_user_id=${oppositeUserId}&order_id=${orderId}&nickname=${oppositeNickname}`
       });
     }
+  },
+  onShow() {
+    this.userInfo = common_vendor.index.getStorageSync("userInfo");
   },
   onLoad(options) {
     this.currentType = options.type || "";
@@ -117,18 +121,18 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         l: item.status === 2
       }, item.status === 2 ? {
         m: common_vendor.o(($event) => $options.updateStatus(item.order_id, 3), item.order_id)
-      } : {}, {
-        n: item.status === 3
-      }, item.status === 3 ? {
-        o: common_vendor.o(($event) => $options.updateStatus(item.order_id, 4), item.order_id)
       } : {}) : {}, {
-        p: $data.currentType === "sell"
+        n: $data.currentType === "sell"
       }, $data.currentType === "sell" ? common_vendor.e({
-        q: item.status === 1
+        o: item.status === 1
       }, item.status === 1 ? {
-        r: common_vendor.o(($event) => $options.updateStatus(item.order_id, 2), item.order_id)
+        p: common_vendor.o(($event) => $options.updateStatus(item.order_id, 2), item.order_id)
+      } : {}, {
+        q: item.status === 3 && item.seller_id === $data.userInfo.user_id
+      }, item.status === 3 && item.seller_id === $data.userInfo.user_id ? {
+        r: common_vendor.o(($event) => $options.updateStatus(item.order_id, 4), item.order_id)
       } : {}) : {}, {
-        s: common_vendor.o(($event) => $options.goChat(item.opposite_user_id, item.order_id, item.opposite_nickname), item.order_id)
+        s: common_vendor.o(($event) => $options.goChat(item.seller_id, item.order_id, item.opposite_nickname), item.order_id)
       }) : {}, {
         t: item.order_id
       });

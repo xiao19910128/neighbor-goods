@@ -15,11 +15,12 @@ const _sfc_main = {
     };
   },
   onLoad(options) {
+    var _a;
     this.to_user_id = options.to_user_id;
     this.order_id = options.order_id;
     this.nickname = options.nickname;
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
-    common_vendor.index.setNavigationBarTitle({ title: this.nickname || "聊天" });
+    common_vendor.index.setNavigationBarTitle({ title: ((_a = this.userInfo) == null ? void 0 : _a.nickname) || "聊天" });
     this.getOppositeInfo();
     this.getMsgList();
     this.timer = setInterval(() => this.getMsgList(), 3e3);
@@ -34,7 +35,7 @@ const _sfc_main = {
       try {
         const res = await api_user.userApi.getUserInfo({ user_id: this.to_user_id });
         if (res.code === 200) {
-          this.oppositeAvatar = res.data.avatar_url || "https://picsum.photos/id/1005/100/100";
+          this.oppositeAvatar = res.data.avatarUrl || "https://picsum.photos/id/1005/100/100";
         }
       } catch (err) {
       }
@@ -98,7 +99,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
     a: common_vendor.f($data.msgList, (item, k0, i0) => {
       return {
-        a: item.sender_id === $data.userInfo.user_id ? $data.userInfo.avatar_url : $data.oppositeAvatar,
+        a: item.sender_id === $data.userInfo.user_id ? $data.userInfo.avatarUrl : $data.oppositeAvatar,
         b: common_vendor.t(item.content),
         c: item.sender_id === $data.userInfo.user_id ? 1 : "",
         d: item.id

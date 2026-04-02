@@ -9,7 +9,7 @@
         :key="item.id"
       >
         <image 
-          :src="item.sender_id === userInfo.user_id ? userInfo.avatar_url : oppositeAvatar" 
+          :src="item.sender_id === userInfo.user_id ? userInfo.avatarUrl : oppositeAvatar" 
           class="avatar"
         ></image>
         <view class="msg-content">
@@ -50,7 +50,7 @@ export default {
     this.order_id = options.order_id
     this.nickname = options.nickname
     this.userInfo = uni.getStorageSync('userInfo') || {}
-    uni.setNavigationBarTitle({ title: this.nickname || '聊天' })
+    uni.setNavigationBarTitle({ title: this.userInfo?.nickname || '聊天' })
     this.getOppositeInfo()
     this.getMsgList()
     this.timer = setInterval(() => this.getMsgList(), 3000)
@@ -65,7 +65,7 @@ export default {
       try {
        const res = await userApi.getUserInfo({ user_id: this.to_user_id })
         if (res.code === 200) {
-          this.oppositeAvatar = res.data.avatar_url || 'https://picsum.photos/id/1005/100/100'
+          this.oppositeAvatar = res.data.avatarUrl || 'https://picsum.photos/id/1005/100/100'
         }
       } catch (err) {}
     },

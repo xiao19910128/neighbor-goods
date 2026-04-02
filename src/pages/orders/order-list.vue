@@ -62,6 +62,11 @@
               class="order-btn warning"
               @click="updateStatus(item.order_id, 3)"
             >已自提</button>
+            <button 
+              class="order-btn error"
+              v-if="item.status === 1 || item.status === 2"
+              @click.stop="refundOrder(item.order_id)"
+            >退单</button>
           </template>
 
           <!-- 我卖出的 → 按钮 -->
@@ -74,7 +79,7 @@
             <!-- 卖家确认完成，订单结束 -->
             <button 
               v-if="item.status === 3 && item.seller_id === userInfo.user_id"
-              class="order-btn primary"
+              class="order-btn warning"
               @click="updateStatus(item.order_id, 4)"
             > 确认完成</button>
           </template>
@@ -151,6 +156,18 @@ export default {
       } catch (err) {
         uni.showToast({ title: '操作失败', icon: 'none' })
       }
+    },
+    // 退单
+    async refundOrder(order_id) {
+      uni.showModal({
+        title: '确认退单',
+        content: '确定要取消该订单吗？',
+        success: async (res) => {
+          if (res.confirm) {
+            this.updateStatus(order_id, 5)
+          }
+        }
+      })
     },
 
     // 图片失败兜底

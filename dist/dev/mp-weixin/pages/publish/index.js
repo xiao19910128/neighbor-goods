@@ -94,7 +94,7 @@ const _sfc_main = {
           publishRes = await api_goods.goodsApi.publishGoods(params);
         }
         if ((publishRes == null ? void 0 : publishRes.code) === 200) {
-          common_vendor.index.showToast({ title: "商品信息提交成功", icon: "none" });
+          common_vendor.index.showToast({ title: "发布成功，等待审核", icon: "none" });
           this.form = { name: "", price: 0, category_id: null, description: "" };
           common_vendor.wx$1.navigateTo({ url: "/pages/mine/publish-list?from=publish" });
         } else {
@@ -124,71 +124,64 @@ const _sfc_main = {
       }
     },
     async handleChooseImage() {
-      try {
-        const res = await common_vendor.index.chooseImage({
-          count: 9 - this.goodsImages.length,
-          // 剩余可选择数量 = 9 - 已选数量
-          sizeType: ["compressed"],
-          // 压缩图片，减少上传体积
-          sourceType: ["album", "camera"]
-          // 允许相册/相机
-        });
-        const tempFilePaths = res.tempFilePaths;
-        const uploadTasks = tempFilePaths.map((path) => this.uploadImage(path));
-        const newImageUrls = await Promise.all(uploadTasks);
-        const validUrls = newImageUrls.filter((url) => url !== null);
-        this.goodsImages = [...this.goodsImages, ...validUrls];
-        common_vendor.index.showToast({
-          title: `成功上传 ${validUrls.length} 张`,
-          icon: "none"
-        });
-      } catch (err) {
-        console.error("选择/上传图片失败:", err);
-        common_vendor.index.showToast({
-          title: "图片操作失败",
-          icon: "none"
-        });
-      }
-    },
-    // 上传图片方法（完全适配微信小程序/uni-app，直接复制）
-    async uploadImage(tempFilePath) {
       var _a;
       try {
-        const res = await common_vendor.index.uploadFile({
-          url: "http://localhost:3000/api/upload/image",
-          filePath: tempFilePath,
-          // 选择图片后返回的临时路径
-          name: "file",
-          formData: {
-            user_id: common_vendor.index.getStorageSync("userInfo").user_id
-          },
-          timeout: 1e4
-          // 超时时间
+        const res = await common_vendor.index.chooseImage({
+          count: 9 - (((_a = this.goodsImages) == null ? void 0 : _a.length) || 0),
+          sizeType: ["compressed"],
+          sourceType: ["album", "camera"]
         });
-        const data = JSON.parse(res == null ? void 0 : res.data);
-        if ((data == null ? void 0 : data.code) === 200) {
-          common_vendor.index.showToast({
-            title: "上传成功",
-            icon: "none",
-            duration: 1500
-          });
-          return (_a = data == null ? void 0 : data.data) == null ? void 0 : _a.url;
-        } else {
-          common_vendor.index.showToast({
-            title: (data == null ? void 0 : data.message) || "上传失败",
-            icon: "none",
-            duration: 2e3
-          });
-          return null;
+        const tempFilePaths = res.tempFilePaths;
+        console.log("✅ 选择的图片路径：", tempFilePaths);
+        const newImages = [];
+        for (const path of tempFilePaths) {
+          const url = await this.uploadImage(path);
+          console.log("✅ 单张上传返回URL：", url);
+          if (url && typeof url === "string") {
+            newImages.push(url);
+          }
         }
-      } catch (err) {
+        const oldImages = [...this.goodsImages || []];
+        this.$set(this, "goodsImages", [...oldImages, ...newImages]);
+        console.log("✅ 最终goodsImages数组：", this.goodsImages);
         common_vendor.index.showToast({
-          title: "上传失败，请重试",
-          icon: "none",
-          duration: 2e3
+          title: `成功上传 ${newImages.length} 张`,
+          icon: "none"
         });
-        return null;
+      } catch (err) {
+        console.error("❌ 上传失败：", err);
+        common_vendor.index.showToast({ title: "上传失败", icon: "none" });
       }
+    },
+    // 上传图片方法（终极稳定版，绝对返回字符串URL）
+    async uploadImage(path) {
+      return new Promise((resolve) => {
+        common_vendor.index.uploadFile({
+          url: "http://localhost:3000/api/upload/image",
+          filePath: path,
+          name: "file",
+          success: (uploadRes) => {
+            var _a;
+            console.log("✅ 后端返回数据：", uploadRes.data);
+            try {
+              const data = JSON.parse(uploadRes.data);
+              if ((data == null ? void 0 : data.code) === 200) {
+                const url = typeof data.data === "string" ? data.data : (_a = data.data) == null ? void 0 : _a.url;
+                resolve(url || null);
+              } else {
+                resolve(null);
+              }
+            } catch (e) {
+              console.error("❌ 解析失败：", e);
+              resolve(null);
+            }
+          },
+          fail: (err) => {
+            console.error("❌ 上传失败：", err);
+            resolve(null);
+          }
+        });
+      });
     },
     // 上传图片到服务器
     uploadImageToServer(tempFilePath) {

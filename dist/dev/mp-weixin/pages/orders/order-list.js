@@ -68,6 +68,18 @@ const _sfc_main = {
         common_vendor.index.showToast({ title: "操作失败", icon: "none" });
       }
     },
+    // 退单
+    async refundOrder(order_id) {
+      common_vendor.index.showModal({
+        title: "确认退单",
+        content: "确定要取消该订单吗？",
+        success: async (res) => {
+          if (res.confirm) {
+            this.updateStatus(order_id, 5);
+          }
+        }
+      });
+    },
     // 图片失败兜底
     handleImgErr(e) {
       e.target.src = "/static/default.png";
@@ -121,20 +133,24 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         l: item.status === 2
       }, item.status === 2 ? {
         m: common_vendor.o(($event) => $options.updateStatus(item.order_id, 3), item.order_id)
-      } : {}) : {}, {
-        n: $data.currentType === "sell"
-      }, $data.currentType === "sell" ? common_vendor.e({
-        o: item.status === 1
-      }, item.status === 1 ? {
-        p: common_vendor.o(($event) => $options.updateStatus(item.order_id, 2), item.order_id)
       } : {}, {
-        q: item.status === 3 && item.seller_id === $data.userInfo.user_id
-      }, item.status === 3 && item.seller_id === $data.userInfo.user_id ? {
-        r: common_vendor.o(($event) => $options.updateStatus(item.order_id, 4), item.order_id)
+        n: item.status === 1 || item.status === 2
+      }, item.status === 1 || item.status === 2 ? {
+        o: common_vendor.o(($event) => $options.refundOrder(item.order_id), item.order_id)
       } : {}) : {}, {
-        s: common_vendor.o(($event) => $options.goChat(item.seller_id, item.order_id, item.opposite_nickname), item.order_id)
+        p: $data.currentType === "sell"
+      }, $data.currentType === "sell" ? common_vendor.e({
+        q: item.status === 1
+      }, item.status === 1 ? {
+        r: common_vendor.o(($event) => $options.updateStatus(item.order_id, 2), item.order_id)
+      } : {}, {
+        s: item.status === 3 && item.seller_id === $data.userInfo.user_id
+      }, item.status === 3 && item.seller_id === $data.userInfo.user_id ? {
+        t: common_vendor.o(($event) => $options.updateStatus(item.order_id, 4), item.order_id)
+      } : {}) : {}, {
+        v: common_vendor.o(($event) => $options.goChat(item.seller_id, item.order_id, item.opposite_nickname), item.order_id)
       }) : {}, {
-        t: item.order_id
+        w: item.order_id
       });
     })
   });

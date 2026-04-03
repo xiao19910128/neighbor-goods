@@ -124,36 +124,40 @@ const _sfc_main = {
       }
     },
     async handleChooseImage() {
-      var _a;
       try {
+        const currentImages = this.goodsImages || [];
+        const remain = 9 - currentImages.length;
+        if (remain <= 0) {
+          common_vendor.index.showToast({ title: "最多上传9张", icon: "none" });
+          return;
+        }
         const res = await common_vendor.index.chooseImage({
-          count: 9 - (((_a = this.goodsImages) == null ? void 0 : _a.length) || 0),
+          count: remain,
           sizeType: ["compressed"],
           sourceType: ["album", "camera"]
         });
         const tempFilePaths = res.tempFilePaths;
-        console.log("✅ 选择的图片路径：", tempFilePaths);
+        if (!tempFilePaths || tempFilePaths.length === 0)
+          return;
         const newImages = [];
         for (const path of tempFilePaths) {
           const url = await this.uploadImage(path);
-          console.log("✅ 单张上传返回URL：", url);
           if (url && typeof url === "string") {
             newImages.push(url);
           }
         }
-        const oldImages = [...this.goodsImages || []];
-        this.$set(this, "goodsImages", [...oldImages, ...newImages]);
-        console.log("✅ 最终goodsImages数组：", this.goodsImages);
+        const finalImages = [...currentImages, ...newImages];
+        this.$set(this, "goodsImages", finalImages);
         common_vendor.index.showToast({
           title: `成功上传 ${newImages.length} 张`,
           icon: "none"
         });
       } catch (err) {
-        console.error("❌ 上传失败：", err);
+        console.error("上传失败：", err);
         common_vendor.index.showToast({ title: "上传失败", icon: "none" });
       }
     },
-    // 上传图片方法（终极稳定版，绝对返回字符串URL）
+    // 上传图片方法，封装上传逻辑
     async uploadImage(path) {
       return new Promise((resolve) => {
         common_vendor.index.uploadFile({
@@ -162,7 +166,6 @@ const _sfc_main = {
           name: "file",
           success: (uploadRes) => {
             var _a;
-            console.log("✅ 后端返回数据：", uploadRes.data);
             try {
               const data = JSON.parse(uploadRes.data);
               if ((data == null ? void 0 : data.code) === 200) {
@@ -172,14 +175,10 @@ const _sfc_main = {
                 resolve(null);
               }
             } catch (e) {
-              console.error("❌ 解析失败：", e);
               resolve(null);
             }
           },
-          fail: (err) => {
-            console.error("❌ 上传失败：", err);
-            resolve(null);
-          }
+          fail: () => resolve(null)
         });
       });
     },

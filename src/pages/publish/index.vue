@@ -218,75 +218,72 @@ export default {
         uni.showToast({ title: '获取商品详情失败', icon: 'none' });
       }
     },
-async handleChooseImage() {
-  try {
-        // 1. 选择图片（最多9张）
-    const res = await uni.chooseImage({
-      count: 9 - (this.goodsImages?.length || 0),
-      sizeType: ['compressed'],
-      sourceType: ['album', 'camera']
-    });
-
-    const tempFilePaths = res.tempFilePaths;
-    console.log('✅ 选择的图片路径：', tempFilePaths);
-
-    // 2. 串行上传，绝对不覆盖
-    const newImages = [];
-    for (const path of tempFilePaths) {
-      const url = await this.uploadImage(path);
-      console.log('✅ 单张上传返回URL：', url);
-      // 🔥 关键：只存字符串URL，过滤对象/空值
-      if (url && typeof url === 'string') {
-        newImages.push(url);
-      }
-    }
-
-    // 3. 强制响应式更新（uni-app专属，解决数组不刷新）
-    const oldImages = [...(this.goodsImages || [])];
-    this.$set(this, 'goodsImages', [...oldImages, ...newImages]);
-
-    console.log('✅ 最终goodsImages数组：', this.goodsImages);
-    uni.showToast({
-      title: `成功上传 ${newImages.length} 张`,
-      icon: 'none'
-    });
-  } catch (err) {
-    console.error('❌ 上传失败：', err);
-    uni.showToast({ title: '上传失败', icon: 'none' });
-  }
-},
-
-// 上传图片方法（终极稳定版，绝对返回字符串URL）
-async uploadImage(path) {
-  return new Promise((resolve) => {
-    uni.uploadFile({
-      url: 'http://localhost:3000/api/upload/image',
-      filePath: path,
-      name: 'file',
-      success: (uploadRes) => {
-        console.log('✅ 后端返回数据：', uploadRes.data);
-        try {
-          const data = JSON.parse(uploadRes.data);
-          // 🔥 关键：兼容后端返回对象/字符串两种情况
-          if (data?.code === 200) {
-            // 如果后端返回的是对象，取url字段；如果是字符串，直接返回
-            const url = typeof data.data === 'string' ? data.data : data.data?.url;
-            resolve(url || null);
-          } else {
-            resolve(null);
-          }
-        } catch (e) {
-          console.error('❌ 解析失败：', e);
-          resolve(null);
+    async handleChooseImage() {
+      try {
+        // 强制保证数组永远不为空--防止编辑时丢失图片
+        const currentImages = this.goodsImages || [];
+        const remain = 9 - currentImages.length;
+        // 没位置了直接提示
+        if (remain <= 0) {
+          uni.showToast({ title: '最多上传9张', icon: 'none' });
+          return;
         }
-      },
-      fail: (err) => {
-        console.error('❌ 上传失败：', err);
-        resolve(null);
+        // 1. 选择图片
+        const res = await uni.chooseImage({
+          count: remain,
+          sizeType: ['compressed'],
+          sourceType: ['album', 'camera']
+        });
+
+        const tempFilePaths = res.tempFilePaths;
+        if (!tempFilePaths || tempFilePaths.length === 0) return;
+
+        // 2. 串行上传
+        const newImages = [];
+        for (const path of tempFilePaths) {
+          const url = await this.uploadImage(path);
+          if (url && typeof url === 'string') {
+            newImages.push(url);
+          }
+        }
+
+        // 永远基于旧数组拼接，绝对不覆盖
+        const finalImages = [...currentImages, ...newImages];
+        this.$set(this, 'goodsImages', finalImages);
+        uni.showToast({
+          title: `成功上传 ${newImages.length} 张`,
+          icon: 'none'
+        });
+      } catch (err) {
+        console.error('上传失败：', err);
+        uni.showToast({ title: '上传失败', icon: 'none' });
       }
-    });
-  });
-},
+    },
+
+    // 上传图片方法，封装上传逻辑
+    async uploadImage(path) {
+      return new Promise((resolve) => {
+        uni.uploadFile({
+          url: 'http://localhost:3000/api/upload/image',
+          filePath: path,
+          name: 'file',
+          success: (uploadRes) => {
+            try {
+              const data = JSON.parse(uploadRes.data);
+              if (data?.code === 200) {
+                const url = typeof data.data === 'string' ? data.data : data.data?.url;
+                resolve(url || null);
+              } else {
+                resolve(null);
+              }
+            } catch (e) {
+              resolve(null);
+            }
+          },
+          fail: () => resolve(null)
+        });
+      });
+    },
 
     // 上传图片到服务器
     uploadImageToServer(tempFilePath) {

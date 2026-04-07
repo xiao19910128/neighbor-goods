@@ -109,11 +109,26 @@ export default {
         }, 300)
         return
       }
+      try {
+        // 调用创建订单接口
+        const res = await orderApi.createOrder({
+          goods_id: this.goods_id,
+          user_id: this.userInfo?.user_id,
+        });
+        if (res.code === 200) {
+          uni.showToast({ title: '下单成功' });
+          // 跳转到订单列表
+          setTimeout(() => {
+            uni.navigateTo({ url: '/pages/orders/order-list?type=buy' });
+          }, 1000);
+        } else {
+          uni.showToast({ title: res.msg || '下单失败', icon: 'none' });
+        }
 
-      // 跳转到地址选择页，选择自提/收货地址
-      uni.navigateTo({  
-        url: `/pages/mine/address-list?from=buy&goods_id=${this.goods_id}`
-      })
+      } catch (err) {
+        // 异常状态提示信息--账户禁用等
+        uni.showToast({ title:  err?.message || err?.msg, icon: 'none' });
+      }
     },
 
     // 图片加载失败兜底

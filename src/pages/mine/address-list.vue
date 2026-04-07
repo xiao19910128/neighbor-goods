@@ -124,6 +124,8 @@ export default {
         }, 300)
         return;
       }
+      // 这里选择地址不创建订单
+      return
       try {
         // 调用创建订单接口
         const res = await orderApi.createOrder({

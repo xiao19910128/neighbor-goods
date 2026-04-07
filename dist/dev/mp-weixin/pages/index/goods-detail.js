@@ -2,7 +2,7 @@
 const common_vendor = require("../../common/vendor.js");
 const api_goods = require("../../api/goods.js");
 const api_collection = require("../../api/collection.js");
-require("../../utils/https.js");
+const api_order = require("../../api/order.js");
 const _sfc_main = {
   data() {
     return {
@@ -57,7 +57,7 @@ const _sfc_main = {
     },
     // 立即购买（完善版：选择收货地址+下单）
     async toBuy() {
-      var _a;
+      var _a, _b;
       if (!((_a = this.userInfo) == null ? void 0 : _a.user_id)) {
         common_vendor.index.showToast({ title: "请先登录", icon: "none" });
         setTimeout(() => {
@@ -65,9 +65,22 @@ const _sfc_main = {
         }, 300);
         return;
       }
-      common_vendor.index.navigateTo({
-        url: `/pages/mine/address-list?from=buy&goods_id=${this.goods_id}`
-      });
+      try {
+        const res = await api_order.orderApi.createOrder({
+          goods_id: this.goods_id,
+          user_id: (_b = this.userInfo) == null ? void 0 : _b.user_id
+        });
+        if (res.code === 200) {
+          common_vendor.index.showToast({ title: "下单成功" });
+          setTimeout(() => {
+            common_vendor.index.navigateTo({ url: "/pages/orders/order-list?type=buy" });
+          }, 1e3);
+        } else {
+          common_vendor.index.showToast({ title: res.msg || "下单失败", icon: "none" });
+        }
+      } catch (err) {
+        common_vendor.index.showToast({ title: (err == null ? void 0 : err.message) || (err == null ? void 0 : err.msg), icon: "none" });
+      }
     },
     // 图片加载失败兜底
     handleImgError(e) {

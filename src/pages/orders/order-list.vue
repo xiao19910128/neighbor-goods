@@ -64,7 +64,7 @@
             >已自提</button>
             <button 
               class="order-btn error"
-              v-if="item.status === 1 || item.status === 2"
+              v-if="item.status === 2"
               @click.stop="refundOrder(item.order_id)"
             >退单</button>
           </template>

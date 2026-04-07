@@ -121,6 +121,7 @@ export default {
       goodsId: '', // 编辑模式下，商品的ID
       isLogin: !!uni.getStorageSync('token'),
       userInfo: {}, // 用户信息
+      addressId: '', // 选择的地址ID
     };
   },
   
@@ -175,7 +176,8 @@ export default {
           // 编辑模式：调用更新接口
           publishRes = await goodsApi.updateGoods({
             ...params,
-            goods_id: this.goodsId
+            goods_id: this.goodsId,
+            address_id: this.addressId, // 关键：发布时绑定地址
           });
         } else {
           // 发布模式：调用发布接口

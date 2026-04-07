@@ -34,8 +34,10 @@ const _sfc_main = {
       goodsId: "",
       // 编辑模式下，商品的ID
       isLogin: !!common_vendor.index.getStorageSync("token"),
-      userInfo: {}
+      userInfo: {},
       // 用户信息
+      addressId: ""
+      // 选择的地址ID
     };
   },
   async onShow() {
@@ -88,7 +90,9 @@ const _sfc_main = {
         if (this.goodsId) {
           publishRes = await api_goods.goodsApi.updateGoods({
             ...params,
-            goods_id: this.goodsId
+            goods_id: this.goodsId,
+            address_id: this.addressId
+            // 关键：发布时绑定地址
           });
         } else {
           publishRes = await api_goods.goodsApi.publishGoods(params);

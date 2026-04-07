@@ -1,7 +1,7 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const api_address = require("../../api/address.js");
-const api_order = require("../../api/order.js");
+require("../../utils/https.js");
 const _sfc_main = {
   data() {
     return {
@@ -62,23 +62,7 @@ const _sfc_main = {
         }, 300);
         return;
       }
-      try {
-        const res = await api_order.orderApi.createOrder({
-          user_id,
-          goods_id: this.goods_id,
-          address_id: this.selectedId
-        });
-        if (res.code === 200) {
-          common_vendor.index.showToast({ title: "下单成功" });
-          setTimeout(() => {
-            common_vendor.index.navigateTo({ url: "/pages/orders/order-list?type=buy" });
-          }, 1e3);
-        } else {
-          common_vendor.index.showToast({ title: res.msg || "下单失败", icon: "none" });
-        }
-      } catch (err) {
-        common_vendor.index.showToast({ title: (err == null ? void 0 : err.message) || (err == null ? void 0 : err.msg), icon: "none" });
-      }
+      return;
     },
     // 新增地址
     add() {

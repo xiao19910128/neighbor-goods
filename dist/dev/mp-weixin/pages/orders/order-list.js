@@ -134,8 +134,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       }, item.status === 2 ? {
         m: common_vendor.o(($event) => $options.updateStatus(item.order_id, 3), item.order_id)
       } : {}, {
-        n: item.status === 1 || item.status === 2
-      }, item.status === 1 || item.status === 2 ? {
+        n: item.status === 2
+      }, item.status === 2 ? {
         o: common_vendor.o(($event) => $options.refundOrder(item.order_id), item.order_id)
       } : {}) : {}, {
         p: $data.currentType === "sell"

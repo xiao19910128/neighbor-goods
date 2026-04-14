@@ -23,19 +23,19 @@
           <view class="grid-group">
             <text class="group-title">交易管理</text>
             <view class="grid-container">
-              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/orders/order-list?type=buy' })">
+              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/orders/order-list?type=buy' })">
                 <view class="icon-wrapper">
                 <uni-icons type="gift" size="24" color="#666"></uni-icons>
                 </view>
                 <text class="item-text">我的订单</text>
               </view>
-              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/publish-list' })">
+              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/publish-list' })">
                 <view class="icon-wrapper">
                   <uni-icons type="shop" size="24" color="#666"></uni-icons>
                 </view>
                 <text class="item-text">我发布的</text>
               </view>
-              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/collection-list' })">
+              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/collection-list' })">
                 <view class="icon-wrapper">
                   <uni-icons type="star" size="24" color="#666"></uni-icons>
                 </view>
@@ -48,18 +48,18 @@
           <view class="grid-group">
             <text class="group-title">偏好管理</text>
             <view class="grid-container">
-              <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/address-list' })">
+              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/address-list' })">
                 <view class="icon-wrapper">
                   <uni-icons type="location" size="24" color="#666"></uni-icons>
                 </view>
                 <text class="item-text">地址管理</text>
               </view>
-              <!-- <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/message-list' })">
+              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/message-list' })">
                 <view class="icon-wrapper">
                   <uni-icons type="chat" size="24" color="#666"></uni-icons>
                 </view>
                 <text class="item-text">我的消息</text>
-              </view> -->
+              </view>
               <view class="grid-item"></view>
             </view>
           </view>

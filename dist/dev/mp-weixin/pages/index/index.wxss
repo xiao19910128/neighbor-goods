@@ -136,11 +136,13 @@
 .product-meta.data-v-83a5a03c {
   font-size: 11px;
   color: #999;
-  padding: 5px 8px 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  height: 72rpx;
+  margin: 5px 8px 8px;
+  height: 68rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 /* 底部提示栏 */

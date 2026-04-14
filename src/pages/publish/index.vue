@@ -42,16 +42,30 @@
         <!-- 商品价格 -->
         <view class="form-item">
           <text class="label">价格（元）</text>
-          <input v-model.number="form.price" type="number" placeholder="0.00" />
+          <input
+            :key="inputKey"
+            :value="form.price"
+            type="digit"
+            placeholder="0.00"
+            @input="handlePriceInput"
+            maxlength="10"
+          />
         </view>
 
         <!-- 地址区域配置 -->
         <view class="address-section form-item">
-
-          <!-- 2. 街道/社区选择（默认是你的目标社区） -->
-          <picker :range="streetList" @change="handleStreetChange">
-            <view class="picker-text">当前社区：{{ form.streetName }}</view>
-          </picker>
+          <text class="label">自提地址（地址库/手动创建二选一）</text>
+          <view class="address-content">
+            <!-- 2. 街道/社区选择 -->
+            <picker :range="streetList" @change="handleStreetChange">
+              <view class="picker-text">当前社区：{{ form.streetName || form.street }}</view>
+            </picker>
+              <button 
+                v-if="addressLists.length"
+                class="choose-address-btn"
+                @click="handleChooseAddress"
+              >选择自提地址</button>
+            </view>
 
           <!-- 3. 详细地址（精确到小区/门口） -->
           <input 
@@ -85,6 +99,32 @@
         <button class="publish-btn" @click.stop="publishGoods">发布闲置</button>
       </view>
     </view>
+
+    <!-- 地址选择抽屉 -->
+    <view class="address-drawer" :class="{ show: showAddressDrawer }" @click="closeAddressDrawer">
+      <view class="drawer-content" @click.stop>
+        <view class="drawer-header">
+          <text>选择自提地址</text>
+          <text class="close" @click="closeAddressDrawer">关闭</text>
+        </view>
+
+        <scroll-view scroll-y class="address-list">
+          <view 
+            class="address-item" 
+            v-for="item in addressLists" 
+            :key="item.address_id"
+            @click="selectAddress(item)"
+          >
+            <view class="name">{{ item.contact_name }}</view>
+            <view class="phone">{{ item.contact_phone }}</view>
+            <view class="addr">
+              {{ item.province }} {{ item.city }} {{ item.district }} {{ item.street }} {{ item.detail_address }}
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
     <TabBar defaultTab="publish" />
   </view>
 </template>
@@ -93,6 +133,7 @@
 import TabBar from '@/components/TabBar.vue'
 import { goodsApi } from '@/api/goods';
 import { categoryApi } from '@/api/category';
+import { addressApi } from '@/api/address';
 const initialData = {
   price: '',
   category_id: null, // 选中的分类ID
@@ -100,7 +141,10 @@ const initialData = {
   province: '',
   city: '',
   name: '',
+  contact_name: '',
+  contact_phone: '',
   district: '',
+  address_id: null,
   street: '梅陇镇',
   detail_address: '',
   streetName: '梅陇镇',
@@ -116,28 +160,40 @@ export default {
       // 省市区联动
       regionValue: ['上海市', '上海市', '闵行区'],
       // 街道列表（可以根据 district 动态加载）
-      streetList: ['梅陇镇', '吴泾镇', '颛桥镇', '华漕镇'], 
+      streetList: ['梅陇镇','莘庄镇', '七宝镇', '颛桥镇', '华漕镇', '虹桥镇', '吴泾镇', '马桥镇', '浦江镇', '江川路街道', '古美街道', '新虹街道', '浦锦街道', '莘庄工业区'], 
       streetId: '',
       goodsId: '', // 编辑模式下，商品的ID
       isLogin: !!uni.getStorageSync('token'),
       userInfo: {}, // 用户信息
-      addressId: '', // 选择的地址ID
+      isUploadingImage: false, // 控制是否清空--uni-app机制问题优化（chooseImage/uploadFile，系统会触发页面的onShow生命周期），要标记这种情况不清空页面的数据
+      addressLists: [],
+      showAddressDrawer: false, // 控制抽屉显示/隐藏
+      inputKey: 0, // 解决input输入框无法更新的问题
     };
   },
   
   async onShow() {
-    // onShow 生命周期中重置表单数据，避免编辑时残留旧数据
-    this.goodsImages = []; // 清空图片列表，避免编辑时残留旧数据
-    this.form = { ...initialData };
-    // 加载分类列表
-    await this.loadCategories();
     // 从登录页返回时需要更新token状态，重新判断是否登录
     this.isLogin = !!uni.getStorageSync('token');
     this.userInfo = uni.getStorageSync('userInfo') || {};
+    // 上传图片时不清空
+    if (this.isUploadingImage) {
+      setTimeout(()=>{
+        this.isUploadingImage = false;
+      }, 100)
+      return
+    };
+    this.goodsImages = []; // 清空图片列表，避免编辑时残留旧数据
+    this.form = { ...initialData };
   },
   async onLoad(options = {}) {
+
+    await this.loadCategories();
+    await this.getAddressLists()
+    this.goodsId = options?.goods_id || '';
     // 从路由获取 goods_id
     if (options.goods_id) {
+      this.isUploadingImage = true // 详情查看无需清空
       this.goodsId = options.goods_id;
       this.getGoodsDetail(this.goodsId);
     }
@@ -165,11 +221,18 @@ export default {
       if (!this.form.price) return uni.showToast({ title: '请输入商品价格', icon: 'none' });
       if (!this.form.category_id) return uni.showToast({ title: '请选择商品分类', icon: 'none' });
       if (!this.form.street) return uni.showToast({ title: '请选择社区信息', icon: 'none' });
+      const  nickName  = this.userInfo?.nickName || this.userInfo?.nick_name;
+      const  phone  = this.userInfo?.phone || '13312345678';
       try {
         const params = {
           ...this.form,
           image_url: this.goodsImages?.join(','),
-          user_id: this.userInfo?.user_id
+          publisher_name: this.form?.contact_name || nickName,
+          user_id:this.userInfo?.user_id,
+          publisher_id:this.userInfo?.user_id,
+          address_id: this.form?.address_id || 0, // 关键：发布时绑定地址
+          contact_name: this.form?.contact_name || nickName,
+          contact_phone: this.form?.contact_phone || phone,
         }
         let publishRes = null;        
         if (this.goodsId) {
@@ -177,7 +240,6 @@ export default {
           publishRes = await goodsApi.updateGoods({
             ...params,
             goods_id: this.goodsId,
-            address_id: this.addressId, // 关键：发布时绑定地址
           });
         } else {
           // 发布模式：调用发布接口
@@ -186,7 +248,7 @@ export default {
         if (publishRes?.code === 200) {
           uni.showToast({ title: '发布成功，等待审核', icon: 'none' });
           // 重置表单
-          this.form = { name: '', price: 0, category_id: null, description: '' };
+          this.form = { ...initialData };
           // 跳转到我的发布列表
           wx.navigateTo({ url: '/pages/mine/publish-list?from=publish' });
         } else {
@@ -200,6 +262,8 @@ export default {
     
     // 查询闲置详情
     async getGoodsDetail(goodsId) {
+      this.form = { ...initialData };
+      if (!goodsId) return
       try {
         const res = await goodsApi.getGoodsDetail({ goods_id: goodsId });
         const {data, code} = res
@@ -207,14 +271,12 @@ export default {
           // 回填表单数据
           this.form = {
             ...data,
-            // streetName: 
           };
-          this.goodsImages = data?.image_url?.split(',')
+          this.goodsImages = data?.image_url?.length ? data?.image_url?.split(',') : [];
           // 页面标题改为“编辑闲置”
           uni.setNavigationBarTitle({ title: '编辑闲置' });
           // 按钮文字改为“更新闲置”
           this.btnText = '更新闲置';
-          // this.form = { ...initialData };
         }
       } catch (err) {
         uni.showToast({ title: '获取商品详情失败', icon: 'none' });
@@ -222,6 +284,7 @@ export default {
     },
     async handleChooseImage() {
       try {
+        this.isUploadingImage = true; // 标记上传图片，无需清空页面填的信息
         // 强制保证数组永远不为空--防止编辑时丢失图片
         const currentImages = this.goodsImages || [];
         const remain = 9 - currentImages.length;
@@ -259,6 +322,8 @@ export default {
       } catch (err) {
         console.error('上传失败：', err);
         uni.showToast({ title: '上传失败', icon: 'none' });
+      } finally {
+        // this.isUploadingImage = false;
       }
     },
 
@@ -368,6 +433,70 @@ export default {
       this.form.street = this.streetList[e.detail.value];
       this.form.streetName = this.form.street;
     },
+
+
+    // 获取地址列表
+    async getAddressLists() {
+      const { user_id = '' } = this.userInfo;
+      console.log(111,user_id);
+      
+      if (!user_id) return;
+      const res = await addressApi.getAddressList({user_id});
+      if (res?.code === 200) {
+        this.addressLists = res.data;
+        // 自动选中默认地址
+        const defaultAddr = res.data.find(item => item.is_default === 1);
+        if (defaultAddr) {
+          this.selectedId = defaultAddr.address_id;
+        }
+      }
+    },
+
+    // 打开地址抽屉
+    handleChooseAddress() {
+      this.showAddressDrawer = true;
+    },
+
+    // 关闭地址抽屉
+    closeAddressDrawer() {
+      this.showAddressDrawer = false;
+    },
+    // 选择地址 → 自动回填
+    selectAddress(item) {
+      this.form = { ...this.form, ...item }
+      this.showAddressDrawer = false;
+    },
+
+    handlePriceInput(e) {
+      let value = e.detail.value || '';
+      // 只保留数字和小数点
+      value = value.replace(/[^\d.]/g, '');
+      console.log(11111, value);
+      let filteredValue = value;
+      // 只保留一个小数点
+      const pointCount = value.split('.').length - 1;
+      if (pointCount > 1) {
+        value = value.substring(0, value.lastIndexOf('.'));
+      }
+      // 限制两位小数
+      const pointIndex = value.indexOf('.');
+      if (pointIndex !== -1) {
+        value = value.substring(0, pointIndex + 3);
+      }
+      // 禁止负数
+      value = value.replace(/-/g, '');
+      // 清理开头多余的 0
+      value = value.replace(/^0+/, '') || '0';
+    
+      if (filteredValue !== value) {
+        this.inputKey++; // 每次过滤后，key自增，强制刷新input组件
+      }
+      // 强制更新视图（解决不刷新问题）
+      this.$nextTick(() => {
+        this.form.price = value;
+        
+      });
+    }
   }
 };
 </script>
@@ -570,5 +699,100 @@ textarea {
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+}
+
+.choose-address-btn {
+  margin: 0;
+  height: 60rpx;
+  line-height: 60rpx;
+  padding: 0 30rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  background: #f2f3f5;
+  background: #07c160;
+  color: #fff;
+  border: none;
+}
+.address-content {
+  display: flex;
+  align-items: center;
+  padding-bottom: 20rpx;
+  justify-content: space-between;
+}
+
+/* 地址抽屉遮罩 */
+.address-drawer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  display: flex;
+  align-items: flex-end;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+.address-drawer.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 抽屉内容 */
+.drawer-content {
+  width: 100%;
+  max-height: 70vh;
+  background: #fff;
+  border-radius: 20rpx 20rpx 0 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.address-drawer.show .drawer-content {
+  transform: translateY(0);
+}
+
+/* 头部 */
+.drawer-header {
+  padding: 30rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1rpx solid #eee;
+}
+.drawer-header .close {
+  color: #666;
+  font-size: 28rpx;
+}
+
+/* 地址列表 */
+.address-list {
+  max-height: 60vh;
+  padding: 20rpx;
+}
+.address-item {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.address-item .name {
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.address-item .phone {
+  font-size: 26rpx;
+  color: #666;
+  margin: 10rpx 0;
+}
+.address-item .addr {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.empty {
+  padding: 100rpx 0;
+  text-align: center;
+  color: #999;
 }
 </style>

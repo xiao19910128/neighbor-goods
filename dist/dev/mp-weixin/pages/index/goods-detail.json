@@ -1,4 +1,6 @@
 {
   "navigationBarTitleText": "闲置商品详情",
-  "usingComponents": {}
+  "usingComponents": {
+    "uni-tag": "../../node-modules/@dcloudio/uni-ui/lib/uni-tag/uni-tag"
+  }
 }

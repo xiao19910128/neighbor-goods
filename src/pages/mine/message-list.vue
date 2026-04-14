@@ -81,7 +81,7 @@ export default {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  margin-right: 20rpx;
+  /* margin-right: 20rpx; */
 }
 .session-info {
   flex: 1;

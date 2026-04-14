@@ -49,7 +49,7 @@ const _sfc_main = {
     },
     // 跳转到商品详情
     goDetail(goods_id) {
-      common_vendor.index.navigateTo({
+      common_vendor.index.redirectTo({
         url: `/pages/goods/detail?goods_id=${goods_id}`
       });
     },

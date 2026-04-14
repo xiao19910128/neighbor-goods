@@ -113,12 +113,12 @@ const _sfc_main = {
         }
         await api_address.addressApi.addAddress({
           user_id,
-          name: res.userName,
-          phone: res.telNumber,
+          contact_name: res.userName,
+          contact_phone: res.telNumber,
           province: res.provinceName,
           city: res.cityName,
-          county: res.districtName,
-          detail: res.detailInfo,
+          district: res.districtName,
+          detail_address: res.detailInfo,
           is_default: 0
         });
         common_vendor.index.showToast({ title: "添加成功", icon: "none" });
@@ -135,14 +135,14 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   }, $data.addressLists.length === 0 ? {} : {}, {
     b: common_vendor.f($data.addressLists, (item, k0, i0) => {
       return common_vendor.e({
-        a: common_vendor.t(item.name),
-        b: common_vendor.t(item.phone),
+        a: common_vendor.t(item.contact_name),
+        b: common_vendor.t(item.contact_phone),
         c: item.is_default === 1
       }, item.is_default === 1 ? {} : {}, {
         d: common_vendor.t(item.province),
         e: common_vendor.t(item.city),
-        f: common_vendor.t(item.county),
-        g: common_vendor.t(item.detail)
+        f: common_vendor.t(item.district),
+        g: common_vendor.t(item.detail_address)
       }, !$data.isSelectMode ? {
         h: common_vendor.o(($event) => $options.edit(item), item.address_id),
         i: common_vendor.o(($event) => $options.del(item.address_id), item.address_id)

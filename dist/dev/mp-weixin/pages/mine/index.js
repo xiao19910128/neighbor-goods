@@ -59,7 +59,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    f: common_vendor.o(($event) => common_vendor.index.navigateTo({
+    f: common_vendor.o(($event) => common_vendor.index.redirectTo({
       url: "/pages/orders/order-list?type=buy"
     })),
     g: common_vendor.p({
@@ -67,7 +67,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    h: common_vendor.o(($event) => common_vendor.index.navigateTo({
+    h: common_vendor.o(($event) => common_vendor.index.redirectTo({
       url: "/pages/mine/publish-list"
     })),
     i: common_vendor.p({
@@ -75,7 +75,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    j: common_vendor.o(($event) => common_vendor.index.navigateTo({
+    j: common_vendor.o(($event) => common_vendor.index.redirectTo({
       url: "/pages/mine/collection-list"
     })),
     k: common_vendor.p({
@@ -83,14 +83,22 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    l: common_vendor.o(($event) => common_vendor.index.navigateTo({
+    l: common_vendor.o(($event) => common_vendor.index.redirectTo({
       url: "/pages/mine/address-list"
     })),
-    m: $data.isLogin
+    m: common_vendor.p({
+      type: "chat",
+      size: "24",
+      color: "#666"
+    }),
+    n: common_vendor.o(($event) => common_vendor.index.redirectTo({
+      url: "/pages/mine/message-list"
+    })),
+    o: $data.isLogin
   }, $data.isLogin ? {
-    n: common_vendor.o((...args) => $options.handleLogout && $options.handleLogout(...args))
+    p: common_vendor.o((...args) => $options.handleLogout && $options.handleLogout(...args))
   } : {}), {
-    o: common_vendor.p({
+    q: common_vendor.p({
       defaultTab: "mine"
     })
   });

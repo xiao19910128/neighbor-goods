@@ -2,6 +2,7 @@
 const common_vendor = require("../../common/vendor.js");
 const api_goods = require("../../api/goods.js");
 const api_category = require("../../api/category.js");
+const api_address = require("../../api/address.js");
 const TabBar = () => "../../components/TabBar.js";
 const initialData = {
   price: "",
@@ -11,7 +12,10 @@ const initialData = {
   province: "",
   city: "",
   name: "",
+  contact_name: "",
+  contact_phone: "",
   district: "",
+  address_id: null,
   street: "梅陇镇",
   detail_address: "",
   streetName: "梅陇镇"
@@ -29,26 +33,40 @@ const _sfc_main = {
       // 省市区联动
       regionValue: ["上海市", "上海市", "闵行区"],
       // 街道列表（可以根据 district 动态加载）
-      streetList: ["梅陇镇", "吴泾镇", "颛桥镇", "华漕镇"],
+      streetList: ["梅陇镇", "莘庄镇", "七宝镇", "颛桥镇", "华漕镇", "虹桥镇", "吴泾镇", "马桥镇", "浦江镇", "江川路街道", "古美街道", "新虹街道", "浦锦街道", "莘庄工业区"],
       streetId: "",
       goodsId: "",
       // 编辑模式下，商品的ID
       isLogin: !!common_vendor.index.getStorageSync("token"),
       userInfo: {},
       // 用户信息
-      addressId: ""
-      // 选择的地址ID
+      isUploadingImage: false,
+      // 控制是否清空--uni-app机制问题优化（chooseImage/uploadFile，系统会触发页面的onShow生命周期），要标记这种情况不清空页面的数据
+      addressLists: [],
+      showAddressDrawer: false,
+      // 控制抽屉显示/隐藏
+      inputKey: 0
+      // 解决input输入框无法更新的问题
     };
   },
   async onShow() {
-    this.goodsImages = [];
-    this.form = { ...initialData };
-    await this.loadCategories();
     this.isLogin = !!common_vendor.index.getStorageSync("token");
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
+    if (this.isUploadingImage) {
+      setTimeout(() => {
+        this.isUploadingImage = false;
+      }, 100);
+      return;
+    }
+    this.goodsImages = [];
+    this.form = { ...initialData };
   },
   async onLoad(options = {}) {
+    await this.loadCategories();
+    await this.getAddressLists();
+    this.goodsId = (options == null ? void 0 : options.goods_id) || "";
     if (options.goods_id) {
+      this.isUploadingImage = true;
       this.goodsId = options.goods_id;
       this.getGoodsDetail(this.goodsId);
     }
@@ -71,7 +89,7 @@ const _sfc_main = {
     },
     // 发布商品
     async publishGoods() {
-      var _a, _b;
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
       if (!this.form.name)
         return common_vendor.index.showToast({ title: "请输入商品标题", icon: "none" });
       if (!this.form.price)
@@ -80,26 +98,32 @@ const _sfc_main = {
         return common_vendor.index.showToast({ title: "请选择商品分类", icon: "none" });
       if (!this.form.street)
         return common_vendor.index.showToast({ title: "请选择社区信息", icon: "none" });
+      const nickName = ((_a = this.userInfo) == null ? void 0 : _a.nickName) || ((_b = this.userInfo) == null ? void 0 : _b.nick_name);
+      const phone = ((_c = this.userInfo) == null ? void 0 : _c.phone) || "13312345678";
       try {
         const params = {
           ...this.form,
-          image_url: (_a = this.goodsImages) == null ? void 0 : _a.join(","),
-          user_id: (_b = this.userInfo) == null ? void 0 : _b.user_id
+          image_url: (_d = this.goodsImages) == null ? void 0 : _d.join(","),
+          publisher_name: ((_e = this.form) == null ? void 0 : _e.contact_name) || nickName,
+          user_id: (_f = this.userInfo) == null ? void 0 : _f.user_id,
+          publisher_id: (_g = this.userInfo) == null ? void 0 : _g.user_id,
+          address_id: ((_h = this.form) == null ? void 0 : _h.address_id) || 0,
+          // 关键：发布时绑定地址
+          contact_name: ((_i = this.form) == null ? void 0 : _i.contact_name) || nickName,
+          contact_phone: ((_j = this.form) == null ? void 0 : _j.contact_phone) || phone
         };
         let publishRes = null;
         if (this.goodsId) {
           publishRes = await api_goods.goodsApi.updateGoods({
             ...params,
-            goods_id: this.goodsId,
-            address_id: this.addressId
-            // 关键：发布时绑定地址
+            goods_id: this.goodsId
           });
         } else {
           publishRes = await api_goods.goodsApi.publishGoods(params);
         }
         if ((publishRes == null ? void 0 : publishRes.code) === 200) {
           common_vendor.index.showToast({ title: "发布成功，等待审核", icon: "none" });
-          this.form = { name: "", price: 0, category_id: null, description: "" };
+          this.form = { ...initialData };
           common_vendor.wx$1.navigateTo({ url: "/pages/mine/publish-list?from=publish" });
         } else {
           common_vendor.index.showToast({ title: publishRes.msg, icon: "none" });
@@ -110,16 +134,18 @@ const _sfc_main = {
     },
     // 查询闲置详情
     async getGoodsDetail(goodsId) {
-      var _a;
+      var _a, _b;
+      this.form = { ...initialData };
+      if (!goodsId)
+        return;
       try {
         const res = await api_goods.goodsApi.getGoodsDetail({ goods_id: goodsId });
         const { data, code } = res;
         if (code === 200) {
           this.form = {
             ...data
-            // streetName: 
           };
-          this.goodsImages = (_a = data == null ? void 0 : data.image_url) == null ? void 0 : _a.split(",");
+          this.goodsImages = ((_a = data == null ? void 0 : data.image_url) == null ? void 0 : _a.length) ? (_b = data == null ? void 0 : data.image_url) == null ? void 0 : _b.split(",") : [];
           common_vendor.index.setNavigationBarTitle({ title: "编辑闲置" });
           this.btnText = "更新闲置";
         }
@@ -129,6 +155,7 @@ const _sfc_main = {
     },
     async handleChooseImage() {
       try {
+        this.isUploadingImage = true;
         const currentImages = this.goodsImages || [];
         const remain = 9 - currentImages.length;
         if (remain <= 0) {
@@ -159,6 +186,7 @@ const _sfc_main = {
       } catch (err) {
         console.error("上传失败：", err);
         common_vendor.index.showToast({ title: "上传失败", icon: "none" });
+      } finally {
       }
     },
     // 上传图片方法，封装上传逻辑
@@ -262,6 +290,56 @@ const _sfc_main = {
     handleStreetChange(e) {
       this.form.street = this.streetList[e.detail.value];
       this.form.streetName = this.form.street;
+    },
+    // 获取地址列表
+    async getAddressLists() {
+      const { user_id = "" } = this.userInfo;
+      console.log(111, user_id);
+      if (!user_id)
+        return;
+      const res = await api_address.addressApi.getAddressList({ user_id });
+      if ((res == null ? void 0 : res.code) === 200) {
+        this.addressLists = res.data;
+        const defaultAddr = res.data.find((item) => item.is_default === 1);
+        if (defaultAddr) {
+          this.selectedId = defaultAddr.address_id;
+        }
+      }
+    },
+    // 打开地址抽屉
+    handleChooseAddress() {
+      this.showAddressDrawer = true;
+    },
+    // 关闭地址抽屉
+    closeAddressDrawer() {
+      this.showAddressDrawer = false;
+    },
+    // 选择地址 → 自动回填
+    selectAddress(item) {
+      this.form = { ...this.form, ...item };
+      this.showAddressDrawer = false;
+    },
+    handlePriceInput(e) {
+      let value = e.detail.value || "";
+      value = value.replace(/[^\d.]/g, "");
+      console.log(11111, value);
+      let filteredValue = value;
+      const pointCount = value.split(".").length - 1;
+      if (pointCount > 1) {
+        value = value.substring(0, value.lastIndexOf("."));
+      }
+      const pointIndex = value.indexOf(".");
+      if (pointIndex !== -1) {
+        value = value.substring(0, pointIndex + 3);
+      }
+      value = value.replace(/-/g, "");
+      value = value.replace(/^0+/, "") || "0";
+      if (filteredValue !== value) {
+        this.inputKey++;
+      }
+      this.$nextTick(() => {
+        this.form.price = value;
+      });
     }
   }
 };
@@ -291,16 +369,19 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   } : {}, {
     f: $data.form.name,
     g: common_vendor.o(($event) => $data.form.name = $event.detail.value),
-    h: $data.form.price,
-    i: common_vendor.o(common_vendor.m(($event) => $data.form.price = $event.detail.value, {
-      number: true
-    })),
-    j: common_vendor.t($data.form.streetName),
-    k: $data.streetList,
-    l: common_vendor.o((...args) => $options.handleStreetChange && $options.handleStreetChange(...args)),
-    m: $data.form.detail_address,
-    n: common_vendor.o(($event) => $data.form.detail_address = $event.detail.value),
-    o: common_vendor.f($data.categoryList, (cat, k0, i0) => {
+    h: $data.inputKey,
+    i: $data.form.price,
+    j: common_vendor.o((...args) => $options.handlePriceInput && $options.handlePriceInput(...args)),
+    k: common_vendor.t($data.form.streetName || $data.form.street),
+    l: $data.streetList,
+    m: common_vendor.o((...args) => $options.handleStreetChange && $options.handleStreetChange(...args)),
+    n: $data.addressLists.length
+  }, $data.addressLists.length ? {
+    o: common_vendor.o((...args) => $options.handleChooseAddress && $options.handleChooseAddress(...args))
+  } : {}, {
+    p: $data.form.detail_address,
+    q: common_vendor.o(($event) => $data.form.detail_address = $event.detail.value),
+    r: common_vendor.f($data.categoryList, (cat, k0, i0) => {
       return {
         a: common_vendor.t(cat.name),
         b: cat.category_id,
@@ -310,11 +391,29 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         d: common_vendor.o(($event) => $options.selectCategory(cat.category_id), cat.category_id)
       };
     }),
-    p: $data.form.description,
-    q: common_vendor.o(($event) => $data.form.description = $event.detail.value),
-    r: common_vendor.o((...args) => $options.publishGoods && $options.publishGoods(...args))
+    s: $data.form.description,
+    t: common_vendor.o(($event) => $data.form.description = $event.detail.value),
+    v: common_vendor.o((...args) => $options.publishGoods && $options.publishGoods(...args))
   }), {
-    s: common_vendor.p({
+    w: common_vendor.o((...args) => $options.closeAddressDrawer && $options.closeAddressDrawer(...args)),
+    x: common_vendor.f($data.addressLists, (item, k0, i0) => {
+      return {
+        a: common_vendor.t(item.contact_name),
+        b: common_vendor.t(item.contact_phone),
+        c: common_vendor.t(item.province),
+        d: common_vendor.t(item.city),
+        e: common_vendor.t(item.district),
+        f: common_vendor.t(item.street),
+        g: common_vendor.t(item.detail_address),
+        h: item.address_id,
+        i: common_vendor.o(($event) => $options.selectAddress(item), item.address_id)
+      };
+    }),
+    y: common_vendor.o(() => {
+    }),
+    z: $data.showAddressDrawer ? 1 : "",
+    A: common_vendor.o((...args) => $options.closeAddressDrawer && $options.closeAddressDrawer(...args)),
+    B: common_vendor.p({
       defaultTab: "publish"
     })
   });

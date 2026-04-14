@@ -1,18 +1,24 @@
 <template>
   <view class="edit-page">
     <view class="form-item">
-      <text class="label">收货人</text>
-      <input class="input" v-model="addressForm.name" placeholder="请输入姓名" />
+      <text class="label">联系人</text>
+      <input class="input" v-model="addressForm.contact_name" placeholder="请输入联系人" />
     </view>
 
     <view class="form-item">
-      <text class="label">手机号码</text>
-      <input class="input" v-model="addressForm.phone" placeholder="请输入手机号" type="number" />
+      <text class="label">联系电话</text>
+      <input class="input" v-model="addressForm.contact_phone" placeholder="请输入联系电话" type="number" />
+    </view>
+    
+    <view class="form-item">
+      <picker :range="streetList" @change="handleStreetChange">
+        <view class="picker-text">当前社区：{{ addressForm.streetName }}</view>
+      </picker>
     </view>
 
     <view class="form-item">
       <text class="label">详细地址</text>
-      <input class="input" v-model="addressForm.detail" placeholder="请输入详细地址（小区/楼栋/门牌号）" />
+      <input class="input" v-model="addressForm.detail_address" placeholder="请输入详细地址（小区/楼栋/门牌号）" />
     </view>
 
     <view class="form-item checkbox-row">
@@ -36,14 +42,17 @@ export default {
     return {
       addressForm: {
         address_id: 0,
-        name: '',
-        phone: '',
+        contact_name: '',
+        contact_phone: '',
         province: '上海市',
         city: '上海市',
-        county: '闵行区',
-        detail: '',
-        is_default: 0
-      }
+        district: '闵行区',
+        detail_address: '',
+        is_default: 0,
+        street: '梅陇镇',
+        streetName: '梅陇镇'
+      },
+      streetList: ['梅陇镇','莘庄镇', '七宝镇', '颛桥镇', '华漕镇', '虹桥镇', '吴泾镇', '马桥镇', '浦江镇', '江川路街道', '古美街道', '新虹街道', '浦锦街道', '莘庄工业区'], // 街道列表
     }
   },
 
@@ -69,7 +78,7 @@ export default {
         return
       }
       const phoneReg = /^1[3-9]\d{9}$/
-      if (!phoneReg.test(this.addressForm.phone)) {
+      if (!phoneReg.test(this.addressForm?.contact_phone)) {
         uni.showToast({
           title: '请输入正确的11位手机号',
           icon: 'none'
@@ -96,7 +105,14 @@ export default {
         console.error('❌ 保存失败：', err)
         uni.showToast({ title: '保存失败', icon: 'none' })
       }
-    }
+    },
+
+
+    // 2. 处理街道/社区变化
+    handleStreetChange(e) {
+      this.addressForm.street = this.streetList[e.detail.value];
+      this.addressForm.streetName = this.addressForm.street;
+    },
   }
 }
 </script>

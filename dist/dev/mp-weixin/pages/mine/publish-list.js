@@ -168,7 +168,10 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         f: common_vendor.n($options.getStatusClass(item.audit_status)),
         g: common_vendor.o(($event) => $options.editGoods(item), item.goods_id),
         h: common_vendor.o(($event) => $options.deleteGoods(item.goods_id), item.goods_id),
-        i: item.goods_id
+        i: item.goods_id,
+        j: common_vendor.o(($event) => common_vendor.index.navigateTo({
+          url: `/pages/index/goods-detail?goods_id=${item.goods_id}`
+        }), item.goods_id)
       };
     })
   });

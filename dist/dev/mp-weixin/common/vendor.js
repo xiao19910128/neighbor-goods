@@ -95,10 +95,6 @@ const looseToNumber = (val) => {
   const n2 = parseFloat(val);
   return isNaN(n2) ? val : n2;
 };
-const toNumber = (val) => {
-  const n2 = isString$2(val) ? Number(val) : NaN;
-  return isNaN(n2) ? val : n2;
-};
 function normalizeStyle(value) {
   if (isArray$2(value)) {
     const res = {};
@@ -6776,27 +6772,6 @@ function vFor(source, renderItem) {
   }
   return ret;
 }
-function withModelModifiers(fn, { number, trim: trim2 }, isComponent = false) {
-  if (isComponent) {
-    return (...args) => {
-      if (trim2) {
-        args = args.map((a) => a.trim());
-      } else {
-        args = args.map(toNumber);
-      }
-      return fn(...args);
-    };
-  }
-  return (event) => {
-    const value = event.detail.value;
-    if (trim2) {
-      event.detail.value = value.trim();
-    } else {
-      event.detail.value = toNumber(value);
-    }
-    return fn(event);
-  };
-}
 const o = (value, key) => vOn(value, key);
 const f = (source, renderItem) => vFor(source, renderItem);
 const s = (value) => stringifyStyle(value);
@@ -6804,7 +6779,6 @@ const e = (target, ...sources) => extend$2(target, ...sources);
 const n = (value) => normalizeClass(value);
 const t = (val) => toDisplayString(val);
 const p = (props) => renderProps(props);
-const m = (fn, modifiers, isComponent = false) => withModelModifiers(fn, modifiers, isComponent);
 function createApp$1(rootComponent, rootProps = null) {
   rootComponent && (rootComponent.mpType = "app");
   return createVueApp(rootComponent, rootProps).use(plugin);
@@ -7949,7 +7923,7 @@ const matchAll = (regExp, str) => {
 };
 const isHTMLForm = kindOfTest("HTMLFormElement");
 const toCamelCase = (str) => {
-  return str.toLowerCase().replace(/[-_\s]([a-z\d])(\w*)/g, function replacer2(m2, p1, p2) {
+  return str.toLowerCase().replace(/[-_\s]([a-z\d])(\w*)/g, function replacer2(m, p1, p2) {
     return p1.toUpperCase() + p2;
   });
 };
@@ -10441,7 +10415,7 @@ function extend(a, b, thisArg) {
   });
   return a;
 }
-var utils$1 = {
+var utils$2 = {
   isArray,
   isArrayBuffer,
   isBuffer,
@@ -10464,7 +10438,7 @@ var utils$1 = {
   extend,
   trim
 };
-const utils$2 = /* @__PURE__ */ getDefaultExportFromCjs(utils$1);
+const utils$1 = /* @__PURE__ */ getDefaultExportFromCjs(utils$2);
 var enhanceError$1 = function enhanceError(error, config, code, request, response) {
   error.config = config;
   if (code) {
@@ -10494,13 +10468,13 @@ var enhanceError$1 = function enhanceError(error, config, code, request, respons
   return error;
 };
 var enhanceError2 = enhanceError$1;
-var createError$1 = function createError(message, config, code, request, response) {
+var createError$2 = function createError(message, config, code, request, response) {
   var error = new Error(message);
   return enhanceError2(error, config, code, request, response);
 };
-const createError$2 = /* @__PURE__ */ getDefaultExportFromCjs(createError$1);
-var createError2 = createError$1;
-var settle = function settle2(resolve2, reject, response) {
+const createError$1 = /* @__PURE__ */ getDefaultExportFromCjs(createError$2);
+var createError2 = createError$2;
+var settle$1 = function settle(resolve2, reject, response) {
   var validateStatus2 = response.config.validateStatus;
   if (!validateStatus2 || validateStatus2(response.status)) {
     resolve2(response);
@@ -10514,12 +10488,12 @@ var settle = function settle2(resolve2, reject, response) {
     ));
   }
 };
-const settle$1 = /* @__PURE__ */ getDefaultExportFromCjs(settle);
-var utils = utils$1;
+const settle2 = /* @__PURE__ */ getDefaultExportFromCjs(settle$1);
+var utils = utils$2;
 function encode(val) {
   return encodeURIComponent(val).replace(/%40/gi, "@").replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
 }
-var buildURL = function buildURL2(url, params, paramsSerializer) {
+var buildURL$1 = function buildURL(url, params, paramsSerializer) {
   if (!params) {
     return url;
   }
@@ -10559,7 +10533,7 @@ var buildURL = function buildURL2(url, params, paramsSerializer) {
   }
   return url;
 };
-const buildURL$1 = /* @__PURE__ */ getDefaultExportFromCjs(buildURL);
+const buildURL2 = /* @__PURE__ */ getDefaultExportFromCjs(buildURL$1);
 var isAbsoluteURL$1 = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
@@ -10568,13 +10542,13 @@ var combineURLs$1 = function combineURLs(baseURL, relativeURL) {
 };
 var isAbsoluteURL2 = isAbsoluteURL$1;
 var combineURLs2 = combineURLs$1;
-var buildFullPath = function buildFullPath2(baseURL, requestedURL) {
+var buildFullPath$1 = function buildFullPath(baseURL, requestedURL) {
   if (baseURL && !isAbsoluteURL2(requestedURL)) {
     return combineURLs2(baseURL, requestedURL);
   }
   return requestedURL;
 };
-const buildFullPath$1 = /* @__PURE__ */ getDefaultExportFromCjs(buildFullPath);
+const buildFullPath2 = /* @__PURE__ */ getDefaultExportFromCjs(buildFullPath$1);
 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 function encoder(input) {
   var str = String(input);
@@ -10642,25 +10616,25 @@ function transformError(error, reject, config) {
   switch (platFormName) {
     case "wechat":
       if (error.errMsg.indexOf("request:fail abort") !== -1) {
-        reject(createError$2("Request aborted", config, "ECONNABORTED", ""));
+        reject(createError$1("Request aborted", config, "ECONNABORTED", ""));
       } else if (error.errMsg.indexOf("timeout") !== -1) {
-        reject(createError$2("timeout of " + config.timeout + "ms exceeded", config, "ECONNABORTED", ""));
+        reject(createError$1("timeout of " + config.timeout + "ms exceeded", config, "ECONNABORTED", ""));
       } else {
-        reject(createError$2("Network Error", config, null, ""));
+        reject(createError$1("Network Error", config, null, ""));
       }
       break;
     case "dd":
     case "alipay":
       if ([14, 19].includes(error.error)) {
-        reject(createError$2("Request aborted", config, "ECONNABORTED", "", error));
+        reject(createError$1("Request aborted", config, "ECONNABORTED", "", error));
       } else if ([13].includes(error.error)) {
-        reject(createError$2("timeout of " + config.timeout + "ms exceeded", config, "ECONNABORTED", "", error));
+        reject(createError$1("timeout of " + config.timeout + "ms exceeded", config, "ECONNABORTED", "", error));
       } else {
-        reject(createError$2("Network Error", config, null, "", error));
+        reject(createError$1("Network Error", config, null, "", error));
       }
       break;
     case "baidu":
-      reject(createError$2("Network Error", config, null, ""));
+      reject(createError$1("Network Error", config, null, ""));
       break;
   }
 }
@@ -10698,12 +10672,12 @@ function mpAdapter(config, _a) {
     var requestMethod = config.method && config.method.toUpperCase() || "GET";
     var mpRequestOption = {
       method: requestMethod,
-      url: buildURL$1(buildFullPath$1(config.baseURL, config.url), config.params, config.paramsSerializer),
+      url: buildURL2(buildFullPath2(config.baseURL, config.url), config.params, config.paramsSerializer),
       timeout: config.timeout,
       // Listen for success
       success: function(mpResponse) {
         var response = transformResponse2(mpResponse, config, mpRequestOption);
-        settle$1(resolve2, reject, response);
+        settle2(resolve2, reject, response);
       },
       // Handle request Exception
       fail: function(error) {
@@ -10717,7 +10691,7 @@ function mpAdapter(config, _a) {
       var _a2 = [config.auth.username || "", config.auth.password || ""], username = _a2[0], password = _a2[1];
       requestHeaders.Authorization = "Basic " + encoder(username + ":" + password);
     }
-    utils$2.forEach(requestHeaders, function setRequestHeader(val, key) {
+    utils$1.forEach(requestHeaders, function setRequestHeader(val, key) {
       var _header = key.toLowerCase();
       if (typeof requestData === "undefined" && _header === "content-type" || _header === "referer") {
         delete requestHeaders[key];
@@ -11417,7 +11391,6 @@ exports.f = f;
 exports.fontData = fontData;
 exports.index = index;
 exports.initVueI18n = initVueI18n;
-exports.m = m;
 exports.messages = messages;
 exports.mpAdapter = mpAdapter;
 exports.n = n;

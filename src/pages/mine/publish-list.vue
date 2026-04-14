@@ -14,7 +14,7 @@
 
     <!-- 商品列表 -->
     <view class="goods-list" v-else>
-      <view class="goods-item" v-for="item in goodsList" :key="item.goods_id">
+      <view class="goods-item" v-for="item in goodsList" :key="item.goods_id" @click="uni.navigateTo({url: `/pages/index/goods-detail?goods_id=${item.goods_id}`})">
         <!-- 商品图片 -->
         <image class="goods-img" :src="item.fileList[0]" mode="aspectFill"></image>
         

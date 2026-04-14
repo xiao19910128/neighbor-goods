@@ -86,7 +86,7 @@ export default {
 
     // 跳转到商品详情
     goDetail(goods_id) {
-      uni.navigateTo({
+      uni.redirectTo({
         url: `/pages/goods/detail?goods_id=${goods_id}`
       })
     },

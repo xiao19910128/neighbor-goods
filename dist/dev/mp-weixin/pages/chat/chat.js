@@ -99,7 +99,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
     a: common_vendor.f($data.msgList, (item, k0, i0) => {
       return {
-        a: item.sender_id === $data.userInfo.user_id ? $data.userInfo.avatarUrl : $data.oppositeAvatar,
+        a: item.sender_id === $data.userInfo.user_id ? $data.userInfo.avatarUrl || "/static/default-avatar.png" : $data.oppositeAvatar,
         b: common_vendor.t(item.content),
         c: item.sender_id === $data.userInfo.user_id ? 1 : "",
         d: item.id

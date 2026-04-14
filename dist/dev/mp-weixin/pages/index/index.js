@@ -46,7 +46,7 @@ const _sfc_main = {
       }
     },
     toDetail(product) {
-      common_vendor.index.navigateTo({ url: `/pages/index/goods-detail?goods_id=${product.goods_id}` });
+      common_vendor.index.redirectTo({ url: `/pages/index/goods-detail?goods_id=${product.goods_id}` });
     }
   }
 };

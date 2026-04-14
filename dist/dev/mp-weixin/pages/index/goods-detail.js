@@ -88,6 +88,14 @@ const _sfc_main = {
     }
   }
 };
+if (!Array) {
+  const _easycom_uni_tag2 = common_vendor.resolveComponent("uni-tag");
+  _easycom_uni_tag2();
+}
+const _easycom_uni_tag = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-tag/uni-tag.js";
+if (!Math) {
+  _easycom_uni_tag();
+}
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: common_vendor.f($data.imgs, (img, idx, i0) => {
@@ -100,19 +108,28 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     b: common_vendor.t($data.detail.title || $data.detail.name),
     c: common_vendor.t($data.detail.price),
     d: $data.detail.avatar_url || "/static/default-avatar.png",
-    e: common_vendor.t($data.detail.nick_name || "匿名卖家"),
-    f: common_vendor.t($data.detail.description || $data.detail.content),
-    g: common_vendor.t($data.detail.province || "上海市"),
-    h: common_vendor.t($data.detail.city || "上海市"),
-    i: common_vendor.t($data.detail.district || "闵行区"),
-    j: common_vendor.t($data.detail.street || "梅陇镇"),
-    k: common_vendor.t($data.detail.detail_address || ""),
-    l: $data.detail.user_id !== $data.userInfo.user_id
-  }, $data.detail.user_id !== $data.userInfo.user_id ? {
-    m: $data.isCollect ? 1 : "",
-    n: common_vendor.t($data.isCollect ? "已收藏" : "收藏"),
-    o: common_vendor.o((...args) => $options.doCollect && $options.doCollect(...args)),
-    p: common_vendor.o((...args) => $options.toBuy && $options.toBuy(...args))
+    e: common_vendor.t($data.detail.publisher_name || "匿名卖家"),
+    f: $data.detail.publisher_id === $data.userInfo.user_id
+  }, $data.detail.publisher_id === $data.userInfo.user_id ? {
+    g: common_vendor.p({
+      mark: true,
+      text: "我发布的",
+      type: "success",
+      size: "mini"
+    })
+  } : {}, {
+    h: common_vendor.t($data.detail.description || $data.detail.content),
+    i: common_vendor.t($data.detail.province || "上海市"),
+    j: common_vendor.t($data.detail.city || "上海市"),
+    k: common_vendor.t($data.detail.district || "闵行区"),
+    l: common_vendor.t($data.detail.street || "梅陇镇"),
+    m: common_vendor.t($data.detail.detail_address || ""),
+    n: $data.detail.publisher_id !== $data.userInfo.user_id
+  }, $data.detail.publisher_id !== $data.userInfo.user_id ? {
+    o: $data.isCollect ? 1 : "",
+    p: common_vendor.t($data.isCollect ? "已收藏" : "收藏"),
+    q: common_vendor.o((...args) => $options.doCollect && $options.doCollect(...args)),
+    r: common_vendor.o((...args) => $options.toBuy && $options.toBuy(...args))
   } : {});
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-9c1ceb90"]]);

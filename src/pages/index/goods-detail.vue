@@ -13,7 +13,8 @@
       <view class="goods-price">¥{{ detail.price }}</view>
       <view class="goods-seller">
         <image class="seller-avatar" :src="detail.avatar_url || '/static/default-avatar.png'" mode="aspectFill"></image>
-        <text class="seller-name">{{ detail.nick_name || '匿名卖家' }}</text>
+        <text class="seller-name">{{ detail.publisher_name || '匿名卖家' }}</text>
+        <uni-tag v-if="detail.publisher_id === userInfo.user_id" :mark="true" text="我发布的" type="success" size="mini" />				
       </view>
     </view>
 
@@ -35,7 +36,7 @@
     </view>
 
     <!-- 5. 底部操作栏：收藏 + 立即购买 -->
-    <view class="footer-bar" v-if="detail.user_id !== userInfo.user_id">
+    <view class="footer-bar" v-if="detail.publisher_id !== userInfo.user_id">
       <view class="collect-btn" @tap="doCollect">
         <text class="collect-icon" :class="{ 'active': isCollect }">♥</text>
         <text class="collect-text">{{ isCollect ? '已收藏' : '收藏' }}</text>

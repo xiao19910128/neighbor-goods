@@ -17,12 +17,12 @@
       >
         <view class="address-info">
           <view class="address-top">
-            <text class="name">{{ item.name }}</text>
-            <text class="phone">{{ item.phone }}</text>
+            <text class="name">{{ item.contact_name }}</text>
+            <text class="phone">{{ item.contact_phone }}</text>
             <text class="default-tag" v-if="item.is_default === 1">默认</text>
           </view>
           <text class="address-detail">
-            {{ item.province }}{{ item.city }}{{ item.county }}{{ item.detail }}
+            {{ item.province }}{{ item.city }}{{ item.district }}{{ item.detail_address }}
           </text>
         </view>
 
@@ -202,12 +202,12 @@ export default {
         
         await addressApi.addAddress({
           user_id,
-          name: res.userName,
-          phone: res.telNumber,
+          contact_name: res.userName,
+          contact_phone: res.telNumber,
           province: res.provinceName,
           city: res.cityName,
-          county: res.districtName,
-          detail: res.detailInfo,
+          district: res.districtName,
+          detail_address: res.detailInfo,
           is_default: 0
         });
 

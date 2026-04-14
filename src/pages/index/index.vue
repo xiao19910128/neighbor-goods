@@ -102,7 +102,7 @@ export default {
       
     },
     toDetail(product) {
-      uni.navigateTo({url: `/pages/index/goods-detail?goods_id=${product.goods_id}`})
+      uni.redirectTo({url: `/pages/index/goods-detail?goods_id=${product.goods_id}`})
     },
   }
 };
@@ -262,11 +262,13 @@ export default {
 .product-meta {
   font-size: 11px;
   color: #999;
-  padding: 5px 8px 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  height: 72rpx;
+  margin: 5px 8px 8px;
+  height: 68rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 /* 底部提示栏 */

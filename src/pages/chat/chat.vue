@@ -9,7 +9,7 @@
         :key="item.id"
       >
         <image 
-          :src="item.sender_id === userInfo.user_id ? userInfo.avatarUrl : oppositeAvatar" 
+          :src="item.sender_id === userInfo.user_id ? (userInfo.avatarUrl || '/static/default-avatar.png') : oppositeAvatar" 
           class="avatar"
         ></image>
         <view class="msg-content">

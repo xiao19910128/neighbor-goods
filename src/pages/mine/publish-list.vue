@@ -34,8 +34,8 @@
 
         <!-- 操作按钮 -->
         <view class="action-buttons">
-          <button class="btn-edit" @click="editGoods(item)">编辑</button>
-          <button class="btn-delete" @click="deleteGoods(item.goods_id)">删除</button>
+          <button class="btn-edit" @click.stop="editGoods(item)">编辑</button>
+          <button class="btn-delete" @click.stop="deleteGoods(item.goods_id)">删除</button>
         </view>
       </view>
     </view>
@@ -143,6 +143,11 @@ export default {
                 // 重新加载列表
                 this.page = 1;
                 this.getPublishedGoods();
+              }else {
+                uni.showToast({
+                  title: data.msg, // 进行中订单无法删除
+                  icon: "none"
+                });
               }
             } catch (err) {
               // 异常状态提示信息--账户禁用等

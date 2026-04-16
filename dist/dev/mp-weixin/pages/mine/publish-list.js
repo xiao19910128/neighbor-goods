@@ -104,6 +104,12 @@ const _sfc_main = {
                 common_vendor.index.showToast({ title: "删除成功" });
                 this.page = 1;
                 this.getPublishedGoods();
+              } else {
+                common_vendor.index.showToast({
+                  title: data.msg,
+                  // 进行中订单无法删除
+                  icon: "none"
+                });
               }
             } catch (err) {
               common_vendor.index.showToast({ title: (err == null ? void 0 : err.message) || (err == null ? void 0 : err.msg), icon: "none" });

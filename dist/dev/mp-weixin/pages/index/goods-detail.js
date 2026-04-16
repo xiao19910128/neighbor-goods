@@ -73,7 +73,7 @@ const _sfc_main = {
         if (res.code === 200) {
           common_vendor.index.showToast({ title: "下单成功" });
           setTimeout(() => {
-            common_vendor.index.navigateTo({ url: "/pages/orders/order-list?type=buy" });
+            common_vendor.index.redirectTo({ url: "/pages/orders/order-list?type=buy" });
           }, 1e3);
         } else {
           common_vendor.index.showToast({ title: res.msg || "下单失败", icon: "none" });

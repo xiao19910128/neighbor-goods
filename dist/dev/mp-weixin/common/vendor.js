@@ -10415,7 +10415,7 @@ function extend(a, b, thisArg) {
   });
   return a;
 }
-var utils$2 = {
+var utils$1 = {
   isArray,
   isArrayBuffer,
   isBuffer,
@@ -10438,7 +10438,7 @@ var utils$2 = {
   extend,
   trim
 };
-const utils$1 = /* @__PURE__ */ getDefaultExportFromCjs(utils$2);
+const utils$2 = /* @__PURE__ */ getDefaultExportFromCjs(utils$1);
 var enhanceError$1 = function enhanceError(error, config, code, request, response) {
   error.config = config;
   if (code) {
@@ -10468,13 +10468,13 @@ var enhanceError$1 = function enhanceError(error, config, code, request, respons
   return error;
 };
 var enhanceError2 = enhanceError$1;
-var createError$2 = function createError(message, config, code, request, response) {
+var createError$1 = function createError(message, config, code, request, response) {
   var error = new Error(message);
   return enhanceError2(error, config, code, request, response);
 };
-const createError$1 = /* @__PURE__ */ getDefaultExportFromCjs(createError$2);
-var createError2 = createError$2;
-var settle$1 = function settle(resolve2, reject, response) {
+const createError$2 = /* @__PURE__ */ getDefaultExportFromCjs(createError$1);
+var createError2 = createError$1;
+var settle = function settle2(resolve2, reject, response) {
   var validateStatus2 = response.config.validateStatus;
   if (!validateStatus2 || validateStatus2(response.status)) {
     resolve2(response);
@@ -10488,12 +10488,12 @@ var settle$1 = function settle(resolve2, reject, response) {
     ));
   }
 };
-const settle2 = /* @__PURE__ */ getDefaultExportFromCjs(settle$1);
-var utils = utils$2;
+const settle$1 = /* @__PURE__ */ getDefaultExportFromCjs(settle);
+var utils = utils$1;
 function encode(val) {
   return encodeURIComponent(val).replace(/%40/gi, "@").replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
 }
-var buildURL$1 = function buildURL(url, params, paramsSerializer) {
+var buildURL = function buildURL2(url, params, paramsSerializer) {
   if (!params) {
     return url;
   }
@@ -10533,7 +10533,7 @@ var buildURL$1 = function buildURL(url, params, paramsSerializer) {
   }
   return url;
 };
-const buildURL2 = /* @__PURE__ */ getDefaultExportFromCjs(buildURL$1);
+const buildURL$1 = /* @__PURE__ */ getDefaultExportFromCjs(buildURL);
 var isAbsoluteURL$1 = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
@@ -10542,13 +10542,13 @@ var combineURLs$1 = function combineURLs(baseURL, relativeURL) {
 };
 var isAbsoluteURL2 = isAbsoluteURL$1;
 var combineURLs2 = combineURLs$1;
-var buildFullPath$1 = function buildFullPath(baseURL, requestedURL) {
+var buildFullPath = function buildFullPath2(baseURL, requestedURL) {
   if (baseURL && !isAbsoluteURL2(requestedURL)) {
     return combineURLs2(baseURL, requestedURL);
   }
   return requestedURL;
 };
-const buildFullPath2 = /* @__PURE__ */ getDefaultExportFromCjs(buildFullPath$1);
+const buildFullPath$1 = /* @__PURE__ */ getDefaultExportFromCjs(buildFullPath);
 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 function encoder(input) {
   var str = String(input);
@@ -10616,25 +10616,25 @@ function transformError(error, reject, config) {
   switch (platFormName) {
     case "wechat":
       if (error.errMsg.indexOf("request:fail abort") !== -1) {
-        reject(createError$1("Request aborted", config, "ECONNABORTED", ""));
+        reject(createError$2("Request aborted", config, "ECONNABORTED", ""));
       } else if (error.errMsg.indexOf("timeout") !== -1) {
-        reject(createError$1("timeout of " + config.timeout + "ms exceeded", config, "ECONNABORTED", ""));
+        reject(createError$2("timeout of " + config.timeout + "ms exceeded", config, "ECONNABORTED", ""));
       } else {
-        reject(createError$1("Network Error", config, null, ""));
+        reject(createError$2("Network Error", config, null, ""));
       }
       break;
     case "dd":
     case "alipay":
       if ([14, 19].includes(error.error)) {
-        reject(createError$1("Request aborted", config, "ECONNABORTED", "", error));
+        reject(createError$2("Request aborted", config, "ECONNABORTED", "", error));
       } else if ([13].includes(error.error)) {
-        reject(createError$1("timeout of " + config.timeout + "ms exceeded", config, "ECONNABORTED", "", error));
+        reject(createError$2("timeout of " + config.timeout + "ms exceeded", config, "ECONNABORTED", "", error));
       } else {
-        reject(createError$1("Network Error", config, null, "", error));
+        reject(createError$2("Network Error", config, null, "", error));
       }
       break;
     case "baidu":
-      reject(createError$1("Network Error", config, null, ""));
+      reject(createError$2("Network Error", config, null, ""));
       break;
   }
 }
@@ -10672,12 +10672,12 @@ function mpAdapter(config, _a) {
     var requestMethod = config.method && config.method.toUpperCase() || "GET";
     var mpRequestOption = {
       method: requestMethod,
-      url: buildURL2(buildFullPath2(config.baseURL, config.url), config.params, config.paramsSerializer),
+      url: buildURL$1(buildFullPath$1(config.baseURL, config.url), config.params, config.paramsSerializer),
       timeout: config.timeout,
       // Listen for success
       success: function(mpResponse) {
         var response = transformResponse2(mpResponse, config, mpRequestOption);
-        settle2(resolve2, reject, response);
+        settle$1(resolve2, reject, response);
       },
       // Handle request Exception
       fail: function(error) {
@@ -10691,7 +10691,7 @@ function mpAdapter(config, _a) {
       var _a2 = [config.auth.username || "", config.auth.password || ""], username = _a2[0], password = _a2[1];
       requestHeaders.Authorization = "Basic " + encoder(username + ":" + password);
     }
-    utils$1.forEach(requestHeaders, function setRequestHeader(val, key) {
+    utils$2.forEach(requestHeaders, function setRequestHeader(val, key) {
       var _header = key.toLowerCase();
       if (typeof requestData === "undefined" && _header === "content-type" || _header === "referer") {
         delete requestHeaders[key];

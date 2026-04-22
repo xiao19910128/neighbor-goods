@@ -78,6 +78,7 @@
 
 <script>
 import request from '@/utils/https'
+import { orderApi } from '@/api/order'
 export default {
   data() {
     return {
@@ -97,14 +98,7 @@ export default {
     // 获取订单详情
     async getOrderDetail() {
       try {
-        const res = await request({
-          url: '/api/order/detail',
-          method: 'POST',
-          data: { 
-            order_id: this.order_id,
-            user_id: this.userInfo.user_id 
-          }
-        })
+        const res = await orderApi.getOrderDetail({order_id: this.order_id || 49, user_id: this.userInfo.user_id || 9  })
         if (res.code === 200) {
           this.orderInfo = res.data
           // 判断身份：买家=当前用户是订单的buyer_id，卖家=seller_id

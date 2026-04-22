@@ -1,21 +1,25 @@
 <template>
   <view class="message-page">
     <!-- 会话列表 -->
+    <view v-if="!sessionList?.length" class="empty-tip">
+      <uni-icons type="chatboxes-filled" size="60" color="#999"></uni-icons>
+      <text>暂无信息</text>
+    </view>
     <view class="session-list">
       <view 
         class="session-item" 
         v-for="item in sessionList" 
         :key="item.to_user_id"
-        @click="goChat(item.to_user_id, item.order_id, item.nickname)"
+        @click="goChat(item)"
       >
         <image :src="item.avatar_url" class="avatar"></image>
         <view class="session-info">
           <view class="top">
-            <text class="nickname">{{ item.nickname }}</text>
+            <text class="nickname">{{ item.username }}</text>
             <text class="time">{{ item.last_time }}</text>
           </view>
           <view class="bottom">
-            <text class="last-msg">{{ item.last_msg }}</text>
+            <text class="last-msg">{{ item.content }}</text>
             <text class="unread" v-if="item.unread_count > 0">{{ item.unread_count }}</text>
           </view>
         </view>
@@ -27,7 +31,7 @@
 <script>
 import { messageApi } from '@/api/message.js';
 export default {
-  data() {
+data() {
     return {
       sessionList: [],
       userInfo: {}
@@ -35,6 +39,11 @@ export default {
   },
   onLoad() {
     this.userInfo = uni.getStorageSync('userInfo') || {}
+    const { user_id } = this.userInfo
+    if (!user_id) {
+      uni.navigateTo({ url: '/pages/login/index' })
+      return 
+    }
     this.getSessionList()
     // 定时刷新会话列表（实时更新未读）
     this.timer = setInterval(() => this.getSessionList(), 3000)
@@ -46,16 +55,18 @@ export default {
     // 获取会话列表
     async getSessionList() {
       try {
-        const res = await messageApi.sessionList({ user_id: this.userInfo.user_id })
+        const res = await messageApi.messageLists({ user_id: this.userInfo?.user_id  })
         if (res.code === 200) {
           this.sessionList = res.data
         }
       } catch (err) {}
     },
     // 跳聊天页
-    goChat(toUserId, orderId, nickname) {
+    goChat({ other_user_id, order_id='', username, session_id }) {
+      let url = `/pages/chat/chat?to_user_id=${other_user_id}&order_id=${order_id}&nickname=${username}&session_id=${session_id}`
+      if (!order_id &&  !['null', 'undefined'].includes(order_id))
       uni.navigateTo({ 
-        url: `/pages/chat/chat?to_user_id=${toUserId}&order_id=${orderId}&nickname=${nickname}` 
+        url: `/pages/chat/chat?to_user_id=${other_user_id}&order_id=${order_id}&nickname=${username}&session_id=${session_id}` 
       })
     }
   }
@@ -72,6 +83,7 @@ export default {
 }
 .session-item {
   display: flex;
+  gap: 20rpx;
   background: #fff;
   padding: 20rpx;
   border-radius: 12rpx;
@@ -125,4 +137,17 @@ export default {
   min-width: 30rpx;
   text-align: center;
 }
+
+/* 空状态 */
+.empty-tip {
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  justify-content: center;
+}
+
 </style>

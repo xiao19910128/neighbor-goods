@@ -27,11 +27,11 @@
       </view>
 
       <!-- 订单卡片 -->
-      <view class="order-card" v-for="item in list" :key="item.order_id">
+      <view class="order-card" v-for="item in list" :key="item.order_id" @click="goDetail(item)">
         <!-- 订单头 -->
         <view class="order-header">
           <text class="order-no">订单号：{{ item.order_no }}</text>
-          <text :class="['order-status', statusMap[item.status].status]">{{ statusMap[item.status].text }}</text>
+          <text :class="['order-status', statusMap[item.order_status].order_status]">{{ statusMap[item.order_status]?.text }}</text>
         </view>
 
         <!-- 商品信息 -->
@@ -49,43 +49,45 @@
         </view>
 
         <!-- 操作按钮（根据身份 + 状态自动显示） -->
-        <view class="btn-box" v-if="item.status !== 4 && item.status !== 5">
-          <!-- 我买到的 → 按钮 -->
-          <template v-if="currentType === 'buy'">
-            <button 
-              class="order-btn"
-              v-if="item.status === 1"
-              @click="updateStatus(item.order_id, 5)"
-            >取消订单</button>
-            <button 
-              v-if="item.status === 2"
-              class="order-btn warning"
-              @click="updateStatus(item.order_id, 3)"
-            >已自提</button>
-            <button 
-              class="order-btn error"
-              v-if="item.status === 2"
-              @click.stop="refundOrder(item.order_id)"
-            >退单</button>
-          </template>
+        <view class="btn-box">
+          <template v-if="item.order_status !== 4 && item.order_status !== 5">
+            <!-- 我买到的 → 按钮 -->
+            <template v-if="currentType === 'buy'">
+              <button 
+                class="order-btn"
+                v-if="item.order_status === 1"
+                @click.stop="updateStatus(item.order_id, 5)"
+              >取消订单</button>
+              <button 
+                v-if="item.order_status === 2"
+                class="order-btn warning"
+                @click.stop="updateStatus(item.order_id, 3)"
+              >已自提</button>
+              <button 
+                class="order-btn error"
+                v-if="item.order_status === 2"
+                @click.stop="refundOrder(item.order_id)"
+              >退单</button>
+            </template>
 
-          <!-- 我卖出的 → 按钮 -->
-          <template v-if="currentType === 'sell'">
-            <button 
-              class="order-btn primary"
-              v-if="item.status === 1"
-              @click="updateStatus(item.order_id, 2)"
-            >确认交易</button>
-            <!-- 卖家确认完成，订单结束 -->
-            <button 
-              v-if="item.status === 3 && item.seller_id === userInfo.user_id"
-              class="order-btn warning"
-              @click="updateStatus(item.order_id, 4)"
-            > 确认完成</button>
+            <!-- 我卖出的 → 按钮 -->
+            <template v-if="currentType === 'sell'">
+              <button 
+                class="order-btn primary"
+                v-if="item.order_status === 1"
+                @click.stop="updateStatus(item.order_id, 2)"
+              >确认交易</button>
+              <!-- 卖家确认完成，订单结束 -->
+              <button 
+                v-if="item.order_status === 3 && item.seller_id === userInfo.user_id"
+                class="order-btn warning"
+                @click.stop="updateStatus(item.order_id, 4)"
+              > 确认完成</button>
+            </template>
           </template>
           <button 
             class="order-btn primary"
-            @click.stop="goChat(item.seller_id, item.order_id, item.opposite_nickname)"
+            @click.stop="goChat(item)"
           >沟通</button>
         </view>
       </view>
@@ -95,6 +97,7 @@
 
 <script>
 import { orderApi } from '@/api/order'
+import { messageApi } from '@/api/message.js';
 export default {
   data() {
     return {
@@ -104,23 +107,23 @@ export default {
       statusMap: {
         1: {
           text: '待确认',
-          status: 'primary',
+          order_status: 'primary',
         },
         2: {
           text: '待自提',
-          status: 'warning',
+          order_status: 'warning',
         },
         3: {
           text: '待收货',
-          status: 'primary',
+          order_status: 'primary',
         },
         4: {
           text: '已完成',
-          status: 'success',
+          order_status: 'success',
         },
         5: {
           text: '已取消',
-          status: 'error',
+          order_status: 'error',
         }
       }
     }
@@ -146,11 +149,11 @@ export default {
     },
 
     // 修改订单状态
-    async updateStatus(order_id, status) {
+    async updateStatus(order_id, order_status) {
       try {
         const { user_id = '' } = this.userInfo
         if (!user_id) return
-        await orderApi.updateOrderStatus({order_id, status, user_id })
+        await orderApi.updateOrderStatus({order_id, order_status, user_id })
         uni.showToast({ title: '操作成功' })
         this.getList()
       } catch (err) {
@@ -176,14 +179,25 @@ export default {
     },
 
     // 跳订单详情
-    goDetail(order_id) {
-      uni.navigateTo({ url: `/pages/order/detail?order_id=${order_id}` })
+    goDetail({order_id}) {
+      uni.navigateTo({ url: `/pages/orders/detail?order_id=${order_id}` })
     },
     // 跳聊天页（传对方ID、订单ID、对方昵称）
-    goChat(oppositeUserId, orderId, oppositeNickname) {
-      uni.navigateTo({ 
-        url: `/pages/chat/chat?to_user_id=${oppositeUserId}&order_id=${orderId}&nickname=${oppositeNickname}` 
-      })
+    async goChat({ seller_id, order_id, opposite_nickname, user_id }) {
+      const new_buy_id = this.currentType === 'sell' ? seller_id : user_id
+      const new_seller_id = this.currentType === 'buy' ? seller_id : user_id
+      // 调用接口获取 session_id
+      const res = await messageApi.getSessionByUserPair({
+        user1_id: new_buy_id,
+        user2_id: new_seller_id
+      });  
+      if (res.code === 200 && res?.session_id) {        
+        uni.navigateTo({ 
+          url: `/pages/chat/chat?to_user_id=${new_seller_id}&order_id=${order_id}&nickname=${opposite_nickname}&session_id=${res.session_id}` 
+        })
+      } else {
+        uni.showToast({ title: '获取会话失败', icon: 'none' })
+      }
     },
   },
   onShow() {

@@ -124,7 +124,7 @@ const _sfc_main = {
         if ((publishRes == null ? void 0 : publishRes.code) === 200) {
           common_vendor.index.showToast({ title: "发布成功，等待审核", icon: "none" });
           this.form = { ...initialData };
-          common_vendor.wx$1.navigateTo({ url: "/pages/mine/publish-list?from=publish" });
+          common_vendor.wx$1.redirectTo({ url: "/pages/mine/publish-list?from=publish" });
         } else {
           common_vendor.index.showToast({ title: publishRes.msg, icon: "none" });
         }

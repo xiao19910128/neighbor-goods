@@ -36,14 +36,16 @@ const _sfc_main = {
       common_vendor.index.showModal({
         title: "提示",
         content: "确定取消收藏该商品吗？",
-        success: async () => {
-          const { user_id = "" } = this.userInfo || {};
-          await api_collection.collectionsApi.toggleCollection({
-            user_id,
-            goods_id
-          });
-          common_vendor.index.showToast({ title: "取消收藏成功" });
-          this.getCollectList();
+        success: async (res) => {
+          if (res.confirm) {
+            const { user_id = "" } = this.userInfo || {};
+            await api_collection.collectionsApi.toggleCollection({
+              user_id,
+              goods_id
+            });
+            common_vendor.index.showToast({ title: "取消收藏成功" });
+            this.getCollectList();
+          }
         }
       });
     },

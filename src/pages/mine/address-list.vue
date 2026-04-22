@@ -22,7 +22,7 @@
             <text class="default-tag" v-if="item.is_default === 1">默认</text>
           </view>
           <text class="address-detail">
-            {{ item.province }}{{ item.city }}{{ item.district }}{{ item.detail_address }}
+            {{ item?.province || '' }}{{ item?.city || '' }}{{ item?.district || '' }}{{item?.street || ''}}{{ item?.detail_address || '' }}
           </text>
         </view>
 
@@ -166,18 +166,20 @@ export default {
       uni.showModal({
         title: '提示',
         content: '确定删除该地址吗？',
-        success: async () => {
-          const { user_id = '' } = this.userInfo;
-          if (!user_id) {
-            uni.showToast({ title: '请先登录', icon: 'none' });
-            setTimeout(() => {
-              uni.navigateTo({ url: '/pages/login/index' })
-            }, 300)
-            return;
+        success: async (res) => {
+          if (res.confirm) {
+            const { user_id = '' } = this.userInfo;
+            if (!user_id) {
+              uni.showToast({ title: '请先登录', icon: 'none' });
+              setTimeout(() => {
+                uni.navigateTo({ url: '/pages/login/index' })
+              }, 300)
+              return;
+            }
+            await addressApi.deleteAddress({ address_id,user_id });
+            uni.showToast({ title: '删除成功', icon: 'none' });
+            this.getList();
           }
-          await addressApi.deleteAddress({ address_id,user_id });
-          uni.showToast({ title: '删除成功', icon: 'none' });
-          this.getList();
         }
       });
     },
@@ -206,7 +208,9 @@ export default {
           contact_phone: res.telNumber,
           province: res.provinceName,
           city: res.cityName,
-          district: res.districtName,
+          street: res?.street || '梅陇镇',
+          streetName: res?.streetName || '梅陇镇',
+          district: res?.countyName,
           detail_address: res.detailInfo,
           is_default: 0
         });

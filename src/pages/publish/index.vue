@@ -250,7 +250,7 @@ export default {
           // 重置表单
           this.form = { ...initialData };
           // 跳转到我的发布列表
-          wx.navigateTo({ url: '/pages/mine/publish-list?from=publish' });
+          wx.redirectTo({ url: '/pages/mine/publish-list?from=publish' });
         } else {
           uni.showToast({ title: publishRes.msg, icon: 'none' });
         }

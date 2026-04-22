@@ -79,18 +79,20 @@ const _sfc_main = {
       common_vendor.index.showModal({
         title: "提示",
         content: "确定删除该地址吗？",
-        success: async () => {
-          const { user_id = "" } = this.userInfo;
-          if (!user_id) {
-            common_vendor.index.showToast({ title: "请先登录", icon: "none" });
-            setTimeout(() => {
-              common_vendor.index.navigateTo({ url: "/pages/login/index" });
-            }, 300);
-            return;
+        success: async (res) => {
+          if (res.confirm) {
+            const { user_id = "" } = this.userInfo;
+            if (!user_id) {
+              common_vendor.index.showToast({ title: "请先登录", icon: "none" });
+              setTimeout(() => {
+                common_vendor.index.navigateTo({ url: "/pages/login/index" });
+              }, 300);
+              return;
+            }
+            await api_address.addressApi.deleteAddress({ address_id, user_id });
+            common_vendor.index.showToast({ title: "删除成功", icon: "none" });
+            this.getList();
           }
-          await api_address.addressApi.deleteAddress({ address_id, user_id });
-          common_vendor.index.showToast({ title: "删除成功", icon: "none" });
-          this.getList();
         }
       });
     },
@@ -117,7 +119,9 @@ const _sfc_main = {
           contact_phone: res.telNumber,
           province: res.provinceName,
           city: res.cityName,
-          district: res.districtName,
+          street: (res == null ? void 0 : res.street) || "梅陇镇",
+          streetName: (res == null ? void 0 : res.streetName) || "梅陇镇",
+          district: res == null ? void 0 : res.countyName,
           detail_address: res.detailInfo,
           is_default: 0
         });
@@ -139,19 +143,20 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         b: common_vendor.t(item.contact_phone),
         c: item.is_default === 1
       }, item.is_default === 1 ? {} : {}, {
-        d: common_vendor.t(item.province),
-        e: common_vendor.t(item.city),
-        f: common_vendor.t(item.district),
-        g: common_vendor.t(item.detail_address)
+        d: common_vendor.t((item == null ? void 0 : item.province) || ""),
+        e: common_vendor.t((item == null ? void 0 : item.city) || ""),
+        f: common_vendor.t((item == null ? void 0 : item.district) || ""),
+        g: common_vendor.t((item == null ? void 0 : item.street) || ""),
+        h: common_vendor.t((item == null ? void 0 : item.detail_address) || "")
       }, !$data.isSelectMode ? {
-        h: common_vendor.o(($event) => $options.edit(item), item.address_id),
-        i: common_vendor.o(($event) => $options.del(item.address_id), item.address_id)
+        i: common_vendor.o(($event) => $options.edit(item), item.address_id),
+        j: common_vendor.o(($event) => $options.del(item.address_id), item.address_id)
       } : {}, {
-        j: $data.isSelectMode && $data.selectedId === item.address_id
+        k: $data.isSelectMode && $data.selectedId === item.address_id
       }, $data.isSelectMode && $data.selectedId === item.address_id ? {} : {}, {
-        k: item.address_id,
-        l: $data.isSelectMode && $data.selectedId === item.address_id ? 1 : "",
-        m: common_vendor.o(($event) => $options.handleSelect(item), item.address_id)
+        l: item.address_id,
+        m: $data.isSelectMode && $data.selectedId === item.address_id ? 1 : "",
+        n: common_vendor.o(($event) => $options.handleSelect(item), item.address_id)
       });
     }),
     c: !$data.isSelectMode,

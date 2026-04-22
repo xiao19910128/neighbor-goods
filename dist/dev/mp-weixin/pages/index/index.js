@@ -19,10 +19,10 @@ const _sfc_main = {
   },
   methods: {
     async getGoodsList() {
-      var _a;
+      var _a, _b;
       this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
-      const listRes = await api_goods.goodsApi.getGoodsList({ name: this.searchValue });
-      this.products = (_a = listRes.data) == null ? void 0 : _a.map((item) => {
+      const listRes = await api_goods.goodsApi.getGoodsList({ name: this.searchValue, user_id: (_a = this.userInfo) == null ? void 0 : _a.user_id });
+      this.products = (_b = listRes.data) == null ? void 0 : _b.map((item) => {
         var _a2;
         return {
           ...item,

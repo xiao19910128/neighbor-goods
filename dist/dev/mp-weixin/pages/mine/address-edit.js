@@ -16,14 +16,23 @@ const _sfc_main = {
         street: "梅陇镇",
         streetName: "梅陇镇"
       },
-      streetList: ["梅陇镇", "莘庄镇", "七宝镇", "颛桥镇", "华漕镇", "虹桥镇", "吴泾镇", "马桥镇", "浦江镇", "江川路街道", "古美街道", "新虹街道", "浦锦街道", "莘庄工业区"]
+      streetList: ["梅陇镇", "莘庄镇", "七宝镇", "颛桥镇", "华漕镇", "虹桥镇", "吴泾镇", "马桥镇", "浦江镇", "江川路街道", "古美街道", "新虹街道", "浦锦街道", "莘庄工业区"],
       // 街道列表
+      userInfo: {}
     };
   },
   onLoad(options) {
+    var _a, _b;
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
     if (options.address) {
       let addr = JSON.parse(decodeURIComponent(options.address));
       this.addressForm = addr;
+    } else {
+      this.addressForm = {
+        ...this.addressForm,
+        contact_name: ((_a = this.userInfo) == null ? void 0 : _a.nickName) || "",
+        contact_phone: ((_b = this.userInfo) == null ? void 0 : _b.phone) || ""
+      };
     }
   },
   methods: {
@@ -76,12 +85,13 @@ const _sfc_main = {
   }
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _a, _b;
   return {
     a: $data.addressForm.contact_name,
     b: common_vendor.o(($event) => $data.addressForm.contact_name = $event.detail.value),
     c: $data.addressForm.contact_phone,
     d: common_vendor.o(($event) => $data.addressForm.contact_phone = $event.detail.value),
-    e: common_vendor.t($data.addressForm.streetName),
+    e: common_vendor.t(((_a = $data.addressForm) == null ? void 0 : _a.street) || ((_b = $data.addressForm) == null ? void 0 : _b.streetName)),
     f: $data.streetList,
     g: common_vendor.o((...args) => $options.handleStreetChange && $options.handleStreetChange(...args)),
     h: $data.addressForm.detail_address,

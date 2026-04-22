@@ -12,7 +12,7 @@
     
     <view class="form-item">
       <picker :range="streetList" @change="handleStreetChange">
-        <view class="picker-text">当前社区：{{ addressForm.streetName }}</view>
+        <view class="picker-text">当前社区：{{ addressForm?.street || addressForm?.streetName }}</view>
       </picker>
     </view>
 
@@ -53,13 +53,22 @@ export default {
         streetName: '梅陇镇'
       },
       streetList: ['梅陇镇','莘庄镇', '七宝镇', '颛桥镇', '华漕镇', '虹桥镇', '吴泾镇', '马桥镇', '浦江镇', '江川路街道', '古美街道', '新虹街道', '浦锦街道', '莘庄工业区'], // 街道列表
+      userInfo: {}
     }
   },
 
   onLoad(options) {    
+    this.userInfo = uni.getStorageSync('userInfo') || {};
     if (options.address) {
       let addr = JSON.parse(decodeURIComponent(options.address))
       this.addressForm = addr
+    } else {
+      // 默认系统当前用户为联系人信息初始化
+      this.addressForm = {
+        ...this.addressForm,
+        contact_name: this.userInfo?.nickName || '',
+        contact_phone: this.userInfo?.phone || ''
+      }
     }
   },
 

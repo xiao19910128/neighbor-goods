@@ -11,8 +11,8 @@ export const messageApi = {
   messageLists(data) {
     return request({
       url: '/message/list',
-      method: 'post',
-      data
+      method: 'get',
+      params: data
     });
   }, 
   markRead(data) {
@@ -22,11 +22,25 @@ export const messageApi = {
       data
     });
   }, 
-  sessionList(data) {
+  // sessionList(data) {
+  //   return request({
+  //     url: '/message/sessionList',
+  //     method: 'post',
+  //     data
+  //   });
+  // },
+  getSessionByUserPair(data) {
     return request({
-      url: '/message/sessionList',
-      method: 'post',
-      data
+      url: '/message/getSessionByUserPair',
+      method: 'get',
+      params: data
+    });
+  },
+  getHistoryMsg(data) {
+    return request({
+      url: '/message/history',
+      method: 'get',
+      params: data
     });
   },
 }

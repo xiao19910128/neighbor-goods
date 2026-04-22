@@ -13,6 +13,12 @@ const _sfc_main = {
       userInfo: {}
     };
   },
+  onShow() {
+    var _a;
+    if (!((_a = this.userInfo) == null ? void 0 : _a.user_id)) {
+      this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
+    }
+  },
   onLoad(options) {
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
     this.goods_id = options.goods_id;

@@ -72,14 +72,16 @@ export default {
       uni.showModal({
         title: '提示',
         content: '确定取消收藏该商品吗？',
-        success: async () => {
-          const { user_id = '' } = this.userInfo || {}    
-          await collectionsApi.toggleCollection({
-            user_id,
-            goods_id: goods_id
-          })
-          uni.showToast({ title: '取消收藏成功' })
-          this.getCollectList()
+        success: async (res) => {
+          if (res.confirm) {
+            const { user_id = '' } = this.userInfo || {}    
+            await collectionsApi.toggleCollection({
+              user_id,
+              goods_id: goods_id
+            })
+            uni.showToast({ title: '取消收藏成功' })
+            this.getCollectList()
+          }
         }
       })
     },

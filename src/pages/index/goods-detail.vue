@@ -60,6 +60,12 @@ export default {
       userInfo: {}
     }
   },
+  onShow() {
+    if (!this.userInfo?.user_id) {
+      this.userInfo = uni.getStorageSync('userInfo') || {}
+    }
+  },
+
   onLoad(options) {
     this.userInfo = uni.getStorageSync('userInfo') || {}
     this.goods_id = options.goods_id

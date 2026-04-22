@@ -9,13 +9,15 @@ const _sfc_main = {
       order_id: "",
       nickname: "",
       msgContent: "",
-      msgList: [],
+      messageList: [],
       userInfo: {},
-      oppositeAvatar: ""
+      oppositeAvatar: "",
+      session_id: ""
     };
   },
   onLoad(options) {
     var _a;
+    this.session_id = options.session_id;
     this.to_user_id = options.to_user_id;
     this.order_id = options.order_id;
     this.nickname = options.nickname;
@@ -43,13 +45,12 @@ const _sfc_main = {
     // 获取消息列表
     async getMsgList() {
       try {
-        const res = await api_message.messageApi.messageLists({
+        const res = await api_message.messageApi.getHistoryMsg({
           user_id: this.userInfo.user_id,
-          to_user_id: this.to_user_id,
-          order_id: this.order_id
+          session_id: this.session_id
         });
         if (res.code === 200) {
-          this.msgList = res.data;
+          this.messageList = res.data;
           this.$nextTick(() => {
             const query = common_vendor.index.createSelectorQuery().in(this);
             query.select("#msg-list").boundingClientRect();
@@ -67,10 +68,12 @@ const _sfc_main = {
     },
     // 发送消息
     async sendMsg() {
-      if (!this.msgContent.trim())
+      const msgContent = this.msgContent.trim();
+      if (!msgContent)
         return;
       try {
         await api_message.messageApi.sendMessage({
+          session_id: this.session_id,
           sender_id: this.userInfo.user_id,
           receiver_id: this.to_user_id,
           order_id: this.order_id,
@@ -88,7 +91,7 @@ const _sfc_main = {
         await api_message.messageApi.markRead({
           user_id: this.userInfo.user_id,
           to_user_id: this.to_user_id,
-          order_id: this.order_id
+          order_id: this.order_id || null
         });
       } catch (err) {
       }
@@ -97,7 +100,7 @@ const _sfc_main = {
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
-    a: common_vendor.f($data.msgList, (item, k0, i0) => {
+    a: common_vendor.f($data.messageList, (item, k0, i0) => {
       return {
         a: item.sender_id === $data.userInfo.user_id ? $data.userInfo.avatarUrl || "/static/default-avatar.png" : $data.oppositeAvatar,
         b: common_vendor.t(item.content),

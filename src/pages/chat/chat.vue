@@ -5,7 +5,7 @@
       <view 
         class="msg-item" 
         :class="{ 'self': item.sender_id === userInfo.user_id }"
-        v-for="item in msgList" 
+        v-for="item in messageList" 
         :key="item.id"
       >
         <image 
@@ -40,12 +40,14 @@ export default {
       order_id: '',
       nickname: '',
       msgContent: '',
-      msgList: [],
+      messageList: [],
       userInfo: {},
-      oppositeAvatar: ''
+      oppositeAvatar: '',
+      session_id: ''
     }
   },
   onLoad(options) {
+    this.session_id = options.session_id;
     this.to_user_id = options.to_user_id
     this.order_id = options.order_id
     this.nickname = options.nickname
@@ -72,13 +74,12 @@ export default {
     // 获取消息列表
     async getMsgList() {
       try {
-        const res = await messageApi.messageLists({
+        const res = await messageApi.getHistoryMsg({
           user_id: this.userInfo.user_id,
-          to_user_id: this.to_user_id,
-          order_id: this.order_id 
+          session_id: this.session_id
         })
         if (res.code === 200) {
-          this.msgList = res.data
+          this.messageList = res.data
           this.$nextTick(() => {
             const query = uni.createSelectorQuery().in(this)
             query.select('#msg-list').boundingClientRect()
@@ -95,15 +96,18 @@ export default {
     },
     // 发送消息
     async sendMsg() {
-      if (!this.msgContent.trim()) return
+      const msgContent = this.msgContent.trim()
+      if (!msgContent) return
       try {
         await messageApi.sendMessage({
+          session_id: this.session_id,
           sender_id: this.userInfo.user_id,
           receiver_id: this.to_user_id,
           order_id: this.order_id,
           content: this.msgContent.trim()
         })
         this.msgContent = ''
+        // this.messageList.push(msgContent);
         this.getMsgList()
       } catch (err) {
         uni.showToast({ title: '发送失败', icon: 'none' })
@@ -115,7 +119,7 @@ export default {
         await messageApi.markRead({
           user_id: this.userInfo.user_id,
           to_user_id: this.to_user_id,
-          order_id: this.order_id 
+          order_id: this.order_id  || null
         })
       } catch (err) {}
     }

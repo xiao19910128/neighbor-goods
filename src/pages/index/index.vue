@@ -76,7 +76,7 @@ export default {
     async getGoodsList() {
       // 不能用计算属性，因为登录成功后重新加载页面，计算属性不会重新执行，需要通过onshow生命周期重新获取数据
       this.userInfo = uni.getStorageSync('userInfo') || {}
-      const listRes = await goodsApi.getGoodsList({name: this.searchValue})
+      const listRes = await goodsApi.getGoodsList({name: this.searchValue, user_id: this.userInfo?.user_id })
       this.products = listRes.data?.map(item => ({
         ...item,
         image_url: item.image_url?.split(',')[0], // 首页只展示第一张图片

@@ -21,8 +21,8 @@
     <!-- 订单列表 -->
     <view class="order-list">
       <!-- 空状态 -->
-      <view v-if="list.length === 0" class="empty-box">
-        <image src="/static/empty-order.png" class="empty-img" mode="aspectFit"></image>
+      <view v-if="list.length === 0" class="empty-box" @click="getList">
+        <uni-icons type="refreshempty" size="60"></uni-icons>
         <text class="empty-text">暂无订单</text>
       </view>
 
@@ -180,7 +180,7 @@ export default {
 
     // 跳订单详情
     goDetail({order_id}) {
-      uni.navigateTo({ url: `/pages/orders/detail?order_id=${order_id}` })
+      uni.navigateTo({ url: `/pages/orders/detail?order_id=${order_id}&currentType=${this.currentType}` })
     },
     // 跳聊天页（传对方ID、订单ID、对方昵称）
     async goChat({ seller_id, order_id, opposite_nickname, user_id }) {

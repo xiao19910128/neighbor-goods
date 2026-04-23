@@ -124,7 +124,11 @@ const _sfc_main = {
         if ((publishRes == null ? void 0 : publishRes.code) === 200) {
           common_vendor.index.showToast({ title: "发布成功，等待审核", icon: "none" });
           this.form = { ...initialData };
-          common_vendor.wx$1.redirectTo({ url: "/pages/mine/publish-list?from=publish" });
+          if (this.goodsId) {
+            common_vendor.index.navigateBack({ delta: 1 });
+          } else {
+            common_vendor.index.redirectTo({ url: "/pages/mine/publish-list?from=publish" });
+          }
         } else {
           common_vendor.index.showToast({ title: publishRes.msg, icon: "none" });
         }
@@ -288,6 +292,8 @@ const _sfc_main = {
     },
     // 2. 处理街道/社区变化
     handleStreetChange(e) {
+      console.log(33333, e, this.streetList);
+      console.log(55555, e.detail.value);
       this.form.street = this.streetList[e.detail.value];
       this.form.streetName = this.form.street;
     },
@@ -316,7 +322,9 @@ const _sfc_main = {
     },
     // 选择地址 → 自动回填
     selectAddress(item) {
+      console.log(111111, item, this.form);
       this.form = { ...this.form, ...item };
+      console.log(2222, this.form);
       this.showAddressDrawer = false;
     },
     handlePriceInput(e) {
@@ -324,7 +332,7 @@ const _sfc_main = {
       value = value.replace(/[^\d.]/g, "");
       console.log(11111, value);
       let filteredValue = value;
-      const pointCount = value.split(".").length - 1;
+      const pointCount = (value == null ? void 0 : value.split(".").length) - 1;
       if (pointCount > 1) {
         value = value.substring(0, value.lastIndexOf("."));
       }
@@ -348,6 +356,7 @@ if (!Array) {
   _component_TabBar();
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _a, _b;
   return common_vendor.e({
     a: !$data.isLogin
   }, !$data.isLogin ? {
@@ -372,7 +381,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     h: $data.inputKey,
     i: $data.form.price,
     j: common_vendor.o((...args) => $options.handlePriceInput && $options.handlePriceInput(...args)),
-    k: common_vendor.t($data.form.streetName || $data.form.street),
+    k: common_vendor.t(((_a = $data.form) == null ? void 0 : _a.streetName) || ((_b = $data.form) == null ? void 0 : _b.street)),
     l: $data.streetList,
     m: common_vendor.o((...args) => $options.handleStreetChange && $options.handleStreetChange(...args)),
     n: $data.addressLists.length

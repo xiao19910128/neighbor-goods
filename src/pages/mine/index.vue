@@ -7,92 +7,69 @@
         <button class="btn-login" @click="uni.navigateTo({ url: '/pages/login/index' })">登录</button>
       </view>
       <view v-else class="login-content">
-        <!-- 顶部：头像 + 昵称 -->
-        <view class="user-section">
-          <image 
-            class="avatar" 
-            :src="userInfo.avatarUrl || '/static/default-avatar.png'" 
-            mode="aspectFill"
-          ></image>
-          <text class="nickname">{{ userInfo.nickName || '微信昵称' }}</text>
-        </view>
+        <view class="flex-box">
+          <!-- 顶部：头像 + 昵称 -->
+          <view class="user-section">
+            <image 
+              class="avatar" 
+              :src="userInfo.avatarUrl || '/static/default-avatar.png'" 
+              mode="aspectFill"
+            ></image>
+            <text class="nickname">{{ userInfo.nickName || '微信昵称' }}</text>
+          </view>
 
-        <!-- 功能区：3列网格 -->
-        <view class="menu-grid">
-          <!-- 交易管理 -->
-          <view class="grid-group">
-            <text class="group-title">交易管理</text>
-            <view class="grid-container">
-              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/orders/order-list?type=buy' })">
-                <view class="icon-wrapper">
-                <uni-icons type="gift" size="24" color="#666"></uni-icons>
+          <!-- 功能区：3列网格 -->
+          <view class="menu-grid">
+            <!-- 交易管理 -->
+            <view class="grid-group">
+              <text class="group-title">交易管理</text>
+              <view class="grid-container">
+                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/orders/order-list?type=buy' })">
+                  <view class="icon-wrapper">
+                  <uni-icons type="gift" size="24" color="#666"></uni-icons>
+                  </view>
+                  <text class="item-text">我的订单</text>
                 </view>
-                <text class="item-text">我的订单</text>
+                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/publish-list' })">
+                  <view class="icon-wrapper">
+                    <uni-icons type="shop" size="24" color="#666"></uni-icons>
+                  </view>
+                  <text class="item-text">我发布的</text>
+                </view>
+                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/collection-list' })">
+                  <view class="icon-wrapper">
+                    <uni-icons type="star" size="24" color="#666"></uni-icons>
+                  </view>
+                  <text class="item-text">我的收藏</text>
+                </view>
               </view>
-              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/publish-list' })">
-                <view class="icon-wrapper">
-                  <uni-icons type="shop" size="24" color="#666"></uni-icons>
+            </view>
+
+            <!-- 偏好管理 -->
+            <view class="grid-group">
+              <text class="group-title">偏好管理</text>
+              <view class="grid-container">
+                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/address-list' })">
+                  <view class="icon-wrapper">
+                    <uni-icons type="location" size="24" color="#666"></uni-icons>
+                  </view>
+                  <text class="item-text">地址管理</text>
                 </view>
-                <text class="item-text">我发布的</text>
-              </view>
-              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/collection-list' })">
-                <view class="icon-wrapper">
-                  <uni-icons type="star" size="24" color="#666"></uni-icons>
+                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/message-list' })">
+                  <view class="icon-wrapper">
+                    <uni-icons type="chat" size="24" color="#666"></uni-icons>
+                  </view>
+                  <text class="item-text">我的消息</text>
                 </view>
-                <text class="item-text">我的收藏</text>
+                <view class="grid-item"></view>
               </view>
             </view>
           </view>
-
-          <!-- 偏好管理 -->
-          <view class="grid-group">
-            <text class="group-title">偏好管理</text>
-            <view class="grid-container">
-              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/address-list' })">
-                <view class="icon-wrapper">
-                  <uni-icons type="location" size="24" color="#666"></uni-icons>
-                </view>
-                <text class="item-text">地址管理</text>
-              </view>
-              <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/message-list' })">
-                <view class="icon-wrapper">
-                  <uni-icons type="chat" size="24" color="#666"></uni-icons>
-                </view>
-                <text class="item-text">我的消息</text>
-              </view>
-              <view class="grid-item"></view>
-            </view>
-          </view>
-
-          <!-- 设置 -->
-          <!-- <view class="grid-group">
-            <text class="group-title">设置</text>
-            <view class="grid-container">
-              <view class="grid-item" @click="goToSecurity">
-                <view class="icon-wrapper">
-                  <uni-icons type="locked" size="24" color="#666"></uni-icons>
-                </view>
-                <text class="item-text">账号与安全</text>
-              </view>
-              <view class="grid-item" @click="goToPrivacy">
-                <view class="icon-wrapper">
-                  <uni-icons type="eye" size="24" color="#666"></uni-icons>
-                </view>
-                <text class="item-text">隐私设置</text>
-              </view>
-              <view class="grid-item" @click="goToHelp">
-                <view class="icon-wrapper">
-                  <uni-icons type="help" size="24" color="#666"></uni-icons>
-                </view>
-                <text class="item-text">帮助与客服</text>
-              </view>
-            </view>
-          </view> -->
         </view>
 
         <!-- 底部：退出登录 -->
-        <view class="logout-section" v-if="isLogin">
-          <text class="logout-btn" @click="handleLogout">退出登录</text>
+        <view class="logout-section" v-if="isLogin" @click="handleLogout">
+          <text class="logout-btn">退出登录</text>
         </view>
       </view>
     </view>
@@ -215,12 +192,14 @@ export default {
 
 /* 底部退出登录 */
 .logout-section {
-  margin-top: 60rpx;
   text-align: center;
+  height: 100rpx;
+  line-height: 100rpx;
+  background: #000;
 }
 .logout-btn {
   font-size: 28rpx;
-  color: #999;
+  color: #fff;
 }
 
 .main-content{
@@ -237,9 +216,15 @@ export default {
     }
   }
   .login-content {
+    height: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    justify-content: flex-end;
+  }
+  .flex-box {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
   }
 }
 </style>

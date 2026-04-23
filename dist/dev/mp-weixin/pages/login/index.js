@@ -4,15 +4,33 @@ const api_user = require("../../api/user.js");
 const _sfc_main = {
   data() {
     return {
-      loginType: "wechat",
+      loginType: "phone",
       // 默认微信登录
-      phone: "",
+      // phone: '',
+      innerPhone: "",
+      // 内部手机号，用于双向绑定和格式化
       smsCode: "",
       countDown: 0,
       // 验证码倒计时
       timer: null
       // 定时器
     };
+  },
+  // watch: {
+  //   phone(newVal) {
+  //     // 强制只保留数字，去掉所有非数字
+  //     this.phone = newVal.replace(/[^\d]/g, '')
+  //   }
+  // },
+  computed: {
+    phone: {
+      get() {
+        return this.innerPhone;
+      },
+      set(val) {
+        this.innerPhone = val.replace(/[^\d]/g, "");
+      }
+    }
   },
   methods: {
     // 微信登录（整合之前的授权逻辑）
@@ -78,9 +96,14 @@ const _sfc_main = {
       if (res.code === 200) {
         common_vendor.index.setStorageSync("token", res.data.token);
         common_vendor.index.setStorageSync("userInfo", res.data.userInfo);
-        common_vendor.index.showToast({ title: "登录成功" });
-        common_vendor.index.navigateBack();
+        common_vendor.index.showToast({ title: "登录成功", icon: "none" });
+        setTimeout(() => {
+          common_vendor.index.navigateBack();
+        }, 2e3);
       }
+    },
+    handleInput(e) {
+      this.phone = e.detail.value;
     }
   },
   onUnload() {
@@ -100,10 +123,12 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   } : {}, {
     g: $data.loginType === "phone"
   }, $data.loginType === "phone" ? {
-    h: $data.phone,
-    i: common_vendor.o(($event) => $data.phone = $event.detail.value),
+    h: $options.phone,
+    i: common_vendor.o((...args) => $options.handleInput && $options.handleInput(...args)),
     j: $data.smsCode,
-    k: common_vendor.o(($event) => $data.smsCode = $event.detail.value),
+    k: common_vendor.o(common_vendor.m(($event) => $data.smsCode = $event.detail.value, {
+      trim: true
+    })),
     l: common_vendor.t($data.countDown > 0 ? `${$data.countDown}s后重新获取` : "获取验证码"),
     m: common_vendor.o((...args) => $options.getSmsCode && $options.getSmsCode(...args)),
     n: $data.countDown > 0,

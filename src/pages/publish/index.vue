@@ -58,7 +58,7 @@
           <view class="address-content">
             <!-- 2. 街道/社区选择 -->
             <picker :range="streetList" @change="handleStreetChange">
-              <view class="picker-text">当前社区：{{ form.streetName || form.street }}</view>
+              <view class="picker-text">当前社区：{{ form?.streetName || form?.street }}</view>
             </picker>
               <button 
                 v-if="addressLists.length"
@@ -249,8 +249,13 @@ export default {
           uni.showToast({ title: '发布成功，等待审核', icon: 'none' });
           // 重置表单
           this.form = { ...initialData };
-          // 跳转到我的发布列表
-          wx.redirectTo({ url: '/pages/mine/publish-list?from=publish' });
+          if (this.goodsId) {
+            // 编辑后回退1层，直接回到上一页（发布列表）
+            uni.navigateBack({ delta: 1 });
+          } else {
+            // 跳转到我的发布列表
+            uni.redirectTo({ url: '/pages/mine/publish-list?from=publish' });
+          }
         } else {
           uni.showToast({ title: publishRes.msg, icon: 'none' });
         }
@@ -430,6 +435,10 @@ export default {
 
     // 2. 处理街道/社区变化
     handleStreetChange(e) {
+      console.log(33333, e, this.streetList);
+      console.log(55555, e.detail.value);
+      
+      
       this.form.street = this.streetList[e.detail.value];
       this.form.streetName = this.form.street;
     },
@@ -463,7 +472,10 @@ export default {
     },
     // 选择地址 → 自动回填
     selectAddress(item) {
+      console.log(111111, item, this.form);
+      
       this.form = { ...this.form, ...item }
+      console.log(2222, this.form);
       this.showAddressDrawer = false;
     },
 
@@ -474,7 +486,7 @@ export default {
       console.log(11111, value);
       let filteredValue = value;
       // 只保留一个小数点
-      const pointCount = value.split('.').length - 1;
+      const pointCount = value?.split('.').length - 1;
       if (pointCount > 1) {
         value = value.substring(0, value.lastIndexOf('.'));
       }

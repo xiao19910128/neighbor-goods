@@ -24,4 +24,12 @@ export const orderApi = {
       data
     });
   }, 
+
+  getOrderDetail(data) {
+    return request({
+      url: '/orders/detail',
+      method: 'get',
+      params: data
+    });
+  }, 
 }

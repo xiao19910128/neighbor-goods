@@ -28,8 +28,8 @@
       </view>
 
       <!-- 空状态 -->
-      <view v-if="collectList.length === 0" class="empty-state">
-        <image class="empty-icon" src="/static/empty-collect.png" mode="aspectFit"></image>
+      <view v-if="collectList.length === 0" class="empty-state" @click="getCollectList">
+        <uni-icons type="refreshempty" size="60"></uni-icons>
         <text class="empty-text">暂无收藏的商品</text>
       </view>
     </view>
@@ -89,7 +89,7 @@ export default {
     // 跳转到商品详情
     goDetail(goods_id) {
       uni.redirectTo({
-        url: `/pages/goods/detail?goods_id=${goods_id}`
+        url: `/pages/index/goods-detail?goods_id=${goods_id}`
       })
     },
 
@@ -197,17 +197,9 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 120rpx 0;
+  padding: 220rpx 0;
   color: #999;
 }
-
-.empty-icon {
-  width: 160rpx;
-  height: 160rpx;
-  margin-bottom: 20rpx;
-  opacity: 0.5;
-}
-
 .empty-text {
   font-size: 28rpx;
   margin-bottom: 30rpx;

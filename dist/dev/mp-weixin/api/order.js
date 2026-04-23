@@ -21,6 +21,13 @@ const orderApi = {
       method: "post",
       data
     });
+  },
+  getOrderDetail(data) {
+    return utils_https.service({
+      url: "/orders/detail",
+      method: "get",
+      params: data
+    });
   }
 };
 exports.orderApi = orderApi;

@@ -2,7 +2,6 @@
 const common_vendor = require("../../common/vendor.js");
 const api_order = require("../../api/order.js");
 const api_message = require("../../api/message.js");
-const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   data() {
     return {
@@ -86,8 +85,8 @@ const _sfc_main = {
       e.target.src = "/static/default.png";
     },
     // 跳订单详情
-    goDetail(order_id) {
-      common_vendor.index.navigateTo({ url: `/pages/order/detail?order_id=${order_id}` });
+    goDetail({ order_id }) {
+      common_vendor.index.navigateTo({ url: `/pages/orders/detail?order_id=${order_id}&currentType=${this.currentType}` });
     },
     // 跳聊天页（传对方ID、订单ID、对方昵称）
     async goChat({ seller_id, order_id, opposite_nickname, user_id }) {
@@ -114,6 +113,14 @@ const _sfc_main = {
     this.getList();
   }
 };
+if (!Array) {
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  _easycom_uni_icons2();
+}
+const _easycom_uni_icons = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons.js";
+if (!Math) {
+  _easycom_uni_icons();
+}
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: $data.currentType === "buy" ? 1 : "",
@@ -122,9 +129,13 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     d: common_vendor.o(($event) => $options.switchTab("sell")),
     e: $data.list.length === 0
   }, $data.list.length === 0 ? {
-    f: common_assets._imports_0$1
+    f: common_vendor.p({
+      type: "refreshempty",
+      size: "60"
+    }),
+    g: common_vendor.o((...args) => $options.getList && $options.getList(...args))
   } : {}, {
-    g: common_vendor.f($data.list, (item, k0, i0) => {
+    h: common_vendor.f($data.list, (item, k0, i0) => {
       var _a;
       return common_vendor.e({
         a: common_vendor.t(item.order_no),
@@ -161,7 +172,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         t: common_vendor.o(($event) => $options.updateStatus(item.order_id, 4), item.order_id)
       } : {}) : {}) : {}, {
         v: common_vendor.o(($event) => $options.goChat(item), item.order_id),
-        w: item.order_id
+        w: item.order_id,
+        x: common_vendor.o(($event) => $options.goDetail(item), item.order_id)
       });
     })
   });

@@ -98,12 +98,14 @@
 
 /* 底部退出登录 */
 .logout-section.data-v-9023ef44 {
-  margin-top: 60rpx;
   text-align: center;
+  height: 100rpx;
+  line-height: 100rpx;
+  background: #000;
 }
 .logout-btn.data-v-9023ef44 {
   font-size: 28rpx;
-  color: #999;
+  color: #fff;
 }
 .main-content.data-v-9023ef44 {
   flex: 1;
@@ -120,7 +122,13 @@
   margin-bottom: 20rpx;
 }
 .main-content .login-content.data-v-9023ef44 {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  justify-content: flex-end;
+}
+.main-content .flex-box.data-v-9023ef44 {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }

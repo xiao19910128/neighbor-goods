@@ -1,7 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const api_collection = require("../../api/collection.js");
-const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   data() {
     return {
@@ -52,7 +51,7 @@ const _sfc_main = {
     // 跳转到商品详情
     goDetail(goods_id) {
       common_vendor.index.redirectTo({
-        url: `/pages/goods/detail?goods_id=${goods_id}`
+        url: `/pages/index/goods-detail?goods_id=${goods_id}`
       });
     },
     // 图片加载失败兜底
@@ -67,6 +66,14 @@ const _sfc_main = {
     }
   }
 };
+if (!Array) {
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  _easycom_uni_icons2();
+}
+const _easycom_uni_icons = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons.js";
+if (!Math) {
+  _easycom_uni_icons();
+}
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: common_vendor.f($data.collectList, (item, k0, i0) => {
@@ -86,9 +93,13 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     b: $data.collectList.length === 0
   }, $data.collectList.length === 0 ? {
-    c: common_assets._imports_0
+    c: common_vendor.p({
+      type: "refreshempty",
+      size: "60"
+    }),
+    d: common_vendor.o((...args) => $options.getCollectList && $options.getCollectList(...args))
   } : {}, {
-    d: common_vendor.o((...args) => $options.goHome && $options.goHome(...args))
+    e: common_vendor.o((...args) => $options.goHome && $options.goHome(...args))
   });
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-ea960b16"]]);

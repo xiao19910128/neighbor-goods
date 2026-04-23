@@ -6772,6 +6772,23 @@ function vFor(source, renderItem) {
   }
   return ret;
 }
+function withModelModifiers(fn, { number, trim: trim2 }, isComponent = false) {
+  if (isComponent) {
+    return (...args) => {
+      {
+        args = args.map((a) => a.trim());
+      }
+      return fn(...args);
+    };
+  }
+  return (event) => {
+    const value = event.detail.value;
+    {
+      event.detail.value = value.trim();
+    }
+    return fn(event);
+  };
+}
 const o = (value, key) => vOn(value, key);
 const f = (source, renderItem) => vFor(source, renderItem);
 const s = (value) => stringifyStyle(value);
@@ -6779,6 +6796,7 @@ const e = (target, ...sources) => extend$2(target, ...sources);
 const n = (value) => normalizeClass(value);
 const t = (val) => toDisplayString(val);
 const p = (props) => renderProps(props);
+const m = (fn, modifiers, isComponent = false) => withModelModifiers(fn, modifiers, isComponent);
 function createApp$1(rootComponent, rootProps = null) {
   rootComponent && (rootComponent.mpType = "app");
   return createVueApp(rootComponent, rootProps).use(plugin);
@@ -7923,7 +7941,7 @@ const matchAll = (regExp, str) => {
 };
 const isHTMLForm = kindOfTest("HTMLFormElement");
 const toCamelCase = (str) => {
-  return str.toLowerCase().replace(/[-_\s]([a-z\d])(\w*)/g, function replacer2(m, p1, p2) {
+  return str.toLowerCase().replace(/[-_\s]([a-z\d])(\w*)/g, function replacer2(m2, p1, p2) {
     return p1.toUpperCase() + p2;
   });
 };
@@ -11391,6 +11409,7 @@ exports.f = f;
 exports.fontData = fontData;
 exports.index = index;
 exports.initVueI18n = initVueI18n;
+exports.m = m;
 exports.messages = messages;
 exports.mpAdapter = mpAdapter;
 exports.n = n;
@@ -11399,4 +11418,3 @@ exports.p = p;
 exports.resolveComponent = resolveComponent;
 exports.s = s;
 exports.t = t;
-exports.wx$1 = wx$1;

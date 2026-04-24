@@ -194,8 +194,13 @@ textarea.data-v-ce8f53b1 {
   align-items: center;
 }
 .no-login .login-tip.data-v-ce8f53b1 {
-  color: #999;
+  font-size: 36rpx;
   margin-bottom: 20rpx;
+}
+.no-login .go-login.data-v-ce8f53b1 {
+  width: 60%;
+  color: #fff;
+  background: #F44336;
 }
 .main-publish.data-v-ce8f53b1 {
   flex: 1;

@@ -10,7 +10,9 @@ const _sfc_main = {
       detail: {},
       imgs: [],
       isCollect: false,
-      userInfo: {}
+      userInfo: {},
+      from_by: ""
+      // 订单详情页/收藏列表跳转过来的标识--已删除的商品，仍然可以查看商品详情
     };
   },
   onShow() {
@@ -22,6 +24,7 @@ const _sfc_main = {
   onLoad(options) {
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
     this.goods_id = options.goods_id;
+    this.from_by = options.from_by || "";
     this.getDetail();
     this.getCollectStatus();
   },
@@ -30,7 +33,7 @@ const _sfc_main = {
     async getDetail() {
       var _a;
       try {
-        const res = await api_goods.goodsApi.getGoodsDetail({ goods_id: this.goods_id });
+        const res = await api_goods.goodsApi.getGoodsDetail({ goods_id: this.goods_id, delete_detail: ["order", "collection"].includes(this.from_by) || false });
         if (res.code === 200) {
           this.detail = res.data;
           this.imgs = ((_a = res.data.image_url) == null ? void 0 : _a.split(",")) || [];
@@ -113,29 +116,30 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     b: common_vendor.t($data.detail.title || $data.detail.name),
     c: common_vendor.t($data.detail.price),
-    d: $data.detail.avatar_url || "/static/default-avatar.png",
-    e: common_vendor.t($data.detail.publisher_name || "匿名卖家"),
-    f: $data.detail.publisher_id === $data.userInfo.user_id
+    d: common_vendor.t($data.detail.category_name),
+    e: $data.detail.avatar_url || "/static/default-avatar.png",
+    f: common_vendor.t($data.detail.publisher_name || "匿名卖家"),
+    g: $data.detail.publisher_id === $data.userInfo.user_id
   }, $data.detail.publisher_id === $data.userInfo.user_id ? {
-    g: common_vendor.p({
+    h: common_vendor.p({
       mark: true,
       text: "我发布的",
       type: "success",
       size: "mini"
     })
   } : {}, {
-    h: common_vendor.t($data.detail.description || $data.detail.content),
-    i: common_vendor.t($data.detail.province || "上海市"),
-    j: common_vendor.t($data.detail.city || "上海市"),
-    k: common_vendor.t($data.detail.district || "闵行区"),
-    l: common_vendor.t($data.detail.street || "梅陇镇"),
-    m: common_vendor.t($data.detail.detail_address || ""),
-    n: $data.detail.publisher_id !== $data.userInfo.user_id
-  }, $data.detail.publisher_id !== $data.userInfo.user_id ? {
-    o: $data.isCollect ? 1 : "",
-    p: common_vendor.t($data.isCollect ? "已收藏" : "收藏"),
-    q: common_vendor.o((...args) => $options.doCollect && $options.doCollect(...args)),
-    r: common_vendor.o((...args) => $options.toBuy && $options.toBuy(...args))
+    i: common_vendor.t($data.detail.description || $data.detail.content),
+    j: common_vendor.t($data.detail.province || "上海市"),
+    k: common_vendor.t($data.detail.city || "上海市"),
+    l: common_vendor.t($data.detail.district || "闵行区"),
+    m: common_vendor.t($data.detail.street || "梅陇镇"),
+    n: common_vendor.t($data.detail.detail_address || ""),
+    o: $data.detail.publisher_id !== $data.userInfo.user_id && $data.detail.is_deleted !== 1
+  }, $data.detail.publisher_id !== $data.userInfo.user_id && $data.detail.is_deleted !== 1 ? {
+    p: $data.isCollect ? 1 : "",
+    q: common_vendor.t($data.isCollect ? "已收藏" : "收藏"),
+    r: common_vendor.o((...args) => $options.doCollect && $options.doCollect(...args)),
+    s: common_vendor.o((...args) => $options.toBuy && $options.toBuy(...args))
   } : {});
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-9c1ceb90"]]);

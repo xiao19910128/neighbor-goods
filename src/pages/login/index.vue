@@ -25,9 +25,10 @@
     <view v-if="loginType === 'phone'" class="phone-login">
       <view class="input-item">
         <input 
-          type="number" 
+          type="text" 
           placeholder="请输入手机号" 
-          v-model="phone"
+          v-model.trim="phone"
+          @input="phone = phone.replace(/[^\d]/g, '')"
           maxlength="11"
         />
       </view>
@@ -35,7 +36,7 @@
         <input 
           type="number" 
           placeholder="请输入验证码" 
-          v-model="smsCode"
+          v-model.trim="smsCode"
           maxlength="6"
         />
         <button 
@@ -56,7 +57,7 @@ import { userApi } from '@/api/user.js';
 export default {
   data() {
     return {
-      loginType: 'wechat', // 默认微信登录
+      loginType: 'phone', // 默认微信登录
       phone: '',
       smsCode: '',
       countDown: 0, // 验证码倒计时
@@ -138,8 +139,10 @@ export default {
       if (res.code === 200) {
         uni.setStorageSync('token', res.data.token);
         uni.setStorageSync('userInfo', res.data.userInfo);
-        uni.showToast({ title: '登录成功' });
-        uni.navigateBack();
+        uni.showToast({ title: '登录成功', icon: 'none' });
+        setTimeout(() => { 
+          uni.navigateBack();
+        }, 2000);
       }
     },
   },

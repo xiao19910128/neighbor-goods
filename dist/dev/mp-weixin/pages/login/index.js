@@ -6,31 +6,13 @@ const _sfc_main = {
     return {
       loginType: "phone",
       // 默认微信登录
-      // phone: '',
-      innerPhone: "",
-      // 内部手机号，用于双向绑定和格式化
+      phone: "",
       smsCode: "",
       countDown: 0,
       // 验证码倒计时
       timer: null
       // 定时器
     };
-  },
-  // watch: {
-  //   phone(newVal) {
-  //     // 强制只保留数字，去掉所有非数字
-  //     this.phone = newVal.replace(/[^\d]/g, '')
-  //   }
-  // },
-  computed: {
-    phone: {
-      get() {
-        return this.innerPhone;
-      },
-      set(val) {
-        this.innerPhone = val.replace(/[^\d]/g, "");
-      }
-    }
   },
   methods: {
     // 微信登录（整合之前的授权逻辑）
@@ -101,9 +83,6 @@ const _sfc_main = {
           common_vendor.index.navigateBack();
         }, 2e3);
       }
-    },
-    handleInput(e) {
-      this.phone = e.detail.value;
     }
   },
   onUnload() {
@@ -123,8 +102,10 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   } : {}, {
     g: $data.loginType === "phone"
   }, $data.loginType === "phone" ? {
-    h: $options.phone,
-    i: common_vendor.o((...args) => $options.handleInput && $options.handleInput(...args)),
+    h: common_vendor.o([common_vendor.m(($event) => $data.phone = $event.detail.value, {
+      trim: true
+    }), ($event) => $data.phone = $data.phone.replace(/[^\d]/g, "")]),
+    i: $data.phone,
     j: $data.smsCode,
     k: common_vendor.o(common_vendor.m(($event) => $data.smsCode = $event.detail.value, {
       trim: true

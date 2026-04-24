@@ -3,7 +3,7 @@
     <!-- 未登录 -->
     <view v-if="!isLogin" class="no-login">
       <view class="login-tip">还没有登录，请先登录</view>
-      <button class="btn-login" @click="uni.navigateTo({ url: '/pages/login/index' })">登录</button>
+      <button class="go-login" @click="uni.navigateTo({ url: '/pages/login/index' })">登录</button>
     </view>
     <!-- 已登录--可发布闲置 -->
     <view v-else class="main-publish">
@@ -51,14 +51,13 @@
             maxlength="10"
           />
         </view>
-
         <!-- 地址区域配置 -->
         <view class="address-section form-item">
           <text class="label">自提地址（地址库/手动创建二选一）</text>
           <view class="address-content">
             <!-- 2. 街道/社区选择 -->
             <picker :range="streetList" @change="handleStreetChange">
-              <view class="picker-text">当前社区：{{ form?.streetName || form?.street }}</view>
+              <view class="picker-text">当前社区：{{ form?.street || form?.streetName }}</view>
             </picker>
               <button 
                 v-if="addressLists.length"
@@ -217,10 +216,11 @@ export default {
     // 发布商品
     async publishGoods() {
       // 简单校验
-      if (!this.form.name) return uni.showToast({ title: '请输入商品标题', icon: 'none' });
-      if (!this.form.price) return uni.showToast({ title: '请输入商品价格', icon: 'none' });
-      if (!this.form.category_id) return uni.showToast({ title: '请选择商品分类', icon: 'none' });
-      if (!this.form.street) return uni.showToast({ title: '请选择社区信息', icon: 'none' });
+      if (!this.form?.name) return uni.showToast({ title: '请输入商品标题', icon: 'none' });
+      if (!this.form?.price) return uni.showToast({ title: '请输入商品价格', icon: 'none' });
+      if (!this.form?.category_id) return uni.showToast({ title: '请选择商品分类', icon: 'none' });
+      if (!this.form?.street) return uni.showToast({ title: '请选择社区信息', icon: 'none' });
+      if (!this?.goodsImages?.length) return uni.showToast({ title: '请补充商品图片信息', icon: 'none' });
       const  nickName  = this.userInfo?.nickName || this.userInfo?.nick_name;
       const  phone  = this.userInfo?.phone || '13312345678';
       try {
@@ -325,8 +325,7 @@ export default {
           icon: 'none'
         });
       } catch (err) {
-        console.error('上传失败：', err);
-        uni.showToast({ title: '上传失败', icon: 'none' });
+        console.error('取消上传：', err);
       } finally {
         // this.isUploadingImage = false;
       }
@@ -435,20 +434,14 @@ export default {
 
     // 2. 处理街道/社区变化
     handleStreetChange(e) {
-      console.log(33333, e, this.streetList);
-      console.log(55555, e.detail.value);
-      
-      
       this.form.street = this.streetList[e.detail.value];
-      this.form.streetName = this.form.street;
+      this.form.streetName = this.streetList[e.detail.value];
     },
 
 
     // 获取地址列表
     async getAddressLists() {
       const { user_id = '' } = this.userInfo;
-      console.log(111,user_id);
-      
       if (!user_id) return;
       const res = await addressApi.getAddressList({user_id});
       if (res?.code === 200) {
@@ -472,10 +465,7 @@ export default {
     },
     // 选择地址 → 自动回填
     selectAddress(item) {
-      console.log(111111, item, this.form);
-      
       this.form = { ...this.form, ...item }
-      console.log(2222, this.form);
       this.showAddressDrawer = false;
     },
 
@@ -483,7 +473,6 @@ export default {
       let value = e.detail.value || '';
       // 只保留数字和小数点
       value = value.replace(/[^\d.]/g, '');
-      console.log(11111, value);
       let filteredValue = value;
       // 只保留一个小数点
       const pointCount = value?.split('.').length - 1;
@@ -701,8 +690,13 @@ textarea {
   justify-content: center;
   align-items: center;
   .login-tip {
-    color: #999;
+    font-size: 36rpx;
     margin-bottom: 20rpx;
+  }
+  .go-login {
+    width: 60%;
+    color: #fff;
+    background: #F44336;
   }
 }
 .main-publish {

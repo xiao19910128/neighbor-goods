@@ -135,3 +135,12 @@
   font-size: 32rpx;
   font-weight: 500;
 }
+.goods-content-1.data-v-9c1ceb90 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.gray.data-v-9c1ceb90 {
+  color: #666;
+  font-size: 24rpx;
+}

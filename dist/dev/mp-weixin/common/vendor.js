@@ -95,6 +95,10 @@ const looseToNumber = (val) => {
   const n2 = parseFloat(val);
   return isNaN(n2) ? val : n2;
 };
+const toNumber = (val) => {
+  const n2 = isString$2(val) ? Number(val) : NaN;
+  return isNaN(n2) ? val : n2;
+};
 function normalizeStyle(value) {
   if (isArray$2(value)) {
     const res = {};
@@ -6775,16 +6779,20 @@ function vFor(source, renderItem) {
 function withModelModifiers(fn, { number, trim: trim2 }, isComponent = false) {
   if (isComponent) {
     return (...args) => {
-      {
+      if (trim2) {
         args = args.map((a) => a.trim());
+      } else if (number) {
+        args = args.map(toNumber);
       }
       return fn(...args);
     };
   }
   return (event) => {
     const value = event.detail.value;
-    {
+    if (trim2) {
       event.detail.value = value.trim();
+    } else if (number) {
+      event.detail.value = toNumber(value);
     }
     return fn(event);
   };

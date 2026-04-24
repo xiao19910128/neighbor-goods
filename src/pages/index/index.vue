@@ -12,13 +12,6 @@
           @clear="handleClear"
         />
       </div>
-      <!-- <div class="nav-tabs">
-        <span class="active" @click="navigateTo('猜你喜欢', $event)">猜你喜欢</span>
-        <span @click="navigateTo('最新发布', $event)">最新发布</span>
-        <span @click="navigateTo('美妆小样', $event)">美妆小样</span>
-        <span @click="navigateTo('稀缺潮玩', $event)">稀缺潮玩</span>
-        <span @click="navigateTo('自用数码', $event)">自用数码</span>
-      </div> -->
     </div>
 
     <!-- 中部商品展示区 -->
@@ -31,10 +24,10 @@
             <span class="want-count">{{ product.description }}</span>
           </div>
           <div class="product-price">￥{{ product.price }}</div>
-          <!-- <div class="product-meta">
-            <span class="want-count">{{ product.wantCount || 2 }}人想要</span>
-            <span class="seller-info">{{ product.seller || 1 }}</span>
-          </div> -->
+          <div class="product-meta">
+            <!-- <span class="want-count">{{ product.wantCount || 2 }}人想要</span> -->
+            <span class="seller-info">{{ product.publisher_name || '' }}</span>
+          </div>
         </div>
       </div>
 

@@ -10,7 +10,10 @@
     <!-- 2. 商品基础信息 -->
     <view class="goods-info-card">
       <view class="goods-title">{{ detail.title || detail.name }}</view>
-      <view class="goods-price">¥{{ detail.price }}</view>
+      <view class="goods-content-1">
+        <view class="goods-price">¥{{ detail.price }}</view>
+        <view class="gray">{{ detail.category_name }}</view>
+      </view>
       <view class="goods-seller">
         <image class="seller-avatar" :src="detail.avatar_url || '/static/default-avatar.png'" mode="aspectFill"></image>
         <text class="seller-name">{{ detail.publisher_name || '匿名卖家' }}</text>
@@ -36,7 +39,7 @@
     </view>
 
     <!-- 5. 底部操作栏：收藏 + 立即购买 -->
-    <view class="footer-bar" v-if="detail.publisher_id !== userInfo.user_id">
+    <view class="footer-bar" v-if="detail.publisher_id !== userInfo.user_id && detail.is_deleted!==1">
       <view class="collect-btn" @tap="doCollect">
         <text class="collect-icon" :class="{ 'active': isCollect }">♥</text>
         <text class="collect-text">{{ isCollect ? '已收藏' : '收藏' }}</text>
@@ -57,7 +60,8 @@ export default {
       detail: {},
       imgs: [],
       isCollect: false,
-      userInfo: {}
+      userInfo: {},
+      from_by: '', // 订单详情页/收藏列表跳转过来的标识--已删除的商品，仍然可以查看商品详情
     }
   },
   onShow() {
@@ -69,6 +73,7 @@ export default {
   onLoad(options) {
     this.userInfo = uni.getStorageSync('userInfo') || {}
     this.goods_id = options.goods_id
+    this.from_by = options.from_by || ''
     this.getDetail()
     this.getCollectStatus()
   },
@@ -76,7 +81,7 @@ export default {
     // 加载商品详情
     async getDetail() {
       try {
-        const res = await goodsApi.getGoodsDetail({ goods_id: this.goods_id})
+        const res = await goodsApi.getGoodsDetail({ goods_id: this.goods_id, delete_detail: ['order', 'collection'].includes(this.from_by) || false })
         if (res.code === 200) {
           this.detail = res.data
           this.imgs = res.data.image_url?.split(',') || []
@@ -282,5 +287,14 @@ export default {
   border-radius: 12rpx;
   font-size: 32rpx;
   font-weight: 500;
+}
+.goods-content-1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.gray {
+  color: #666;
+  font-size: 24rpx;
 }
 </style>

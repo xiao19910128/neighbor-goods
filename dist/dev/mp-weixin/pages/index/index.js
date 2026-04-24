@@ -80,8 +80,9 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         b: common_vendor.t(product.name),
         c: common_vendor.t(product.description),
         d: common_vendor.t(product.price),
-        e: index,
-        f: common_vendor.o(($event) => $options.toDetail(product), index)
+        e: common_vendor.t(product.publisher_name || ""),
+        f: index,
+        g: common_vendor.o(($event) => $options.toDetail(product), index)
       };
     }),
     g: common_vendor.n($data.viewMode === "single" ? "single-column" : "double-column")

@@ -4,7 +4,7 @@
       <!-- 未登录：显示微信登录按钮 -->
       <view v-if="!isLogin" class="no-login">
         <view class="login-tip">还没有登录，请先登录</view>
-        <button class="btn-login" @click="uni.navigateTo({ url: '/pages/login/index' })">登录</button>
+        <button class="go-login" @click="uni.navigateTo({ url: '/pages/login/index' })">登录</button>
       </view>
       <view v-else class="login-content">
         <view class="flex-box">
@@ -211,8 +211,13 @@ export default {
     align-items: center;
     height: 500rpx;
     .login-tip {
-      color: #999;
+      font-size: 36rpx;
       margin-bottom: 20rpx;
+    }
+    .go-login {
+      width: 60%;
+      color: #fff;
+      background: #F44336;
     }
   }
   .login-content {

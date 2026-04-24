@@ -89,28 +89,30 @@ const _sfc_main = {
     },
     // 发布商品
     async publishGoods() {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
-      if (!this.form.name)
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
+      if (!((_a = this.form) == null ? void 0 : _a.name))
         return common_vendor.index.showToast({ title: "请输入商品标题", icon: "none" });
-      if (!this.form.price)
+      if (!((_b = this.form) == null ? void 0 : _b.price))
         return common_vendor.index.showToast({ title: "请输入商品价格", icon: "none" });
-      if (!this.form.category_id)
+      if (!((_c = this.form) == null ? void 0 : _c.category_id))
         return common_vendor.index.showToast({ title: "请选择商品分类", icon: "none" });
-      if (!this.form.street)
+      if (!((_d = this.form) == null ? void 0 : _d.street))
         return common_vendor.index.showToast({ title: "请选择社区信息", icon: "none" });
-      const nickName = ((_a = this.userInfo) == null ? void 0 : _a.nickName) || ((_b = this.userInfo) == null ? void 0 : _b.nick_name);
-      const phone = ((_c = this.userInfo) == null ? void 0 : _c.phone) || "13312345678";
+      if (!((_e = this == null ? void 0 : this.goodsImages) == null ? void 0 : _e.length))
+        return common_vendor.index.showToast({ title: "请补充商品图片信息", icon: "none" });
+      const nickName = ((_f = this.userInfo) == null ? void 0 : _f.nickName) || ((_g = this.userInfo) == null ? void 0 : _g.nick_name);
+      const phone = ((_h = this.userInfo) == null ? void 0 : _h.phone) || "13312345678";
       try {
         const params = {
           ...this.form,
-          image_url: (_d = this.goodsImages) == null ? void 0 : _d.join(","),
-          publisher_name: ((_e = this.form) == null ? void 0 : _e.contact_name) || nickName,
-          user_id: (_f = this.userInfo) == null ? void 0 : _f.user_id,
-          publisher_id: (_g = this.userInfo) == null ? void 0 : _g.user_id,
-          address_id: ((_h = this.form) == null ? void 0 : _h.address_id) || 0,
+          image_url: (_i = this.goodsImages) == null ? void 0 : _i.join(","),
+          publisher_name: ((_j = this.form) == null ? void 0 : _j.contact_name) || nickName,
+          user_id: (_k = this.userInfo) == null ? void 0 : _k.user_id,
+          publisher_id: (_l = this.userInfo) == null ? void 0 : _l.user_id,
+          address_id: ((_m = this.form) == null ? void 0 : _m.address_id) || 0,
           // 关键：发布时绑定地址
-          contact_name: ((_i = this.form) == null ? void 0 : _i.contact_name) || nickName,
-          contact_phone: ((_j = this.form) == null ? void 0 : _j.contact_phone) || phone
+          contact_name: ((_n = this.form) == null ? void 0 : _n.contact_name) || nickName,
+          contact_phone: ((_o = this.form) == null ? void 0 : _o.contact_phone) || phone
         };
         let publishRes = null;
         if (this.goodsId) {
@@ -188,8 +190,7 @@ const _sfc_main = {
           icon: "none"
         });
       } catch (err) {
-        console.error("上传失败：", err);
-        common_vendor.index.showToast({ title: "上传失败", icon: "none" });
+        console.error("取消上传：", err);
       } finally {
       }
     },
@@ -292,15 +293,12 @@ const _sfc_main = {
     },
     // 2. 处理街道/社区变化
     handleStreetChange(e) {
-      console.log(33333, e, this.streetList);
-      console.log(55555, e.detail.value);
       this.form.street = this.streetList[e.detail.value];
-      this.form.streetName = this.form.street;
+      this.form.streetName = this.streetList[e.detail.value];
     },
     // 获取地址列表
     async getAddressLists() {
       const { user_id = "" } = this.userInfo;
-      console.log(111, user_id);
       if (!user_id)
         return;
       const res = await api_address.addressApi.getAddressList({ user_id });
@@ -322,15 +320,12 @@ const _sfc_main = {
     },
     // 选择地址 → 自动回填
     selectAddress(item) {
-      console.log(111111, item, this.form);
       this.form = { ...this.form, ...item };
-      console.log(2222, this.form);
       this.showAddressDrawer = false;
     },
     handlePriceInput(e) {
       let value = e.detail.value || "";
       value = value.replace(/[^\d.]/g, "");
-      console.log(11111, value);
       let filteredValue = value;
       const pointCount = (value == null ? void 0 : value.split(".").length) - 1;
       if (pointCount > 1) {
@@ -381,7 +376,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     h: $data.inputKey,
     i: $data.form.price,
     j: common_vendor.o((...args) => $options.handlePriceInput && $options.handlePriceInput(...args)),
-    k: common_vendor.t(((_a = $data.form) == null ? void 0 : _a.streetName) || ((_b = $data.form) == null ? void 0 : _b.street)),
+    k: common_vendor.t(((_a = $data.form) == null ? void 0 : _a.street) || ((_b = $data.form) == null ? void 0 : _b.streetName)),
     l: $data.streetList,
     m: common_vendor.o((...args) => $options.handleStreetChange && $options.handleStreetChange(...args)),
     n: $data.addressLists.length

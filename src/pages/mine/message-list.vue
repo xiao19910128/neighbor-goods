@@ -1,30 +1,37 @@
 <template>
   <view class="message-page">
-    <!-- 会话列表 -->
-    <view v-if="!sessionList?.length" class="empty-tip">
-      <uni-icons type="chatboxes-filled" size="60" color="#999"></uni-icons>
-      <text>暂无信息</text>
+    <!-- 未登录：显示微信登录按钮 -->
+    <view v-if="!isLogin" class="no-login">
+      <view class="login-tip">还没有登录，请先登录</view>
+      <button class="go-login" @click="uni.navigateTo({ url: '/pages/login/index' })">登录</button>
     </view>
-    <view class="session-list">
-      <view 
-        class="session-item" 
-        v-for="item in sessionList" 
-        :key="item.to_user_id"
-        @click="goChat(item)"
-      >
-        <image :src="item.avatar_url" class="avatar"></image>
-        <view class="session-info">
-          <view class="top">
-            <text class="nickname">{{ item.username }}</text>
-            <text class="time">{{ item.last_time }}</text>
-          </view>
-          <view class="bottom">
-            <text class="last-msg">{{ item.content }}</text>
-            <text class="unread" v-if="item.unread_count > 0">{{ item.unread_count }}</text>
+    <template v-else>
+      <!-- 会话列表 -->
+      <view v-if="!sessionList?.length" class="empty-tip">
+        <uni-icons type="chatboxes-filled" size="60" color="#999"></uni-icons>
+        <text>暂无信息</text>
+      </view>
+      <view class="session-list">
+        <view 
+          class="session-item" 
+          v-for="item in sessionList" 
+          :key="item.to_user_id"
+          @click="goChat(item)"
+        >
+          <image :src="item.avatar_url" class="avatar"></image>
+          <view class="session-info">
+            <view class="top">
+              <text class="nickname">{{ item.username }}</text>
+              <text class="time">{{ item.last_time }}</text>
+            </view>
+            <view class="bottom">
+              <text class="last-msg">{{ item.content }}</text>
+              <text class="unread" v-if="item.unread_count > 0">{{ item.unread_count }}</text>
+            </view>
           </view>
         </view>
       </view>
-    </view>
+    </template>
   </view>
 </template>
 
@@ -34,17 +41,21 @@ export default {
 data() {
     return {
       sessionList: [],
-      userInfo: {}
+      userInfo: {},
+      isLogin: !!uni.getStorageSync('token')
     }
   },
+  onShow() {
+    if (this.userInfo?.user_id)  return
+    this.userInfo = uni.getStorageSync('userInfo') || {};
+    this.isLogin = !!uni.getStorageSync('token');
+  },
   onLoad() {
-    this.userInfo = uni.getStorageSync('userInfo') || {}
-    const { user_id } = this.userInfo
-    if (!user_id) {
-      uni.navigateTo({ url: '/pages/login/index' })
-      return 
-    }
+    this.userInfo = uni.getStorageSync('userInfo') || {};
+    this.isLogin = !!uni.getStorageSync('token');
+    if (!this.userInfo?.user_id)  return
     this.getSessionList()
+    
     // 定时刷新会话列表（实时更新未读）
     this.timer = setInterval(() => this.getSessionList(), 3000)
   },
@@ -73,7 +84,7 @@ data() {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .message-page {
   background: #f7f8fa;
   min-height: 100vh;
@@ -150,4 +161,20 @@ data() {
   justify-content: center;
 }
 
+  .no-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 500rpx;
+    .login-tip {
+      font-size: 36rpx;
+      margin-bottom: 20rpx;
+    }
+    .go-login {
+      width: 60%;
+      color: #fff;
+      background: #F44336;
+    }
+  }
 </style>

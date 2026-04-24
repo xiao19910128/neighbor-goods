@@ -118,8 +118,13 @@
   height: 500rpx;
 }
 .main-content .no-login .login-tip.data-v-9023ef44 {
-  color: #999;
+  font-size: 36rpx;
   margin-bottom: 20rpx;
+}
+.main-content .no-login .go-login.data-v-9023ef44 {
+  width: 60%;
+  color: #fff;
+  background: #F44336;
 }
 .main-content .login-content.data-v-9023ef44 {
   height: 100%;

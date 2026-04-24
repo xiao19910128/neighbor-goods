@@ -113,7 +113,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     b: common_vendor.t($data.orderInfo.goods_name),
     c: common_vendor.t($data.orderInfo.goods_price),
     d: common_vendor.o(($event) => common_vendor.index.redirectTo({
-      url: `/pages/index/goods-detail?goods_id=${$data.orderInfo.goods_id}`
+      url: `/pages/index/goods-detail?goods_id=${$data.orderInfo.goods_id}&from_order=yes`
     })),
     e: common_vendor.t($data.orderInfo.buyer_name || "匿名用户"),
     f: common_vendor.t($data.orderInfo.buyer_phone || "无"),

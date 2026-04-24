@@ -5,16 +5,23 @@ const _sfc_main = {
   data() {
     return {
       sessionList: [],
-      userInfo: {}
+      userInfo: {},
+      isLogin: !!common_vendor.index.getStorageSync("token")
     };
   },
-  onLoad() {
-    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
-    const { user_id } = this.userInfo;
-    if (!user_id) {
-      common_vendor.index.navigateTo({ url: "/pages/login/index" });
+  onShow() {
+    var _a;
+    if ((_a = this.userInfo) == null ? void 0 : _a.user_id)
       return;
-    }
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
+    this.isLogin = !!common_vendor.index.getStorageSync("token");
+  },
+  onLoad() {
+    var _a;
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
+    this.isLogin = !!common_vendor.index.getStorageSync("token");
+    if (!((_a = this.userInfo) == null ? void 0 : _a.user_id))
+      return;
     this.getSessionList();
     this.timer = setInterval(() => this.getSessionList(), 3e3);
   },
@@ -53,15 +60,21 @@ if (!Math) {
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   var _a, _b;
   return common_vendor.e({
-    a: !((_a = $data.sessionList) == null ? void 0 : _a.length)
+    a: !$data.isLogin
+  }, !$data.isLogin ? {
+    b: common_vendor.o(($event) => common_vendor.index.navigateTo({
+      url: "/pages/login/index"
+    }))
+  } : common_vendor.e({
+    c: !((_a = $data.sessionList) == null ? void 0 : _a.length)
   }, !((_b = $data.sessionList) == null ? void 0 : _b.length) ? {
-    b: common_vendor.p({
+    d: common_vendor.p({
       type: "chatboxes-filled",
       size: "60",
       color: "#999"
     })
   } : {}, {
-    c: common_vendor.f($data.sessionList, (item, k0, i0) => {
+    e: common_vendor.f($data.sessionList, (item, k0, i0) => {
       return common_vendor.e({
         a: item.avatar_url,
         b: common_vendor.t(item.username),
@@ -75,7 +88,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         h: common_vendor.o(($event) => $options.goChat(item), item.to_user_id)
       });
     })
-  });
+  }));
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-b77a8c2f"]]);
 wx.createPage(MiniProgramPage);

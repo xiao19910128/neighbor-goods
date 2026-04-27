@@ -25,6 +25,10 @@
   border-radius: 50%;
   margin: 0 20rpx;
 }
+.chat-image.data-v-a041b13f {
+  width: 160rpx;
+  height: 160rpx;
+}
 .msg-content.data-v-a041b13f {
   max-width: 60%;
   background: #fff;
@@ -56,11 +60,18 @@
   font-size: 28rpx;
   margin-right: 20rpx;
 }
-.send-btn.data-v-a041b13f {
-  background: #07c160;
-  color: #fff;
-  border-radius: 40rpx;
-  padding: 20rpx 30rpx;
-  font-size: 28rpx;
-  border: none;
+.common-send-btn.data-v-a041b13f {
+  width: 120rpx;
+    height: 90rpx;
+    color: #fff;
+    font-size: 30rpx;
+    text-align: center;
+    line-height: 90rpx;
+    border-radius: 40rpx;
+    background: #07c160;
+}
+.choose-image-btn.data-v-a041b13f {
+    margin-right: 20rpx;
+    font-weight: bolder;
+    font-size: 60rpx;
 }

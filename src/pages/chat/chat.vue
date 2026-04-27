@@ -12,20 +12,24 @@
           :src="item.sender_id === userInfo.user_id ? (userInfo.avatarUrl || '/static/default-avatar.png') : oppositeAvatar" 
           class="avatar"
         ></image>
-        <view class="msg-content">
+        <view class="msg-content" v-if="item.msg_type === 0">
           <text class="msg-text">{{ item.content }}</text>
         </view>
+        <!-- 图片消息 -->
+        <image class="chat-image" v-else-if="item.msg_type === 1" :src="item.content"  mode="widthFix" crossorigin="anonymous" @click="previewImage(item.content)" />
+
       </view>
     </view>
-
+    <!-- 聊天页底部输入栏 -->
     <view class="input-bar">
       <input 
         v-model="msgContent" 
         class="input" 
         placeholder="输入消息..."
         @confirm="sendMsg"
-       />
-      <button class="send-btn" @click="sendMsg">发送</button>
+      />
+      <button v-if="!msgContent" class="choose-image-btn common-send-btn" @click="chooseImage">+</button>
+      <button v-else class="send-btn common-send-btn" @click="sendMsg">发送</button>
     </view>
   </view>
 </template>
@@ -43,7 +47,8 @@ export default {
       messageList: [],
       userInfo: {},
       oppositeAvatar: '',
-      session_id: ''
+      session_id: '',   
+      timer: null
     }
   },
   onLoad(options) {
@@ -95,16 +100,17 @@ export default {
       }
     },
     // 发送消息
-    async sendMsg() {
+    async sendMsg(msg_type='text', imageUrl = '') {
       const msgContent = this.msgContent.trim()
-      if (!msgContent) return
+      if (!msgContent && msg_type ==='text') return
       try {
         await messageApi.sendMessage({
           session_id: this.session_id,
           sender_id: this.userInfo.user_id,
           receiver_id: this.to_user_id,
           order_id: this.order_id,
-          content: this.msgContent.trim()
+          content: msg_type === 'image' ? imageUrl : this.msgContent.trim(),
+          msg_type: msg_type === 'image' ? 1: 0 // 新增一个字段：1=图片，0=文本
         })
         this.msgContent = ''
         // this.messageList.push(msgContent);
@@ -122,6 +128,72 @@ export default {
           order_id: this.order_id  || null
         })
       } catch (err) {}
+    },
+    // 选择图片（拍照/相册）
+    chooseImage() {
+      uni.chooseImage({
+        sizeType: ['compressed'], // 压缩图片
+        sourceType: ['album', 'camera'], // 支持相册和拍照
+        success: (res) => {
+          const tempFilePath = res.tempFilePaths[0];
+          this.uploadImage(tempFilePath);
+        }
+      });
+    },
+
+    // 上传图片到后端
+    async uploadImage(filePath) {
+      uni.showLoading({ title: '发送中...' });
+      return new Promise((resolve) => {
+        uni.uploadFile({
+          url: 'http://192.168.3.116:3000/api/upload/chatImage',
+          filePath: filePath,
+          name: 'file',
+          success: (uploadRes) => {
+            try {
+              const data = JSON.parse(uploadRes.data);
+              if (data?.code === 200) {
+                const url = typeof data.data === 'string' ? data.data : data.data?.url;
+                // 上传成功，把图片地址发成消息
+                this.sendMsg('image', url);
+                resolve(url || null);
+              } else {
+                resolve(null);
+              }
+            } catch (e) {
+              resolve(null);
+            }
+          },
+          fail: () => {
+            uni.showToast({ title: '上传失败', icon: 'none' });
+          },
+          complete: () => {
+            uni.hideLoading();
+          }
+        });
+      })
+    },   
+    previewImage(url) {
+      uni.previewImage({
+        urls: [url],
+        current: url
+      });
+    },
+    // 批量预览--有点bug，暂时不用了
+    previewImage1(url) {
+      // 取出当前聊天所有图片
+      const allImages = this.messageList
+        ?.filter(item => item.msg_type === 1 && item.content)
+        ?.map(item => item.content) || [];
+
+      if (allImages.length === 0) return;
+
+      // 直接预览！
+      uni.previewImage({
+        urls: allImages,
+        current: url,
+        loop: true
+      });
     }
   }
 }
@@ -154,6 +226,10 @@ export default {
   border-radius: 50%;
   margin: 0 20rpx;
 }
+.chat-image {
+  width: 160rpx;
+  height: 160rpx;
+}
 .msg-content {
   max-width: 60%;
   background: #fff;
@@ -185,12 +261,19 @@ export default {
   font-size: 28rpx;
   margin-right: 20rpx;
 }
-.send-btn {
-  background: #07c160;
-  color: #fff;
-  border-radius: 40rpx;
-  padding: 20rpx 30rpx;
-  font-size: 28rpx;
-  border: none;
+.common-send-btn {
+  width: 120rpx;
+    height: 90rpx;
+    color: #fff;
+    font-size: 30rpx;
+    text-align: center;
+    line-height: 90rpx;
+    border-radius: 40rpx;
+    background: #07c160;
+}
+.choose-image-btn {
+    margin-right: 20rpx;
+    font-weight: bolder;
+    font-size: 60rpx;
 }
 </style>

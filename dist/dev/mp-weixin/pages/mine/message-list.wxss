@@ -25,9 +25,13 @@
 /* 文章场景相关 */
 .message-page.data-v-b77a8c2f {
   background: #f7f8fa;
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .session-list.data-v-b77a8c2f {
+  overflow: auto;
   padding: 20rpx;
 }
 .session-item.data-v-b77a8c2f {

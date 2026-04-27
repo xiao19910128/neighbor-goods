@@ -198,7 +198,7 @@ const _sfc_main = {
     async uploadImage(path) {
       return new Promise((resolve) => {
         common_vendor.index.uploadFile({
-          url: "http://localhost:3000/api/upload/image",
+          url: "http://192.168.3.116:3000/api/upload/image",
           filePath: path,
           name: "file",
           success: (uploadRes) => {

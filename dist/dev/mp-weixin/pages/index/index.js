@@ -38,23 +38,15 @@ const _sfc_main = {
     handleSearch() {
       this.getGoodsList();
     },
-    navigateTo(tabName, event) {
-      const tabs = document.querySelectorAll(".nav-tabs span");
-      tabs.forEach((tab) => tab.classList.remove("active"));
-      if (event && event.target) {
-        event.target.classList.add("active");
-      }
-    },
     toDetail(product) {
-      common_vendor.index.redirectTo({ url: `/pages/index/goods-detail?goods_id=${product.goods_id}` });
+      common_vendor.index.navigateTo({ url: `/pages/index/goods-detail?goods_id=${product.goods_id}` });
     }
   }
 };
 if (!Array) {
   const _easycom_uni_search_bar2 = common_vendor.resolveComponent("uni-search-bar");
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
-  const _component_TabBar = common_vendor.resolveComponent("TabBar");
-  (_easycom_uni_search_bar2 + _easycom_uni_icons2 + _component_TabBar)();
+  (_easycom_uni_search_bar2 + _easycom_uni_icons2)();
 }
 const _easycom_uni_search_bar = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-search-bar/uni-search-bar.js";
 const _easycom_uni_icons = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons.js";
@@ -98,11 +90,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     j: common_vendor.o(($event) => common_vendor.index.navigateTo({
       url: "/pages/login/index"
     }))
-  } : {}, {
-    k: common_vendor.p({
-      defaultTab: "home"
-    })
-  });
+  } : {});
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-83a5a03c"]]);
 wx.createPage(MiniProgramPage);

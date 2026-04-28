@@ -37,8 +37,7 @@ const _sfc_main = {
 };
 if (!Array) {
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
-  const _component_TabBar = common_vendor.resolveComponent("TabBar");
-  (_easycom_uni_icons2 + _component_TabBar)();
+  _easycom_uni_icons2();
 }
 const _easycom_uni_icons = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons.js";
 if (!Math) {
@@ -59,7 +58,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    f: common_vendor.o(($event) => common_vendor.index.redirectTo({
+    f: common_vendor.o(($event) => common_vendor.index.navigateTo({
       url: "/pages/orders/order-list?type=buy"
     })),
     g: common_vendor.p({
@@ -67,7 +66,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    h: common_vendor.o(($event) => common_vendor.index.redirectTo({
+    h: common_vendor.o(($event) => common_vendor.index.navigateTo({
       url: "/pages/mine/publish-list"
     })),
     i: common_vendor.p({
@@ -75,7 +74,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    j: common_vendor.o(($event) => common_vendor.index.redirectTo({
+    j: common_vendor.o(($event) => common_vendor.index.navigateTo({
       url: "/pages/mine/collection-list"
     })),
     k: common_vendor.p({
@@ -83,7 +82,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    l: common_vendor.o(($event) => common_vendor.index.redirectTo({
+    l: common_vendor.o(($event) => common_vendor.index.navigateTo({
       url: "/pages/mine/address-list"
     })),
     m: common_vendor.p({
@@ -91,17 +90,13 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       size: "24",
       color: "#666"
     }),
-    n: common_vendor.o(($event) => common_vendor.index.redirectTo({
+    n: common_vendor.o(($event) => common_vendor.index.switchTab({
       url: "/pages/mine/message-list"
     })),
     o: $data.isLogin
   }, $data.isLogin ? {
     p: common_vendor.o((...args) => $options.handleLogout && $options.handleLogout(...args))
-  } : {}), {
-    q: common_vendor.p({
-      defaultTab: "mine"
-    })
-  });
+  } : {}));
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-9023ef44"]]);
 wx.createPage(MiniProgramPage);

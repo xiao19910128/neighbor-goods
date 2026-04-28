@@ -24,19 +24,19 @@
             <view class="grid-group">
               <text class="group-title">交易管理</text>
               <view class="grid-container">
-                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/orders/order-list?type=buy' })">
+                <view class="grid-item" @click="uni.navigateTo({ url: '/pages/orders/order-list?type=buy' })">
                   <view class="icon-wrapper">
                   <uni-icons type="gift" size="24" color="#666"></uni-icons>
                   </view>
                   <text class="item-text">我的订单</text>
                 </view>
-                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/publish-list' })">
+                <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/publish-list' })">
                   <view class="icon-wrapper">
                     <uni-icons type="shop" size="24" color="#666"></uni-icons>
                   </view>
                   <text class="item-text">我发布的</text>
                 </view>
-                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/collection-list' })">
+                <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/collection-list' })">
                   <view class="icon-wrapper">
                     <uni-icons type="star" size="24" color="#666"></uni-icons>
                   </view>
@@ -49,13 +49,13 @@
             <view class="grid-group">
               <text class="group-title">偏好管理</text>
               <view class="grid-container">
-                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/address-list' })">
+                <view class="grid-item" @click="uni.navigateTo({ url: '/pages/mine/address-list' })">
                   <view class="icon-wrapper">
                     <uni-icons type="location" size="24" color="#666"></uni-icons>
                   </view>
                   <text class="item-text">地址管理</text>
                 </view>
-                <view class="grid-item" @click="uni.redirectTo({ url: '/pages/mine/message-list' })">
+                <view class="grid-item" @click="uni.switchTab({ url: '/pages/mine/message-list' })">
                   <view class="icon-wrapper">
                     <uni-icons type="chat" size="24" color="#666"></uni-icons>
                   </view>
@@ -73,7 +73,7 @@
         </view>
       </view>
     </view>
-    <TabBar  defaultTab="mine" />
+    <!-- <TabBar  defaultTab="mine" /> -->
   </view>
 </template>
 
@@ -119,11 +119,23 @@ export default {
 <style scoped lang="scss">
 .mine-page {
   display: flex;
-  height: calc(100vh - 90rpx);
+  height: 100vh;
   flex-direction: column;
   background-color: #f5f7fa;
   /* min-height: 100vh; */
   /* padding: 40rpx 30rpx; */
+}
+
+/* 关键：给底部加一条上阴影，和tabBar形成分割 */
+.mine-page::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 6rpx;
+  height: 10rpx;
+  background: linear-gradient(to top, rgba(0,0,0,0.08), transparent);
+  pointer-events: none; /* 不影响点击 */
 }
 
 /* 顶部用户区 */

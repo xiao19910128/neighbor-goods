@@ -1,5 +1,5 @@
   <template>
-  <div class="idle-fish-page">
+  <div class="home-page">
     <!-- 顶部导航栏 -->
     <div class="top-nav">
       <div class="search-container">
@@ -42,7 +42,7 @@
       <span class="tip-text">请先登录，查看更多信息</span>
       <button class="login-btn" @tap="uni.navigateTo({ url: '/pages/login/index' })">马上登录</button>
     </div>
-    <TabBar defaultTab="home" />
+    <!-- <TabBar defaultTab="home" /> -->
   </div>
 </template>
 
@@ -83,19 +83,8 @@ export default {
     handleSearch(){
       this.getGoodsList()
     },
-    navigateTo(tabName, event) {
-      // 移除所有活动状态
-      const tabs = document.querySelectorAll('.nav-tabs span');
-      tabs.forEach(tab => tab.classList.remove('active'));
-      
-      // 为当前点击的标签添加活动状态
-      if (event && event.target) {
-        event.target.classList.add('active');
-      }
-      
-    },
     toDetail(product) {
-      uni.redirectTo({url: `/pages/index/goods-detail?goods_id=${product.goods_id}`})
+      uni.navigateTo({url: `/pages/index/goods-detail?goods_id=${product.goods_id}`})
     },
   }
 };
@@ -103,12 +92,23 @@ export default {
 
 <style scoped>
 /* 基础布局 */
-.idle-fish-page {
+.home-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 90rpx);
+  height: 100vh;
   background-color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+/* 关键：给底部加一条上阴影，和tabBar形成分割 */
+.home-page::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 6rpx;
+  height: 10rpx;
+  background: linear-gradient(to top, rgba(0,0,0,0.08), transparent);
+  pointer-events: none; /* 不影响点击 */
 }
 
 /* 顶部导航栏 */

@@ -4,7 +4,7 @@
     <!-- 商品信息 -->
     <view class="card goods-card">
       <view class="card-title">商品信息</view>
-      <view class="goods-box" @click="uni.redirectTo({url: `/pages/index/goods-detail?goods_id=${orderInfo.goods_id}&from_order=yes`})">
+      <view class="goods-box" @click="uni.navigateTo({url: `/pages/index/goods-detail?goods_id=${orderInfo.goods_id}&from_order=yes`})">
         <image class="goods-img" :src="orderInfo.imageUrl" mode="aspectFill"></image>
         <view class="goods-info">
           <view class="goods-name">{{orderInfo.goods_name}}</view>

@@ -126,8 +126,8 @@ export default {
     },
     // 编辑商品
     editGoods(goods) {
-      // 这里只能用navigateTo，因为发布页需要传递商品ID作为参数来编辑商品信息
-      uni.navigateTo({ url: `/pages/publish/index?goods_id=${goods.goods_id}` });
+      uni.setStorageSync('edit_goods_id', goods.goods_id);
+      uni.switchTab({ url: '/pages/publish/index' });
     },
     // 删除商品
     async deleteGoods(goods_id) {

@@ -124,7 +124,7 @@
       </view>
     </view>
 
-    <TabBar defaultTab="publish" />
+    <!-- <TabBar defaultTab="publish" /> -->
   </view>
 </template>
 
@@ -175,6 +175,31 @@ export default {
     // 从登录页返回时需要更新token状态，重新判断是否登录
     this.isLogin = !!uni.getStorageSync('token');
     this.userInfo = uni.getStorageSync('userInfo') || {};
+    const goods_id = uni.getStorageSync('edit_goods_id');    
+    await this.loadCategories();
+    await this.getAddressLists()
+    // 【正在上传图片】→ 绝对不清空任何数据
+    if (this.isUploadingImage) {
+      setTimeout(() => {
+        this.isUploadingImage = false;
+      }, 100);
+      return;
+    }
+    if (goods_id) {
+      this.goodsId = goods_id || '';
+      this.isUploadingImage = true // 详情查看无需清空
+      // 有参数，说明是编辑商品，加载商品数据
+      this.getGoodsDetail(goods_id);
+      // 读取后立刻清空，避免下次进入还带着旧参数
+      uni.removeStorageSync('edit_goods_id');
+      return
+    } 
+    // 【只有全新发布时】→ 才清空表单和图片！
+    if (!this.goodsId && !edit_goods_id) {
+      this.form = { ...initialData };
+      this.goodsImages = [];
+    }
+
     // 上传图片时不清空
     if (this.isUploadingImage) {
       setTimeout(()=>{
@@ -184,18 +209,6 @@ export default {
     };
     this.goodsImages = []; // 清空图片列表，避免编辑时残留旧数据
     this.form = { ...initialData };
-  },
-  async onLoad(options = {}) {
-
-    await this.loadCategories();
-    await this.getAddressLists()
-    this.goodsId = options?.goods_id || '';
-    // 从路由获取 goods_id
-    if (options.goods_id) {
-      this.isUploadingImage = true // 详情查看无需清空
-      this.goodsId = options.goods_id;
-      this.getGoodsDetail(this.goodsId);
-    }
   },
   methods: {
     // 加载分类列表
@@ -249,13 +262,8 @@ export default {
           uni.showToast({ title: '发布成功，等待审核', icon: 'none' });
           // 重置表单
           this.form = { ...initialData };
-          if (this.goodsId) {
-            // 编辑后回退1层，直接回到上一页（发布列表）
-            uni.navigateBack({ delta: 1 });
-          } else {
-            // 跳转到我的发布列表
-            uni.redirectTo({ url: '/pages/mine/publish-list?from=publish' });
-          }
+          // 跳转到我的发布列表
+          uni.navigateTo({ url: '/pages/mine/publish-list?from=publish' });
         } else {
           uni.showToast({ title: publishRes.msg, icon: 'none' });
         }
@@ -508,9 +516,21 @@ export default {
 .publish-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 90rpx);
+  height: 100vh;
   background-color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 关键：给底部加一条上阴影，和tabBar形成分割 */
+.publish-page::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 6rpx;
+  height: 10rpx;
+  background: linear-gradient(to top, rgba(0,0,0,0.08), transparent);
+  pointer-events: none; /* 不影响点击 */
 }
 /* 表单内容区 */
 .form-container {

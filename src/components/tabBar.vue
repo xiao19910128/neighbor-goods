@@ -58,7 +58,7 @@ data() {
 }
 
 .tab-item.active {
-  color: #ff7676;
+  color: #d4237a;
 }
 .tab-item.active  .uni-icons {
   color: #ceec9d!important;

@@ -1,12 +1,12 @@
 {
   "pages": [
-    "pages/mine/message-list",
     "pages/index/index",
     "pages/publish/index",
     "pages/mine/index",
     "pages/login/index",
     "pages/mine/publish-list",
     "pages/mine/collection-list",
+    "pages/mine/message-list",
     "pages/mine/address-list",
     "pages/mine/address-edit",
     "pages/index/goods-detail",
@@ -19,6 +19,38 @@
     "navigationBarTitleText": "闲置中心",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#666",
+    "selectedColor": "#d4237a",
+    "borderStyle": "white",
+    "backgroundColor": "#fff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "闲置中心",
+        "iconPath": "static/tab/home.png",
+        "selectedIconPath": "static/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/publish/index",
+        "text": "发布",
+        "iconPath": "static/tab/publish.png",
+        "selectedIconPath": "static/tab/publish-active.png"
+      },
+      {
+        "pagePath": "pages/mine/message-list",
+        "text": "消息",
+        "iconPath": "static/tab/message.png",
+        "selectedIconPath": "static/tab/message-active.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "static/tab/mine.png",
+        "selectedIconPath": "static/tab/mine-active.png"
+      }
+    ]
   },
   "requiredPrivateInfos": [
     "chooseAddress"

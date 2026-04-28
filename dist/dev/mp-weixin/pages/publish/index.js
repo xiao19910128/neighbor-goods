@@ -52,6 +52,26 @@ const _sfc_main = {
   async onShow() {
     this.isLogin = !!common_vendor.index.getStorageSync("token");
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
+    const goods_id = common_vendor.index.getStorageSync("edit_goods_id");
+    await this.loadCategories();
+    await this.getAddressLists();
+    if (this.isUploadingImage) {
+      setTimeout(() => {
+        this.isUploadingImage = false;
+      }, 100);
+      return;
+    }
+    if (goods_id) {
+      this.goodsId = goods_id || "";
+      this.isUploadingImage = true;
+      this.getGoodsDetail(goods_id);
+      common_vendor.index.removeStorageSync("edit_goods_id");
+      return;
+    }
+    if (!this.goodsId && !edit_goods_id) {
+      this.form = { ...initialData };
+      this.goodsImages = [];
+    }
     if (this.isUploadingImage) {
       setTimeout(() => {
         this.isUploadingImage = false;
@@ -60,16 +80,6 @@ const _sfc_main = {
     }
     this.goodsImages = [];
     this.form = { ...initialData };
-  },
-  async onLoad(options = {}) {
-    await this.loadCategories();
-    await this.getAddressLists();
-    this.goodsId = (options == null ? void 0 : options.goods_id) || "";
-    if (options.goods_id) {
-      this.isUploadingImage = true;
-      this.goodsId = options.goods_id;
-      this.getGoodsDetail(this.goodsId);
-    }
   },
   methods: {
     // 加载分类列表
@@ -126,11 +136,7 @@ const _sfc_main = {
         if ((publishRes == null ? void 0 : publishRes.code) === 200) {
           common_vendor.index.showToast({ title: "发布成功，等待审核", icon: "none" });
           this.form = { ...initialData };
-          if (this.goodsId) {
-            common_vendor.index.navigateBack({ delta: 1 });
-          } else {
-            common_vendor.index.redirectTo({ url: "/pages/mine/publish-list?from=publish" });
-          }
+          common_vendor.index.navigateTo({ url: "/pages/mine/publish-list?from=publish" });
         } else {
           common_vendor.index.showToast({ title: publishRes.msg, icon: "none" });
         }
@@ -346,10 +352,6 @@ const _sfc_main = {
     }
   }
 };
-if (!Array) {
-  const _component_TabBar = common_vendor.resolveComponent("TabBar");
-  _component_TabBar();
-}
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   var _a, _b;
   return common_vendor.e({
@@ -416,10 +418,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     y: common_vendor.o(() => {
     }),
     z: $data.showAddressDrawer ? 1 : "",
-    A: common_vendor.o((...args) => $options.closeAddressDrawer && $options.closeAddressDrawer(...args)),
-    B: common_vendor.p({
-      defaultTab: "publish"
-    })
+    A: common_vendor.o((...args) => $options.closeAddressDrawer && $options.closeAddressDrawer(...args))
   });
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-ce8f53b1"]]);

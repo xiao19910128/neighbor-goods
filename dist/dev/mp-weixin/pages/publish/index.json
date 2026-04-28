@@ -1,6 +1,4 @@
 {
   "navigationBarTitleText": "发布闲置",
-  "usingComponents": {
-    "tab-bar": "../../components/TabBar"
-  }
+  "usingComponents": {}
 }

@@ -30,6 +30,18 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+/* 关键：给底部加一条上阴影，和tabBar形成分割 */
+.message-page.data-v-b77a8c2f::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 6rpx;
+  height: 10rpx;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.08), transparent);
+  pointer-events: none; /* 不影响点击 */
+}
 .session-list.data-v-b77a8c2f {
   overflow: auto;
   padding: 20rpx;

@@ -88,7 +88,7 @@ export default {
 
     // 跳转到商品详情
     goDetail(goods_id) {
-      uni.redirectTo({
+      uni.navigateTo({
         url: `/pages/index/goods-detail?goods_id=${goods_id}`
       })
     },
@@ -114,7 +114,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 0 20rpx;
-  height: calc(100vh - 90rpx);
+  height: 100vh;
   background-color: #f5f5f5;
 }
 

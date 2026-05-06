@@ -32,7 +32,7 @@
         </view>
       </view>
     </template>
-    <TabBar defaultTab="publish" />
+    <!-- <TabBar defaultTab="publish" /> -->
   </view>
 </template>
 <script>
@@ -126,6 +126,18 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+/* 关键：给底部加一条上阴影，和tabBar形成分割 */
+.message-page::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 6rpx;
+  height: 10rpx;
+  background: linear-gradient(to top, rgba(0,0,0,0.08), transparent);
+  pointer-events: none; /* 不影响点击 */
 }
 .session-list {
   // flex: 1;

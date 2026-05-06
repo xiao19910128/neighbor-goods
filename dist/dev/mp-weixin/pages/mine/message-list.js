@@ -77,8 +77,7 @@ const _sfc_main = {
 };
 if (!Array) {
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
-  const _component_TabBar = common_vendor.resolveComponent("TabBar");
-  (_easycom_uni_icons2 + _component_TabBar)();
+  _easycom_uni_icons2();
 }
 const _easycom_uni_icons = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons.js";
 if (!Math) {
@@ -115,11 +114,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         h: common_vendor.o(($event) => $options.goChat(item), item.to_user_id)
       });
     })
-  }), {
-    f: common_vendor.p({
-      defaultTab: "publish"
-    })
-  });
+  }));
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-b77a8c2f"]]);
 wx.createPage(MiniProgramPage);

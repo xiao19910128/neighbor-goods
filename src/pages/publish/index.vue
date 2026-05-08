@@ -343,7 +343,7 @@ export default {
     async uploadImage(path) {
       return new Promise((resolve) => {
         uni.uploadFile({
-          url: 'http://192.168.3.116:3000/api/upload/image',
+          url: 'http://192.168.3.121:3000/api/upload/image',
           filePath: path,
           name: 'file',
           success: (uploadRes) => {

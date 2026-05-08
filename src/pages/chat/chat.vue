@@ -146,7 +146,7 @@ export default {
       uni.showLoading({ title: '发送中...' });
       return new Promise((resolve) => {
         uni.uploadFile({
-          url: 'http://192.168.3.116:3000/api/upload/chatImage',
+          url: 'http://192.168.3.121:3000/api/upload/chatImage',
           filePath: filePath,
           name: 'file',
           success: (uploadRes) => {

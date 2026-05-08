@@ -117,7 +117,7 @@ const _sfc_main = {
       common_vendor.index.showLoading({ title: "发送中..." });
       return new Promise((resolve) => {
         common_vendor.index.uploadFile({
-          url: "http://192.168.3.116:3000/api/upload/chatImage",
+          url: "http://192.168.3.121:3000/api/upload/chatImage",
           filePath,
           name: "file",
           success: (uploadRes) => {

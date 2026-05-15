@@ -57,10 +57,6 @@
         <text class="price-red">¥{{orderInfo.goods_price}}</text>
       </view>
       <view class="info-row">
-        <text>订单状态：</text>
-        <text>{{orderInfo.order_status_text}}</text>
-      </view>
-      <view class="info-row">
         <text>订单号：</text>
         <text>{{orderInfo.order_no}}</text>
       </view>

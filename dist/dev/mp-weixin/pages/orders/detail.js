@@ -122,36 +122,35 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     i: common_vendor.t((_b = $data.statusMap[(_a = $data.orderInfo) == null ? void 0 : _a.order_status]) == null ? void 0 : _b.text),
     j: common_vendor.n((_d = $data.statusMap[(_c = $data.orderInfo) == null ? void 0 : _c.order_status]) == null ? void 0 : _d.order_status),
     k: common_vendor.t($data.orderInfo.goods_price),
-    l: common_vendor.t($data.orderInfo.order_status_text),
-    m: common_vendor.t($data.orderInfo.order_no),
-    n: common_vendor.t($data.orderInfo.created_time),
-    o: $data.orderInfo.order_status !== 4 && $data.orderInfo.order_status !== 5
+    l: common_vendor.t($data.orderInfo.order_no),
+    m: common_vendor.t($data.orderInfo.created_time),
+    n: $data.orderInfo.order_status !== 4 && $data.orderInfo.order_status !== 5
   }, $data.orderInfo.order_status !== 4 && $data.orderInfo.order_status !== 5 ? common_vendor.e({
-    p: $data.currentType === "buy"
+    o: $data.currentType === "buy"
   }, $data.currentType === "buy" ? common_vendor.e({
-    q: $data.orderInfo.order_status === 1
+    p: $data.orderInfo.order_status === 1
   }, $data.orderInfo.order_status === 1 ? {
-    r: common_vendor.o(($event) => $options.updateStatus($data.orderInfo.order_id, 5))
+    q: common_vendor.o(($event) => $options.updateStatus($data.orderInfo.order_id, 5))
   } : {}, {
-    s: $data.orderInfo.order_status === 2
+    r: $data.orderInfo.order_status === 2
   }, $data.orderInfo.order_status === 2 ? {
-    t: common_vendor.o(($event) => $options.updateStatus($data.orderInfo.order_id, 3))
+    s: common_vendor.o(($event) => $options.updateStatus($data.orderInfo.order_id, 3))
   } : {}, {
-    v: $data.orderInfo.order_status === 2
+    t: $data.orderInfo.order_status === 2
   }, $data.orderInfo.order_status === 2 ? {
-    w: common_vendor.o(($event) => $options.refundOrder($data.orderInfo.order_id))
+    v: common_vendor.o(($event) => $options.refundOrder($data.orderInfo.order_id))
   } : {}) : {}, {
-    x: $data.currentType === "sell"
+    w: $data.currentType === "sell"
   }, $data.currentType === "sell" ? common_vendor.e({
-    y: $data.orderInfo.order_status === 1
+    x: $data.orderInfo.order_status === 1
   }, $data.orderInfo.order_status === 1 ? {
-    z: common_vendor.o(($event) => $options.updateStatus($data.orderInfo.order_id, 2))
+    y: common_vendor.o(($event) => $options.updateStatus($data.orderInfo.order_id, 2))
   } : {}, {
-    A: $data.orderInfo.order_status === 3 && $data.orderInfo.seller_id === $data.userInfo.user_id
+    z: $data.orderInfo.order_status === 3 && $data.orderInfo.seller_id === $data.userInfo.user_id
   }, $data.orderInfo.order_status === 3 && $data.orderInfo.seller_id === $data.userInfo.user_id ? {
-    B: common_vendor.o(($event) => $options.updateStatus($data.orderInfo.order_id, 4))
+    A: common_vendor.o(($event) => $options.updateStatus($data.orderInfo.order_id, 4))
   } : {}) : {}) : {}, {
-    C: common_vendor.o(($event) => $options.goChat($data.orderInfo))
+    B: common_vendor.o(($event) => $options.goChat($data.orderInfo))
   });
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-9f5624b7"]]);

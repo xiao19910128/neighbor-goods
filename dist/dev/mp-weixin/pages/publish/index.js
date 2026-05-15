@@ -52,7 +52,6 @@ const _sfc_main = {
   async onShow() {
     this.isLogin = !!common_vendor.index.getStorageSync("token");
     this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
-    const goods_id = common_vendor.index.getStorageSync("edit_goods_id");
     await this.loadCategories();
     await this.getAddressLists();
     if (this.isUploadingImage) {
@@ -61,25 +60,16 @@ const _sfc_main = {
       }, 100);
       return;
     }
-    if (goods_id) {
-      this.goodsId = goods_id || "";
-      this.isUploadingImage = true;
-      this.getGoodsDetail(goods_id);
+    const editGoodsId = common_vendor.index.getStorageSync("edit_goods_id");
+    if (editGoodsId) {
+      this.goodsId = editGoodsId;
+      this.getGoodsDetail(editGoodsId);
       common_vendor.index.removeStorageSync("edit_goods_id");
       return;
     }
-    if (!this.goodsId && !edit_goods_id) {
-      this.form = { ...initialData };
-      this.goodsImages = [];
-    }
-    if (this.isUploadingImage) {
-      setTimeout(() => {
-        this.isUploadingImage = false;
-      }, 100);
-      return;
-    }
-    this.goodsImages = [];
+    this.goodsId = "";
     this.form = { ...initialData };
+    this.goodsImages = [];
   },
   methods: {
     // 加载分类列表

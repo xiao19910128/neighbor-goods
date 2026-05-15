@@ -175,40 +175,32 @@ export default {
     // 从登录页返回时需要更新token状态，重新判断是否登录
     this.isLogin = !!uni.getStorageSync('token');
     this.userInfo = uni.getStorageSync('userInfo') || {};
-    const goods_id = uni.getStorageSync('edit_goods_id');    
     await this.loadCategories();
     await this.getAddressLists()
-    // 【正在上传图片】→ 绝对不清空任何数据
+    // 正在上传图片 → 不清空、不重置，直接跳过--(小程序的选择图片会触发show生命周期，导致页面数据重置）
     if (this.isUploadingImage) {
       setTimeout(() => {
         this.isUploadingImage = false;
       }, 100);
       return;
     }
-    if (goods_id) {
-      this.goodsId = goods_id || '';
-      this.isUploadingImage = true // 详情查看无需清空
+    // 从「发布列表 → 编辑」进入 → 加载商品数据
+    // 发布列表的编辑入口--携带发布商品ID
+    const editGoodsId = uni.getStorageSync('edit_goods_id');
+    if (editGoodsId) {
+      this.goodsId = editGoodsId;
+      // 直接拉取最新商品详情数据--0508--上传图片的时候赋值
+      // this.isUploadingImage = true; // 标记为编辑状态，防止上传时清空
       // 有参数，说明是编辑商品，加载商品数据
-      this.getGoodsDetail(goods_id);
+      this.getGoodsDetail(editGoodsId); 
       // 读取后立刻清空，避免下次进入还带着旧参数
       uni.removeStorageSync('edit_goods_id');
-      return
-    } 
-    // 【只有全新发布时】→ 才清空表单和图片！
-    if (!this.goodsId && !edit_goods_id) {
-      this.form = { ...initialData };
-      this.goodsImages = [];
+      return;
     }
-
-    // 上传图片时不清空
-    if (this.isUploadingImage) {
-      setTimeout(()=>{
-        this.isUploadingImage = false;
-      }, 100)
-      return
-    };
-    this.goodsImages = []; // 清空图片列表，避免编辑时残留旧数据
+    // 从底部「发布」tab进入 → 必须强制清空所有数据
+    this.goodsId = '';
     this.form = { ...initialData };
+    this.goodsImages = [];
   },
   methods: {
     // 加载分类列表
